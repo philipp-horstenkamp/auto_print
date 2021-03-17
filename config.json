@@ -1,0 +1,24 @@
+{
+  "Marke": {
+    "active": true,
+    "printer": "Marthastr",
+    "prefix": "Annahmemarke",
+    "suffix": ".pdf",
+    "print": true,
+    "show": false
+  },
+  "FSP": {
+    "active": false,
+    "printer": "Feinstaub",
+    "prefix": "FSP",
+    "suffix": ".pdf",
+    "show": true,
+    "print": true,
+    "delete": true
+  },
+  "All": {
+    "active": true,
+    "show": true,
+    "print": false
+  }
+}
