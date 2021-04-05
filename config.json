@@ -1,6 +1,6 @@
 {
   "Marke": {
-    "active": true,
+    "active": false,
     "printer": "Marthastr",
     "prefix": "Annahmemarke",
     "suffix": ".pdf",
@@ -13,6 +13,15 @@
     "prefix": "FSP",
     "suffix": ".pdf",
     "show": true,
+    "print": true,
+    "delete": true
+  },
+  "Auftragszettel": {
+    "active": true,
+    "printer": "Minolta Main",
+    "prefix": "Auftragszettel",
+    "suffix": ".pdf",
+    "show": false,
     "print": true,
     "delete": true
   },

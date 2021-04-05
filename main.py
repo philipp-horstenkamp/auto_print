@@ -3,8 +3,6 @@ import locale
 import logging
 import os
 import sys
-import time
-from datetime import datetime
 
 import ghostscript
 import win32api
@@ -52,6 +50,7 @@ def auto_ghost1(filename, printer_name: str):
         "-dPrinted", "-dBATCH", "-dNOSAFER", "-dNOPAUSE", "-dNOPROMPT", "-q",
         "-dNumCopies#1",
         "-sDEVICE#mswinpr2",
+        "-dNODISPLAY",  # TODO test
         f'-sOutputFile#"%printer%{printer_name}"',
         f'"{filename}"'
     ]
@@ -59,6 +58,15 @@ def auto_ghost1(filename, printer_name: str):
     encoding = locale.getpreferredencoding()
     args = [a.encode(encoding) for a in args]
     ghostscript.Ghostscript(*args)
+
+
+def execute_action(fname: str, fpath: str, prefix: str, suffix: str) -> bool:
+    if not fname.startswith(prefix):
+        return False
+    if not fname.endswith(suffix):
+        return False
+
+    return True
 
 
 # Press the green button in the gutter to run the script.
@@ -103,26 +111,31 @@ if __name__ == '__main__':
     for c in config:
         action = config[c]
         if not action.get("active", "false"):  # skip
-            print(f"{c} not active")
+            logging.debug(f"The action {c} is not active.")
             continue
-        if filename.startswith(action.get("prefix", "")):
-            if filename.endswith(action.get("suffix", "")):
-                print(f"Action to print {c}")
-                if bool(action.get("print", "false")):
-                    if bool(action.get("show", "true")):
-                        auto_print3(filepath, action.get("printer", win32print.GetDefaultPrinter()))
-                        break
-                    else:
-                        auto_ghost1(filepath, action.get("printer", win32print.GetDefaultPrinter()))
-                        if bool(action.get("delete", "false")):
-                            try:
-                                # os.remove(filepath)
-                                break
-                            except PermissionError as pe:
-                                print(pe)
+        if execute_action(filename, filepath, action.get("prefix", ""), action.get("suffix", "")):
+            logging.info(f"The action {c} is the valid action. No other action will be performed!")
+            print(f"Action to print {c}")
+            if bool(action.get("print", "false")):
+                p_name: str = action.get("printer", win32print.GetDefaultPrinter())
+                if bool(action.get("show", "true")):
+
+                    logging.info(f"The printer {p_name} will be chosen to print the file {filename}"
+                                 f" while showing the file!")
+                    auto_print3(filepath, p_name)
+                    break
                 else:
-                    os.system("start " + filepath)
+                    logging.info(f"The printer {p_name} will be chosen to print the file {filename}"
+                                 f" while not showing the file and using ghostscript!")
+                    auto_ghost1(filepath, p_name)
+                    if bool(action.get("delete", "false")):
+                        try:
+                            # os.remove(filepath)
+                            break
+                        except PermissionError as pe:
+                            print(pe)
             else:
-                continue
+                logging.info(f"Showing the file!")
+                os.system("start " + filepath)
         else:
             continue

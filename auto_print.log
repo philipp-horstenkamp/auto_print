@@ -73,3 +73,16 @@
 2021-03-17 22:37:34,427 Start p1: C:\Users\phhor\PycharmProjects\autoPrint
 2021-03-17 22:37:34,427 Argument 0 is "C:/Users/phhor/PycharmProjects/autoPrint/main.py".
 2021-03-17 22:37:34,427 Argument 1 is "C:\Users\phhor\AppData\Local\Temp\Annahmemarke-26.pdf".
+2021-03-18 10:01:09,416 Starting the program!
+2021-03-18 10:01:09,416 Start path: C:/Users/phhor/PycharmProjects/autoPrint/main.py
+2021-03-18 10:01:09,416 Start p1: C:\Users\phhor\PycharmProjects\autoPrint
+2021-03-18 10:01:09,416 Argument 0 is "C:/Users/phhor/PycharmProjects/autoPrint/main.py".
+2021-03-18 10:01:09,416 Argument 1 is "C:\Users\phhor\AppData\Local\Temp\Annahmemarke-26.pdf".
+2021-03-18 10:01:09,431 The action FSP is not active.
+2021-03-18 10:12:21,072 Starting the program!
+2021-03-18 10:12:21,072 Start path: C:/Users/phhor/PycharmProjects/autoPrint/main.py
+2021-03-18 10:12:21,072 Start p1: C:\Users\phhor\PycharmProjects\autoPrint
+2021-03-18 10:12:21,072 Argument 0 is "C:/Users/phhor/PycharmProjects/autoPrint/main.py".
+2021-03-18 10:12:21,072 Argument 1 is "C:\Users\phhor\AppData\Local\Temp\Annahmemarke-26.pdf".
+2021-03-18 10:12:21,072 The action Marke is the valid action. No other action will be performed!
+2021-03-18 10:12:21,072 The printer Marthastr will be chosen to print the file Annahmemarke-26.pdf while not showing the file and using ghostscript!
