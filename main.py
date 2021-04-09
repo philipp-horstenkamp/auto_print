@@ -4,34 +4,26 @@ import logging
 import os
 import sys
 
-import ghostscript
+gs = None
+try:
+    import ghostscript as gs
+except RuntimeError as e:
+    args = sys.argv
+    temp_arg = args[0]
+    temp_arg = temp_arg.replace("\\", "/")
+    root_folder: str = temp_arg[:temp_arg.rfind("/")]
+    FORMAT = '%(asctime)-15s %(message)s'
+    logging.basicConfig(filename=f"{root_folder}/auto_print.log", format=FORMAT, level=logging.DEBUG, filemode='a')
+    logging.error(e)
+    print(e)
+
 import win32api
 import win32print
-
-
-# import render_to_pdf
-
-
-def auto_print2():
-    name = win32print.GetDefaultPrinter()  # verify that it matches with the name of your printer
-    printdefaults = {"DesiredAccess": win32print.PRINTER_ALL_ACCESS}  # Doesn't work with PRINTER_ACCESS_USE
-    handle = win32print.OpenPrinter(name, printdefaults)
-    level = 2
-    attributes = win32print.GetPrinter(handle, level)
-    # attributes['pDevMode'].Duplex = 1  # no flip
-    # attributes['pDevMode'].Duplex = 2  # flip up
-    attributes['pDevMode'].Duplex = 3  # flip over
-    win32print.SetPrinter(handle, level, attributes, 0)
-
-    win32print.GetPrinter(handle, level)['pDevMode'].Duplex
-
-    win32api.ShellExecute(0, 'print', 'PRINT_TEST.pdf', '.', '/manualstoprint', 0)
 
 
 def auto_print3(filepath: str, printer_name: str):
     hPrinter = win32print.OpenPrinter(printer_name)
     try:
-        hJob = win32print.StartDocPrinter(hPrinter, 1, ('PrintJobName', None, 'RAW'))
         try:
             win32api.ShellExecute(0, "print", filepath, None, ".", 0)
             win32print.StartPagePrinter(hPrinter)
@@ -57,7 +49,7 @@ def auto_ghost1(filename, printer_name: str):
 
     encoding = locale.getpreferredencoding()
     args = [a.encode(encoding) for a in args]
-    ghostscript.Ghostscript(*args)
+    gs.Ghostscript(*args)
 
 
 def execute_action(fname: str, fpath: str, prefix: str, suffix: str) -> bool:
@@ -125,6 +117,8 @@ if __name__ == '__main__':
                     auto_print3(filepath, p_name)
                     break
                 else:
+                    if gs is None:
+                        continue
                     logging.info(f"The printer {p_name} will be chosen to print the file {filename}"
                                  f" while not showing the file and using ghostscript!")
                     auto_ghost1(filepath, p_name)
