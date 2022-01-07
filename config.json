@@ -1,8 +1,8 @@
 {
   "Marke": {
-    "active": false,
+    "active": true,
     "printer": "Marthastr",
-    "prefix": "Annahmemarke",
+    "prefix": "TEST_",
     "suffix": ".pdf",
     "print": true,
     "show": false
@@ -13,8 +13,7 @@
     "prefix": "FSP",
     "suffix": ".pdf",
     "show": true,
-    "print": true,
-    "delete": true
+    "print": true
   },
   "Auftragszettel": {
     "active": true,
@@ -22,8 +21,7 @@
     "prefix": "Auftragszettel",
     "suffix": ".pdf",
     "show": false,
-    "print": true,
-    "delete": true
+    "print": true
   },
   "All": {
     "active": true,

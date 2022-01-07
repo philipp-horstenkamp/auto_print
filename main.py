@@ -8,45 +8,58 @@ import sys
 import win32api
 import win32print
 
-try:
-    import ghostscript as gs
-except RuntimeError as e:
-    args = sys.argv
-    temp_arg = args[0]
-    temp_arg = temp_arg.replace("\\", "/")
-    root_folder: str = temp_arg[: temp_arg.rfind("/")]
-    FORMAT = "%(asctime)-15s %(message)s"
-    logging.basicConfig(
-        filename=f"{root_folder}/auto_print.log",
-        format=FORMAT,
-        level=logging.DEBUG,
-        filemode="a",
+# defines the path of the printer config JSON file.
+PRINTER_CONFIG_PATH: str = "config.json"
+# defines the generell config file.
+# GENERELL_CONFIG_FILE: str = ""  # todo define this file.
+
+LOG_FILE: str = "auto_print.log"
+
+
+# Try to load the ghostscript api.
+# This programm will shut down if ghostscript is not installed.
+
+
+def printer_pdf_reader(file_path: str, printer_name: str) -> None:
+    """
+    Prints a document via the adobe pdf reader.
+    :param file_path: The path of the file that should be printed.
+    :param printer_name: The name of the printer that should be used.
+    :return: None
+    """
+    logging.info(
+        f'The printer "{printer_name}" will be chosen to print the file "{file_to_print_arg}"'
+        "\nWhile showing the file!"
     )
-    logging.error(e)
-    del root_folder
-    sys.exit(-1)
 
-
-def auto_print3(filepath: str, printer_name: str):
-    hPrinter = win32print.OpenPrinter(printer_name)
+    h_printer = win32print.OpenPrinter(printer_name)
     try:
         try:
-            win32api.ShellExecute(0, "print", filepath, None, ".", 0)
-            win32print.StartPagePrinter(hPrinter)
+            win32api.ShellExecute(0, "print", file_path, None, ".", 0)
+            win32print.StartPagePrinter(h_printer)
             win32print.WritePrinter(
-                hPrinter, "test"
+                h_printer, "test"
             )  # Instead of raw text is there a way to print PDF File ?
-            win32print.EndPagePrinter(hPrinter)
+            win32print.EndPagePrinter(h_printer)
         finally:
-            win32print.EndDocPrinter(hPrinter)
+            win32print.EndDocPrinter(h_printer)
     finally:
-        win32print.ClosePrinter(hPrinter)
+        win32print.ClosePrinter(h_printer)
 
 
-def auto_ghost1(filename, printer_name: str):
-    # p_name = "Minolta Main"
-    # p_name = r"\\192.168.10.109\Ettiketen Drucker"
-    args = [
+def printer_ghost_script(file_path: str, printer_name: str) -> None:
+    """
+    Prints a document with the ghostscript printer.
+    :param file_path: The path of the file that should be printed.
+    :param printer_name: The name of the printer that should be used.
+    :return: None
+    """
+    logging.info(
+        f"The printer {printer_name} will be chosen to print the file {file_path}"
+        f" while not showing the file and using ghostscript!"
+    )
+
+    printer_args = [
         "-dPrinted",
         "-dBATCH",
         "-dNOSAFER",
@@ -55,109 +68,126 @@ def auto_ghost1(filename, printer_name: str):
         "-q",
         "-dNumCopies#1",
         "-sDEVICE#mswinpr2",
-        "-dNODISPLAY",  # TODO test
         f'-sOutputFile#"%printer%{printer_name}"',
-        f'"{filename}"',
     ]
 
-    encoding = locale.getpreferredencoding()
-    args = [a.encode(encoding) for a in args]
-    gs.Ghostscript(*args)
+    with ghostscript.Ghostscript(*printer_args[:]) as gs:
+        gs.run_filename(file_to_print_arg.encode(locale.getpreferredencoding()))
 
 
-def execute_action(fname: str, fpath: str, prefix: str, suffix: str) -> bool:
-    if not fname.startswith(prefix):
+def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) -> bool:
+    """
+    Checks if a provision is fulfilled to execute a section of the Programm.
+    :param file_name:
+    :param prefix: A prefix of the basename. Checks if the suffix is fulfilled.
+    :param suffix: A suffix of the basename (file extension).
+    :return: Returns true if all provisions are fulfilled.
+    """
+    if not prefix or not file_name.startswith(prefix):
         return False
-    if not fname.endswith(suffix):
+    if not suffix or not file_name.endswith(suffix):
         return False
-
     return True
 
 
-# Press the green button in the gutter to run the script.
+# The main function should be started as shown above.
 if __name__ == "__main__":
-    args = sys.argv
-    temp_arg = args[0]
-    temp_arg = temp_arg.replace("\\", "/")
-    root_folder: str = temp_arg[: temp_arg.rfind("/")]
+    # loads the argument that where used to start this software.
 
-    FORMAT = "%(asctime)-15s %(message)s"
     logging.basicConfig(
-        filename=f"{root_folder}/auto_print.log",
-        format=FORMAT,
+        filename=f"{LOG_FILE}",
+        format="%(asctime)-15s %(message)s",
         level=logging.DEBUG,
         filemode="a",
     )
+    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+
+    # todo check for a config test argument!
+
+    # try to load the ghostscript software!
+    try:
+        import ghostscript
+    except RuntimeError as e:
+        logging.error(e)
+        sys.exit(-5)
+
     logging.info("Starting the program!")
-    logging.info(f"Start path: {args[0]}")
-    logging.info(f"Start p1: {sys.path[0]}")
+    logging.info(f"Start programm in: {os.path.abspath(sys.path[0])}")
 
-    for index, arg in enumerate(args):
+    args = sys.argv  # loading the arguments
+    for index, arg in enumerate(args):  # logging the arguments
         logging.debug(f'Argument {index} is "{arg}".')
+        del index, arg
 
-    if len(args) == 1:
+    if len(args) != 2:
         logging.warning("No file to print specified!")
         sys.exit(-1)
 
     if len(args) > 2:
         logging.warning(
-            "There is more then one argument! Please use only the filename as an Argument!"
+            "There is more then one additional Argument. Please only use the filename as an Argument!"
         )
         sys.exit(-2)
-    filepath = args[1]
-    filename = filepath[filepath.rfind("\\") + 1 :]
 
-    if not os.path.exists(filepath):
-        logging.warning("The file specified in the argument does not exist!")
-        logging.warning(f'The specified path is: "{filepath}".')
+    # The first argument should always be the path of the file.
+    # file_to_print_arg: str = os.path.abspath(args[1])
+    file_to_print_arg: str = args[1]
+
+    if not file_to_print_arg:
+        sys.exit(-5)
+
+    # file_to_print_arg = file_to_print_arg.replace("\\", "/")  # Transform the path
+    # todo check if tha abspath needs to be transformed.
+
+    # file_to_print_folder: str = os.path.dirname(file_to_print_arg)
+    file_to_print_name: str = os.path.basename(file_to_print_arg)
+
+    logging.info(f"File to print: {file_to_print_arg}")
+
+    if not os.path.exists(file_to_print_arg):  # checks if the file exists!
+        logging.warning(
+            "The file specified in the argument does not exist!\n"
+            f'The specified path is: "{file_to_print_arg}".'
+        )
         sys.exit(-3)
 
     try:
-        with open(f"{root_folder}/config.json") as json_file:
-            config = json.load(json_file)
+        with open(PRINTER_CONFIG_PATH) as printer_config_file:
+            printer_config = json.load(printer_config_file)
     except Exception as e:
+        # todo start a tkinter dialoge here. Only import what is needed here!
         logging.error(e)
         print(e)
         sys.exit(-4)
 
-    for c in config:
-        action = config[c]
-        if not action.get("active", "false"):  # skip
-            logging.debug(f"The action {c} is not active.")
+    for action_key in printer_config:
+        printer_action = printer_config[action_key]
+        if not printer_action.get(
+            "active", "false"
+        ):  # skip if printer action is disabled!
+            logging.debug(f"The action {action_key} is not active.")
             continue
-        if execute_action(
-            filename, filepath, action.get("prefix", ""), action.get("suffix", "")
+        if not provision_fulfilled(  # check if the printer action should be performed.
+            file_to_print_name,
+            printer_action.get("prefix", None),
+            printer_action.get("suffix", None),
         ):
-            logging.info(
-                f"The action {c} is the valid action. No other action will be performed!"
-            )
-            print(f"Action to print {c}")
-            if bool(action.get("print", "false")):
-                p_name: str = action.get("printer", win32print.GetDefaultPrinter())
-                if bool(action.get("show", "true")):
-
-                    logging.info(
-                        f"The printer {p_name} will be chosen to print the file {filename}"
-                        f" while showing the file!"
-                    )
-                    auto_print3(filepath, p_name)
-                    break
-                else:
-                    if gs is None:
-                        continue
-                    logging.info(
-                        f"The printer {p_name} will be chosen to print the file {filename}"
-                        f" while not showing the file and using ghostscript!"
-                    )
-                    auto_ghost1(filepath, p_name)
-                    if bool(action.get("delete", "false")):
-                        try:
-                            # os.remove(filepath)
-                            break
-                        except PermissionError as pe:
-                            print(pe)
-            else:
-                logging.info("Showing the file!")
-                os.system("start " + filepath)
-        else:
             continue
+
+        logging.info(
+            f"The action {action_key} is the valid action. This action will be executed!"
+        )
+        print(f'Action to print "{action_key}"')
+        if bool(printer_action.get("print", "false")):
+            printer_to_use: str = printer_action.get(
+                "printer", win32print.GetDefaultPrinter()
+            )
+            if bool(printer_action.get("show", "true")):
+                printer_pdf_reader(file_to_print_arg, printer_to_use)
+                sys.exit(0)
+            else:
+                printer_ghost_script(file_to_print_arg, printer_to_use)
+                sys.exit(0)
+        else:
+            logging.info("Showing the file!")
+            os.system("start " + file_to_print_arg)

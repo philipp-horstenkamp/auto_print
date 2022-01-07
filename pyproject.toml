@@ -20,3 +20,11 @@ pylint = "^2.12.2"
 pre-commit = "^2.16.0"
 mypy = "^0.931"
 pyinstaller = "^4.7"
+
+[tool.vulture]
+exclude = []
+ignore_decorators = []
+ignore_names = []
+make_whitelist = true
+paths = ["main.py"]
+sort_by_size = true
