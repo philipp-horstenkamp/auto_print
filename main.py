@@ -1,24 +1,30 @@
+# -*- coding: utf-8 -*-
 import json
 import locale
 import logging
 import os
 import sys
 
-gs = None
+import win32api
+import win32print
+
 try:
     import ghostscript as gs
 except RuntimeError as e:
     args = sys.argv
     temp_arg = args[0]
     temp_arg = temp_arg.replace("\\", "/")
-    root_folder: str = temp_arg[:temp_arg.rfind("/")]
-    FORMAT = '%(asctime)-15s %(message)s'
-    logging.basicConfig(filename=f"{root_folder}/auto_print.log", format=FORMAT, level=logging.DEBUG, filemode='a')
+    root_folder: str = temp_arg[: temp_arg.rfind("/")]
+    FORMAT = "%(asctime)-15s %(message)s"
+    logging.basicConfig(
+        filename=f"{root_folder}/auto_print.log",
+        format=FORMAT,
+        level=logging.DEBUG,
+        filemode="a",
+    )
     logging.error(e)
-    print(e)
-
-import win32api
-import win32print
+    del root_folder
+    sys.exit(-1)
 
 
 def auto_print3(filepath: str, printer_name: str):
@@ -27,7 +33,9 @@ def auto_print3(filepath: str, printer_name: str):
         try:
             win32api.ShellExecute(0, "print", filepath, None, ".", 0)
             win32print.StartPagePrinter(hPrinter)
-            win32print.WritePrinter(hPrinter, "test")  # Instead of raw text is there a way to print PDF File ?
+            win32print.WritePrinter(
+                hPrinter, "test"
+            )  # Instead of raw text is there a way to print PDF File ?
             win32print.EndPagePrinter(hPrinter)
         finally:
             win32print.EndDocPrinter(hPrinter)
@@ -39,12 +47,17 @@ def auto_ghost1(filename, printer_name: str):
     # p_name = "Minolta Main"
     # p_name = r"\\192.168.10.109\Ettiketen Drucker"
     args = [
-        "-dPrinted", "-dBATCH", "-dNOSAFER", "-dNOPAUSE", "-dNOPROMPT", "-q",
+        "-dPrinted",
+        "-dBATCH",
+        "-dNOSAFER",
+        "-dNOPAUSE",
+        "-dNOPROMPT",
+        "-q",
         "-dNumCopies#1",
         "-sDEVICE#mswinpr2",
         "-dNODISPLAY",  # TODO test
         f'-sOutputFile#"%printer%{printer_name}"',
-        f'"{filename}"'
+        f'"{filename}"',
     ]
 
     encoding = locale.getpreferredencoding()
@@ -62,34 +75,41 @@ def execute_action(fname: str, fpath: str, prefix: str, suffix: str) -> bool:
 
 
 # Press the green button in the gutter to run the script.
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = sys.argv
     temp_arg = args[0]
     temp_arg = temp_arg.replace("\\", "/")
-    root_folder: str = temp_arg[:temp_arg.rfind("/")]
+    root_folder: str = temp_arg[: temp_arg.rfind("/")]
 
-    FORMAT = '%(asctime)-15s %(message)s'
-    logging.basicConfig(filename=f"{root_folder}/auto_print.log", format=FORMAT, level=logging.DEBUG, filemode='a')
+    FORMAT = "%(asctime)-15s %(message)s"
+    logging.basicConfig(
+        filename=f"{root_folder}/auto_print.log",
+        format=FORMAT,
+        level=logging.DEBUG,
+        filemode="a",
+    )
     logging.info("Starting the program!")
     logging.info(f"Start path: {args[0]}")
     logging.info(f"Start p1: {sys.path[0]}")
 
     for index, arg in enumerate(args):
-        logging.debug(f"Argument {index} is \"{arg}\".")
+        logging.debug(f'Argument {index} is "{arg}".')
 
     if len(args) == 1:
         logging.warning("No file to print specified!")
         sys.exit(-1)
 
     if len(args) > 2:
-        logging.warning("There is more then one argument! Please use only the filename as an Argument!")
+        logging.warning(
+            "There is more then one argument! Please use only the filename as an Argument!"
+        )
         sys.exit(-2)
     filepath = args[1]
-    filename = filepath[filepath.rfind(f"\\") + 1:]
+    filename = filepath[filepath.rfind("\\") + 1 :]
 
     if not os.path.exists(filepath):
         logging.warning("The file specified in the argument does not exist!")
-        logging.warning(f"The specified path is: \"{filepath}\".")
+        logging.warning(f'The specified path is: "{filepath}".')
         sys.exit(-3)
 
     try:
@@ -105,22 +125,30 @@ if __name__ == '__main__':
         if not action.get("active", "false"):  # skip
             logging.debug(f"The action {c} is not active.")
             continue
-        if execute_action(filename, filepath, action.get("prefix", ""), action.get("suffix", "")):
-            logging.info(f"The action {c} is the valid action. No other action will be performed!")
+        if execute_action(
+            filename, filepath, action.get("prefix", ""), action.get("suffix", "")
+        ):
+            logging.info(
+                f"The action {c} is the valid action. No other action will be performed!"
+            )
             print(f"Action to print {c}")
             if bool(action.get("print", "false")):
                 p_name: str = action.get("printer", win32print.GetDefaultPrinter())
                 if bool(action.get("show", "true")):
 
-                    logging.info(f"The printer {p_name} will be chosen to print the file {filename}"
-                                 f" while showing the file!")
+                    logging.info(
+                        f"The printer {p_name} will be chosen to print the file {filename}"
+                        f" while showing the file!"
+                    )
                     auto_print3(filepath, p_name)
                     break
                 else:
                     if gs is None:
                         continue
-                    logging.info(f"The printer {p_name} will be chosen to print the file {filename}"
-                                 f" while not showing the file and using ghostscript!")
+                    logging.info(
+                        f"The printer {p_name} will be chosen to print the file {filename}"
+                        f" while not showing the file and using ghostscript!"
+                    )
                     auto_ghost1(filepath, p_name)
                     if bool(action.get("delete", "false")):
                         try:
@@ -129,7 +157,7 @@ if __name__ == '__main__':
                         except PermissionError as pe:
                             print(pe)
             else:
-                logging.info(f"Showing the file!")
+                logging.info("Showing the file!")
                 os.system("start " + filepath)
         else:
             continue
