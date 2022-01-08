@@ -1,0 +1,60 @@
+image: python:3.10
+
+# Change pip's cache directory to be inside the project directory since we can
+# only cache local items.
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
+  GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+- Static Code Analysis
+- deploy
+
+cache:
+  paths:
+  - .cache/pip
+  - venv/
+
+before_script:
+- python3.10 -V    # Print out python version for debugging
+- python3.10 -m pip poetry
+- poetry install
+
+Black Linter:
+  when: always
+  stage: Static Code Analysis
+  tags:
+  - pi
+  script:
+  - pip install black
+  - black  --check --diff ./
+  allow_failure: true
+
+Flake Linter:
+  when: always
+  stage: Static Code Analysis
+  tags:
+  - pi
+  script:
+  - pip install flake8
+  - flake8 --statistics
+  allow_failure: true
+
+pyinstall:
+  stage: deploy
+  image: tobix/pywine:3.10
+  retry: 2
+  tags:
+  - win-docker
+  before_script:
+  - . /opt/mkuserwineprefix
+  - wine /opt/wineprefix/drive_c/Python39/Python.exe -v
+  - wine /opt/wineprefix/drive_c/Python39/Python.exe -m pip -r requirements.txt
+
+  script:
+  - wine /opt/wineprefix/drive_c/Python39/Scripts/pyinstaller.exe auto_print.spec
+  artifacts:
+    paths:
+    - dist/*.exe
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

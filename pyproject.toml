@@ -27,5 +27,5 @@ exclude = []
 ignore_decorators = []
 ignore_names = []
 make_whitelist = true
-paths = ["main.py"]
+paths = ["auto_print.py"]
 sort_by_size = true
