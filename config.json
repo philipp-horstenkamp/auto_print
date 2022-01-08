@@ -1,24 +1,23 @@
 {
   "Marke": {
     "active": true,
-    "printer": "Marthastr",
+    "printer": "MyPreciousPrinter",
     "prefix": "TEST_",
     "suffix": ".pdf",
     "print": true,
     "show": false
   },
-  "FSP": {
+  "SomeOtherCategory": {
     "active": false,
-    "printer": "Feinstaub",
-    "prefix": "FSP",
+    "printer": "AnotherPrinter",
+    "prefix": "Something",
     "suffix": ".pdf",
     "show": true,
     "print": true
   },
-  "Auftragszettel": {
+  "UseDefaultPrinter": {
     "active": true,
-    "printer": "Minolta Main",
-    "prefix": "Auftragszettel",
+    "prefix": "DefPrintFile",
     "suffix": ".pdf",
     "show": false,
     "print": true

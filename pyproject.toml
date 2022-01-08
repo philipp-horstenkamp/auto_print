@@ -12,6 +12,7 @@ authors = ["Philipp Horstenkamp <philipp@horstenkamp.de>"]
 python = ">=3.10, <3.11"
 ghostscript = "^0.7"
 pywin32 = "^303"
+pyinstaller = "^4.7"
 
 [tool.poetry.dev-dependencies]
 black = {extras = ["jupyter"], version = "^21.12b0"}
@@ -19,7 +20,7 @@ flake8 = "^4.0.1"
 pylint = "^2.12.2"
 pre-commit = "^2.16.0"
 mypy = "^0.931"
-pyinstaller = "^4.7"
+jupyter = "^1.0.0"
 
 [tool.vulture]
 exclude = []

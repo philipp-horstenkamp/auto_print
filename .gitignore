@@ -116,3 +116,5 @@ dmypy.json
 
 # IDEA
 .idea/
+
+auto_print.log
