@@ -17,7 +17,7 @@ cache:
 
 before_script:
 - python -V    # Print out python version for debugging
-- python -m pip poetry
+- python -m pip install poetry
 - poetry install
 
 Black Linter:
