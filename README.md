@@ -22,6 +22,9 @@ If a suffix or a prefix is not given the comparison is true either way.
 
 Everything is logged and can be locked up in the auto_print.log file!
 
+To test this software while setting up there is a `test_print.bat`.
+Hit it for easy testing. 
+
 ## Configuration example
 
 The below file is an example with comments.

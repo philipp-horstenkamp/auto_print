@@ -57,6 +57,6 @@ pyinstall:
   - wine /opt/wineprefix/drive_c/Python39/Scripts/pyinstaller.exe auto_print.spec
   artifacts:
     paths:
-    - dist/*.exe
+    - dist/*
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
