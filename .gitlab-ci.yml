@@ -1,4 +1,4 @@
-image: python:3.10
+image: python:latest
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -43,6 +43,7 @@ Flake Linter:
   allow_failure: true
 
 pyinstall:
+  when: manual
   stage: deploy
   image: tobix/pywine:3.10
   retry: 2
