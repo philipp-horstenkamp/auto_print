@@ -16,8 +16,8 @@ cache:
   - venv/
 
 before_script:
-- python3.10 -V    # Print out python version for debugging
-- python3.10 -m pip poetry
+- python -V    # Print out python version for debugging
+- python -m pip poetry
 - poetry install
 
 Black Linter:
@@ -26,7 +26,7 @@ Black Linter:
   tags:
   - pi
   before_script:
-  - python3.10 -V
+  - python -V
   - pip install black
   script:
   - pip install black
@@ -53,7 +53,6 @@ pyinstall:
   - . /opt/mkuserwineprefix
   - wine /opt/wineprefix/drive_c/Python39/Python.exe -v
   - wine /opt/wineprefix/drive_c/Python39/Python.exe -m pip -r requirements.txt
-
   script:
   - wine /opt/wineprefix/drive_c/Python39/Scripts/pyinstaller.exe auto_print.spec
   artifacts:
