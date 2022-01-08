@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "auto-print"
-version = "0.1.1"
+version = "1.0.0"
 description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
 authors = ["Philipp Horstenkamp <philipp@horstenkamp.de>"]
 
