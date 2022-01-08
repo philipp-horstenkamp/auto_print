@@ -25,6 +25,9 @@ Black Linter:
   stage: Static Code Analysis
   tags:
   - pi
+  before_script:
+  - python3.10 -V
+  - pip install black
   script:
   - pip install black
   - black  --check --diff ./
@@ -36,8 +39,7 @@ Flake Linter:
   tags:
   - pi
   script:
-  - pip install flake8
-  - flake8 --statistics
+  - poetry run flake8 --statistics
   allow_failure: true
 
 pyinstall:
