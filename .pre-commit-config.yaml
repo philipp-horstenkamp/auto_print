@@ -63,7 +63,7 @@ repos:
     args: [--config=tox.ini]
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v0.930
+  rev: v0.931
   hooks:
   - id: mypy
 
@@ -87,3 +87,8 @@ repos:
   hooks:
   - id: pyupgrade
     args: [--py310-plus]
+
+- repo: git@gitlab.horstenkamp.eu:philipp/markdown-to-html-hook.git
+  rev: 1fa36fd9ca36d183b83b6a0e4fdc0eaca2354465
+  hooks: []
+  # - id: readme-to-html

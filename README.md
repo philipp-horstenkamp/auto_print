@@ -4,11 +4,12 @@
 
 - [Auto Print](#auto-print)
   - [Features](#features)
+  - [Integrate in browser workflow](#integrate-in-browser-workflow)
   - [Configuration example](#configuration-example)
+  - [Systemvoraussetzungen](#systemvoraussetzungen)
   - [Further improvements](#further-improvements)
 
 <!--TOC-->
-
 ## Features
 
 The goal of this project is to simplify the tedious task or printing similar forms.
@@ -23,7 +24,16 @@ If a suffix or a prefix is not given the comparison is true either way.
 Everything is logged and can be locked up in the auto_print.log file!
 
 To test this software while setting up there is a `test_print.bat`.
-Hit it for easy testing. 
+Hit it for easy testing.
+
+One of the use cases is to use this software as a default PDF executable from Firefox or Chrome:
+Here some images on how to configure that:
+
+## Integrate in browser workflow
+1. Open the Settings Tab in your Browser:
+![go to settings](doc/Settings.PNG)
+2. Choose the auto-printer.exe as your default executable for pdf and all pdf like formats.
+![Choose auto-printer.exe as your default software](doc/ChoosePrinter.PNG)
 
 ## Configuration example
 
@@ -64,6 +74,14 @@ The file `ABC.docx` would be shown with MS Word (if installed).
   }
 }
 ```
+
+## Systemvoraussetzungen
+Um die Software gut nutzen zu können werden folgende Programme benötigt:
+
+- [Ghostscript](https://www.ghostscript.com/releases/gsdnld.html)
+- [Adobe PDF Reader](https://www.adobe.com/de/acrobat/pdf-reader.html)
+
+
 
 ## Further improvements
 

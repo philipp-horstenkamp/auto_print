@@ -7,6 +7,8 @@ added_files = [
     ( 'TEST_PRINT.pdf', '.' ),
     ( 'test_print.bat', '.'),
     ( 'config.json', '.'),
+    ('doc/Settings.PNG', 'doc'),
+    ('doc/ChoosePrinter.PNG', 'doc'),
 ]
 
 a = Analysis(['auto_print.py'],

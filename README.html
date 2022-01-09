@@ -1,0 +1,96 @@
+<h1>Auto Print</h1>
+<!--TOC-->
+
+<ul>
+<li>
+<p><a href="#auto-print">Auto Print</a></p>
+</li>
+<li>
+<p><a href="#features">Features</a></p>
+</li>
+<li>
+<p><a href="#integrate-in-browser-workflow">Integrate in browser workflow</a></p>
+</li>
+<li>
+<p><a href="#configuration-example">Configuration example</a></p>
+</li>
+<li>
+<p><a href="#systemvoraussetzungen">Systemvoraussetzungen</a></p>
+</li>
+<li>
+<p><a href="#further-improvements">Further improvements</a></p>
+</li>
+</ul>
+<!--TOC-->
+
+<h2>Features</h2>
+<p>The goal of this project is to simplify the tedious task or printing similar forms.</p>
+<ol>
+<li>The program is started with a filepath as an argument.</li>
+<li>The filename gets extracted.</li>
+<li>The filename is compared to a list of suffixes and prefixes.</li>
+<li>If suffix and prefix are a match the file gets executed.
+If a suffix or a prefix is not given the comparison is true either way.</li>
+<li>The file is then eiter Printed and/or shown depending on the configuration.</li>
+</ol>
+<p>Everything is logged and can be locked up in the auto_print.log file!</p>
+<p>To test this software while setting up there is a <code>test_print.bat</code>.
+Hit it for easy testing.</p>
+<p>One of the use cases is to use this software as a default PDF executable from Firefox or Chrome:
+Here some images on how to configure that:</p>
+<h2>Integrate in browser workflow</h2>
+<ol>
+<li>Open the Settings Tab in your Browser:
+<img alt="go to settings" src="doc/Settings.PNG" /></li>
+<li>Choose the auto-printer.exe as your default executable for pdf and all pdf like formats.
+<img alt="Choose auto-printer.exe as your default software" src="doc/ChoosePrinter.PNG" /></li>
+</ol>
+<h2>Configuration example</h2>
+<p>The below file is an example with comments.
+The file <code>TEST_something.pdf</code> would be printed with the first printer.
+The file <code>Something_to_print.pdf</code> would be used by the second printer.
+The file <code>ABC.docx</code> would be shown with MS Word (if installed).
+<code>json
+{
+  "Marke": {
+    "active": true,                 // Section active. Should be used.
+    "printer": "MyPreciousPrinter",
+    "prefix": "TEST_",             // How the file should start.
+    "suffix": ".pdf",              // How the file should end.
+    "print": true,                 // Prints the file.
+    "show": false                  // Does not show the file.
+  },
+  "SomeOtherCategory": {
+    "active": false,               // Section not active. Can't be used.
+    "printer": "AnotherPrinter",
+    "prefix": "Something",
+    "suffix": ".pdf",
+    "show": true,                  // Printing via default windows application
+    "print": true
+  },
+  "UseDefaultPrinter": {
+    "active": true,
+                                   //no printer is given therefore the default printer is used."
+    "prefix": "DefPrintFile",
+    "suffix": ".pdf",
+    "show": false,
+    "print": true
+  },
+  "All": {                         // Default action (No requirements)
+    "active": true,
+    "show": true,                  // Show without printing (Windows Default action)
+    "print": false
+  }
+}</code></p>
+<h2>Systemvoraussetzungen</h2>
+<p>Um die Software gut nutzen zu können werden folgende Programme benötigt:</p>
+<ul>
+<li><a href="https://www.ghostscript.com/releases/gsdnld.html">Ghostscript</a></li>
+<li><a href="https://www.adobe.com/de/acrobat/pdf-reader.html">Adobe PDF Reader</a></li>
+</ul>
+<h2>Further improvements</h2>
+<ul>
+<li>[ ] A config file checker that checks
+if all the used printers exist for this application.</li>
+<li>[ ] A way to force the printer to print in grayscale.</li>
+</ul>
