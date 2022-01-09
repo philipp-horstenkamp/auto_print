@@ -22,6 +22,22 @@ pre-commit = "^2.16.0"
 mypy = "^0.931"
 jupyter = "^1.0.0"
 
+[tool.pylint.basic]
+good-names = [
+    "gs",
+]
+
+[tool.pylint.messages_control]
+confidence = []
+disable = [
+    "logging-fstring-interpolation",
+    "broad-execpt",
+    "c-extension-no-member",
+    "line-too-long",
+    "import-outside-toplevel",
+    "broad-except",
+]
+
 [tool.vulture]
 exclude = []
 ignore_decorators = []
