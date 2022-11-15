@@ -2,24 +2,32 @@
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.black]
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+
 [tool.poetry]
 name = "auto-print"
-version = "1.0.3"
+version = "2.0.0"
 description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
 authors = ["Philipp Horstenkamp <philipp@horstenkamp.de>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10, <3.11"
+python = ">=3.10,<3.11"
 ghostscript = "^0.7"
-pywin32 = "^303"
-pyinstaller = "^4.7"
+pywin32 = "^305"
+case-insensitive-dictionary = "^0.2.1"
 
 [tool.poetry.dev-dependencies]
-black = {extras = ["jupyter"], version = "^21.12b0"}
-flake8 = "^4.0.1"
+black = "*"
+flake8 = "^5.0.4"
 pylint = "^2.12.2"
 pre-commit = "^2.16.0"
-mypy = "^0.931"
+mypy = "^0.991"
+cx-Freeze = "^6.13.1"
+isort = "^5.10.1"
 jupyter = "^1.0.0"
 
 [tool.pylint.basic]
@@ -43,5 +51,5 @@ exclude = []
 ignore_decorators = []
 ignore_names = []
 make_whitelist = true
-paths = ["auto_print.py"]
+paths = ["src", "msi_setup.py"]
 sort_by_size = true

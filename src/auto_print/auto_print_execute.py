@@ -10,7 +10,6 @@ If a suffix or a prefix is not given the comparison is true either way.
 
 Everything is logged and can be locked up in the auto_print.log file!
 """
-
 import json
 import locale
 import logging
@@ -20,15 +19,22 @@ import sys
 import win32api
 import win32print
 
-
 # defines the path of the printer config JSON file.
-PROGRAM_FOLDER = os.path.dirname(sys.argv[0])
+PROGRAM_FOLDER = os.getcwd()  # os.path.dirname(sys.argv[0])
 PRINTER_CONFIG_PATH: str = f"{PROGRAM_FOLDER}\\config.json"
 
 LOG_FILE: str = f"{PROGRAM_FOLDER}\\auto_print.log"
 
 # Try to load the ghostscript api.
 # This programm will shut down if ghostscript is not installed.
+
+
+def get_default_printer() -> str:
+    return str(win32print.GetDefaultPrinter())
+
+
+def get_printer_list() -> list[str]:
+    return [section[1].split(",")[0] for section in win32print.EnumPrinters(2)]
 
 
 # noinspection PyBroadException
@@ -72,6 +78,25 @@ def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None
             raise err
 
 
+def install_ghostscript():
+    for sys_arg in sys.argv:
+        logging.error(f"Started with arguments: {sys_arg}")
+    from tkinter import messagebox
+
+    messagebox.showerror(
+        "Ghostscript missing!",
+        "Ghostscript is not installed.\nPlease install ghostscript!",
+    )
+    action = messagebox.askyesno(
+        "Install Ghostscript!", "Would you likte to download Ghostscript 64 bit?"
+    )
+    if action:
+        import webbrowser
+
+        webbrowser.open("https://ghostscript.com/releases/gsdnld.html", new=2)
+    sys.exit(-5)
+
+
 def printer_ghost_script(file_path: str, printer_name: str) -> None:
     """
     Prints a document with the ghostscript printer.
@@ -89,22 +114,7 @@ def printer_ghost_script(file_path: str, printer_name: str) -> None:
         import ghostscript
     except RuntimeError as err:
         logging.error(err)
-        for sys_arg in sys.argv:
-            logging.error(f"Started with arguments: {sys_arg}")
-        from tkinter import messagebox
-
-        messagebox.showerror(
-            "Ghostscript missing!",
-            "Ghostscript is not installed.\nPlease install ghostscript!",
-        )
-        action = messagebox.askyesno(
-            "Install Ghostscript!", "Would you likte to download Ghostscript 64 bit?"
-        )
-        if action:
-            import webbrowser
-
-            webbrowser.open("https://ghostscript.com/releases/gsdnld.html", new=2)
-        sys.exit(-5)
+        install_ghostscript()
 
     printer_args = [
         "-dPrinted",
@@ -137,9 +147,7 @@ def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) 
     return True
 
 
-# The main function should be started as shown above.
-if __name__ == "__main__":
-    # loads the argument that where used to start this software.
+def config_logger() -> None:
     try:
         logging.basicConfig(
             filename=LOG_FILE,
@@ -149,6 +157,12 @@ if __name__ == "__main__":
         )
     except Exception as e:
         print(e)
+
+
+# The main function should be started as shown above.
+if __name__ == "__main__":
+    # loads the argument that where used to start this software.
+    config_logger()
     logging.info("Starting the program!")
     logging.info(f"Start programm in: {os.path.abspath(sys.path[0])}")
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
@@ -211,9 +225,7 @@ if __name__ == "__main__":
             f"The action {action_key} is the valid action. This action will be executed!"
         )
         if bool(printer_action.get("print", "false")):
-            printer_to_use: str = printer_action.get(
-                "printer", win32print.GetDefaultPrinter()
-            )
+            printer_to_use: str = printer_action.get("printer", get_default_printer())
             if bool(printer_action.get("show", "true")):
                 printer_pdf_reader(
                     file_to_print_arg, file_to_print_name, printer_to_use
@@ -223,6 +235,4 @@ if __name__ == "__main__":
         else:
             logging.info("Showing the file! No printing!")
             os.startfile(file_to_print_arg)
-            # os.system("start " + file_to_print_arg.replace("\\", "/"))
     logging.error("No valid action found.")
-# time.time(20)
