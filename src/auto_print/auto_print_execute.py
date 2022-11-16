@@ -19,6 +19,7 @@ import sys
 import win32api
 import win32print
 
+
 # defines the path of the printer config JSON file.
 PROGRAM_FOLDER = os.getcwd()  # os.path.dirname(sys.argv[0])
 PRINTER_CONFIG_PATH: str = f"{PROGRAM_FOLDER}\\config.json"
