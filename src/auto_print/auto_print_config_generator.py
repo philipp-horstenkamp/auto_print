@@ -7,7 +7,7 @@ from case_insensitive_dict import CaseInsensitiveDict
 from auto_print.auto_print_execute import (
     PRINTER_CONFIG_PATH,
     install_ghostscript,
-    config_logger,
+    configure_logger,
     get_default_printer,
     get_printer_list,
 )
@@ -53,14 +53,14 @@ def print_element(name: str, config_element: dict[str, Any], index: int | None):
     prefix = config_element.get("prefix", None)
 
     if index is None:
-        next_str = "    "
+        next_str = "    Config "
     else:
-        next_str = f"{index + 1:>2}. "
-    next_str += f'Prio config with name "{name}" is '
+        next_str = f"{index + 1:>2}. Prio config "
+    next_str += f' section with name "{name}" '
     if printing:
-        next_str += f'printed on "{printer}"'
+        next_str += f'prints on "{printer}"'
     else:
-        next_str += "not printed."
+        next_str += "does not print."
     print(next_str)
     if suffix or prefix:
         next_str = "    Action is taken on all files "
@@ -80,7 +80,7 @@ def print_element(name: str, config_element: dict[str, Any], index: int | None):
     )
 
 
-def print_config(config_object: CaseInsensitiveDict[str, dict]) -> None:
+def print_configuration(config_object: CaseInsensitiveDict[str, dict]) -> None:
     print("The current config works as follows:")
     print()
     if config_object is None:
@@ -104,9 +104,10 @@ def load_config() -> CaseInsensitiveDict[str, dict[str, Any]]:
             return CaseInsensitiveDict[str, dict](data={})
 
 
-def save_config(config: CaseInsensitiveDict[str, dict[str, Any]]) -> None:
+def save_config(config_object: CaseInsensitiveDict[str, dict[str, Any]]) -> None:
     with open(PRINTER_CONFIG_PATH, "w") as file:
-        json.dump(dict(config), file)
+        json.dump(dict(config_object), file)
+    print("Config saved!")
 
 
 def check_ghostscript():
@@ -117,10 +118,9 @@ def check_ghostscript():
         install_ghostscript()
 
 
-def add_section(config_object: CaseInsensitiveDict[str, dict[str, Any]]):
-    print("Add a new section:")
-
-    name: str
+def create_section(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+) -> tuple[str, dict[str, Any]]:
     config_element: dict[str, Any] = {}
     while True:
         name = ""
@@ -130,6 +130,9 @@ def add_section(config_object: CaseInsensitiveDict[str, dict[str, Any]]):
                 print(
                     f'The name "{name}" is already in use. Choose another name that is not in use!'
                 )
+                name = ""
+            if name.lower() in ["cancel", "c"]:
+                print(f'The name "{name}" is not valid. Please choose again!')
                 name = ""
 
         # prefix
@@ -187,19 +190,83 @@ def add_section(config_object: CaseInsensitiveDict[str, dict[str, Any]]):
 
         # check
         if bool_decision("Is the above section correct?", True):
-
-            break
+            return name, config_element
         print("Please make changes as needed.")
 
 
+def add_section(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+) -> CaseInsensitiveDict[str, dict[str, Any]]:
+    print("Add a new section:")
+    new_name, new_section = create_section(config_object)
+
+    for insert_pos, (name, section) in enumerate(config_object.items()):
+        print(f"Insert Position {insert_pos} ->")
+        print_element(name, section, None)
+    end_pos = len(config_object.keys())
+    print(f"Insert Position {end_pos} ->")
+    print()
+
+    insert_str: str = input_choice(
+        "Please choose where to add the section or choose cancel to cancel this action:",
+        ["start"] + [str(n) for n in range(end_pos + 1)] + ["end", "cancel", "c"],
+        "end",
+    )
+    if insert_str == "end":
+        insert_str = str(end_pos)
+    elif insert_str == "start":
+        insert_str = "0"
+    elif insert_str in ["cancel", "c"]:
+        print_configuration(config_object)
+        return config_object
+
+    key_list = list(config_object.keys())
+
+    key_list.insert(int(insert_str), new_name)
+    config_object[new_name] = new_section
+    config_object = CaseInsensitiveDict[str, dict[str, Any]](
+        {name: config_object[name] for name in key_list}
+    )
+    print_configuration(config_object)
+    return config_object
+
+
+def delete_section(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+) -> CaseInsensitiveDict[str, dict[str, Any]]:
+    print_configuration(config_object)
+    delete_object = input_choice(
+        "Chose what section to delete or to cancel the operation!",
+        list(config_object.keys()) + ["cancel", "c"],
+        "cancel",
+    )
+    if delete_object in ["cancel", "c"]:
+        print("Cancel delete object!")
+        return config_object
+
+    print(f'Deleting section "{delete_object}"')
+    config_object = CaseInsensitiveDict[str, dict[str, Any]](
+        {
+            name: section
+            for name, section in config_object.items()
+            if name != delete_object
+        }
+    )
+    print_configuration(config_object)
+
+    return config_object
+
+
 if __name__ == "__main__":
-    config_logger()
+
+    configure_logger()
     check_ghostscript()
+
     print("Welcome to the auto_print config generator!")
     print()
 
     config = load_config()
-    print_config(config)
+    print_configuration(config)
 
     while True:
         action = input_choice(
@@ -211,15 +278,14 @@ if __name__ == "__main__":
         print(f"Action: {action}")
         if action in ["s", "save"]:
             save_config(config)
-            print("Config saved!")
         elif action in ["add", "a"]:
-            add_section(config)
-            print("add".upper())
+            config = add_section(config)
         elif action in ["delete", "d"]:
-            print("delete".upper())
+            config = delete_section(config)
+
         elif action in ["show"]:
             print()
-            print_config(config)
+            print_configuration(config)
         elif action in ["change"]:
             print("change".upper())
         elif action in ["close", "c"]:

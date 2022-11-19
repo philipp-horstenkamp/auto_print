@@ -37,6 +37,7 @@ vulture = "^2.6"
 [tool.poetry.group.build.dependencies]
 cx-freeze = "^6.13.1"
 
+
 [tool.pylint.basic]
 good-names = [
     "gs",

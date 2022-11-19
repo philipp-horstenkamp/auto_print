@@ -148,7 +148,7 @@ def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) 
     return True
 
 
-def config_logger() -> None:
+def configure_logger() -> None:
     try:
         logging.basicConfig(
             filename=LOG_FILE,
@@ -163,7 +163,7 @@ def config_logger() -> None:
 # The main function should be started as shown above.
 if __name__ == "__main__":
     # loads the argument that where used to start this software.
-    config_logger()
+    configure_logger()
     logging.info("Starting the program!")
     logging.info(f"Start programm in: {os.path.abspath(sys.path[0])}")
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
