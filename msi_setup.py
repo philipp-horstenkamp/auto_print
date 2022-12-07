@@ -12,7 +12,13 @@ build_options = {
     "packages": [],
     "excludes": [],
     "optimize": 2,
-    "include_files": ["config.json", "README.md"],
+    "include_files": [
+        "config.json",
+        "README.md",
+        "README.md",
+        "doc/ChoosePrinter.PNG",
+        "doc/Settings.PNG",
+    ],
 }
 
 # directory_table = []

@@ -1,6 +1,7 @@
 import os.path
 import json
 import logging
+import webbrowser
 
 from case_insensitive_dict import CaseInsensitiveDict
 
@@ -342,13 +343,8 @@ def edit_section_command(
 
 
 def show_help():
-    help_text = """
-
-
-
-
-    """
-    print(help_text)
+    webbrowser.open("file://" + os.path.realpath("README.html"))
+    print("Opening the browser to show the help files!")
 
 
 def generate_list_of_available_commands(
