@@ -53,9 +53,9 @@ def print_element(name: str, config_element: dict[str, Any], index: int | None):
     prefix = config_element.get("prefix", None)
 
     if index is None:
-        next_str = "    Config "
+        next_str = "    Config"
     else:
-        next_str = f"{index + 1:>2}. Prio config "
+        next_str = f"{index + 1:>2}. Prio config"
     next_str += f' section with name "{name}" '
     if printing:
         next_str += f'prints on "{printer}"'
@@ -118,23 +118,10 @@ def check_ghostscript():
         install_ghostscript()
 
 
-def create_section(
-    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+def edit_section(
+    name: str, config_element: dict[str, Any]
 ) -> tuple[str, dict[str, Any]]:
-    config_element: dict[str, Any] = {}
     while True:
-        name = ""
-        while not name:
-            name = input("Name:").strip()
-            if name in config_object:
-                print(
-                    f'The name "{name}" is already in use. Choose another name that is not in use!'
-                )
-                name = ""
-            if name.lower() in ["cancel", "c"]:
-                print(f'The name "{name}" is not valid. Please choose again!')
-                name = ""
-
         # prefix
         print(
             "Filter by the start of a file.\n"
@@ -194,12 +181,29 @@ def create_section(
         print("Please make changes as needed.")
 
 
-def add_section(
+def create_section(
     config_object: CaseInsensitiveDict[str, dict[str, Any]]
-) -> CaseInsensitiveDict[str, dict[str, Any]]:
-    print("Add a new section:")
-    new_name, new_section = create_section(config_object)
+) -> tuple[str, dict[str, Any]]:
+    config_element: dict[str, Any] = {}
+    name = ""
+    while not name:
+        name = input("Name:").strip()
+        if name in config_object:
+            print(
+                f'The name "{name}" is already in use. Choose another name that is not in use!'
+            )
+            name = ""
+        if name.lower() in ["cancel", "c"]:
+            print(f'The name "{name}" is not valid. Please choose again!')
+            name = ""
+    return edit_section(name, config_element)
 
+
+def insert_section(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]],
+    name_to_add: str,
+    section_to_add: dict[str, Any],
+) -> CaseInsensitiveDict[str, dict[str, Any]]:
     for insert_pos, (name, section) in enumerate(config_object.items()):
         print(f"Insert Position {insert_pos} ->")
         print_element(name, section, None)
@@ -222,8 +226,8 @@ def add_section(
 
     key_list = list(config_object.keys())
 
-    key_list.insert(int(insert_str), new_name)
-    config_object[new_name] = new_section
+    key_list.insert(int(insert_str), name_to_add)
+    config_object[name_to_add] = section_to_add
     config_object = CaseInsensitiveDict[str, dict[str, Any]](
         {name: config_object[name] for name in key_list}
     )
@@ -231,9 +235,28 @@ def add_section(
     return config_object
 
 
+def add_section(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+) -> CaseInsensitiveDict[str, dict[str, Any]]:
+    print("Add a new section:")
+    new_name, new_section = create_section(config_object)
+    return insert_section(config_object, new_name, new_section)
+
+
 def delete_section(
     config_object: CaseInsensitiveDict[str, dict[str, Any]]
 ) -> CaseInsensitiveDict[str, dict[str, Any]]:
+    """Deletes a specified section.
+
+    Args:
+        config_object: A configurations object.
+
+    Returns:
+        The newly generated/edited config_object.
+    """
+    if not config_object:
+        print("There are no section to delete.")
+        return config_object
     print_configuration(config_object)
     delete_object = input_choice(
         "Chose what section to delete or to cancel the operation!",
@@ -253,12 +276,141 @@ def delete_section(
         }
     )
     print_configuration(config_object)
+    return config_object
 
+
+def change_section_position(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+) -> CaseInsensitiveDict[str, dict[str, Any]]:
+    """Changes the filter order.
+
+    Args:
+        config_object: A configurations object.
+
+    Returns:
+        The newly generated/edited config_object.
+    """
+    section_names = list(config_object.keys())
+    if not section_names:
+        print("There is no section to edit.")
+        return config_object
+
+    name_of_section = input_choice(
+        "Choose the section to edit:",
+        section_names,
+        section_names[0],
+    )
+    temp_config = CaseInsensitiveDict[str, dict](
+        data={
+            k: v
+            for k, v in config_object.items()
+            if name_of_section.lower() != k.lower()
+        }
+    )
+    return insert_section(temp_config, name_of_section, config_object[name_of_section])
+
+
+def edit_section_command(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+) -> CaseInsensitiveDict[str, dict[str, Any]]:
+    """Edits a section in the configuration.
+
+    Args:
+        config_object: A configurations object.
+
+    Returns:
+        The newly generated/edited config_object.
+    """
+
+    section_names = list(config_object.keys())
+    if not section_names:
+        print("There is no section to edit.")
+        return config_object
+
+    choice = input_choice(
+        "Choose the section to edit:",
+        section_names,
+        section_names[0],
+    )
+
+    print()
+    print("Redefine the following section section\n")
+    print_element(choice, config_object[choice], None)
+
+    _, config_object[choice] = edit_section(choice, config_object[choice])
+    return config_object
+
+
+def show_help():
+    help_text = """
+
+
+
+
+    """
+    print(help_text)
+
+
+def generate_list_of_available_commands(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+) -> list[str]:
+    """Checks to config for operations that would make sense and generates a list of possible commands accordingly.
+
+    Args:
+        config_object: A configurations object.
+
+    Returns:
+        The generates list fo possible commands.
+    """
+    options = ["save", "s", "close", "c", "add", "a"]
+    if config_object:
+        options += ["repair", "r", "delete", "d"]
+    options += ["show"]
+    if config_object and len(config_object.keys()) > 1:
+        options.append("change")
+    if config_object:
+        options += ["edit", "e"]
+    options += ["help", "h"]
+    return options
+
+
+def repair_config(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+) -> CaseInsensitiveDict[str, dict[str, Any]]:
+    """Repair the configuration file.
+
+    Args:
+        config_object: A configurations object.
+
+    Returns:
+        The generates list fo possible commands.
+    """
+    printer_list = get_printer_list()
+    error_found = False
+
+    for key, section in config_object.items():
+        if "printer" not in section:
+            continue
+        if section["printer"] not in printer_list:
+            error_found = True
+            print(
+                "The printer in the following sections was not found. Please clarify the printer!\n"
+            )
+            print_element(key, section, None)
+            print()
+            printer = input_choice(
+                "Please select a new valid printer.",
+                printer_list,
+                get_default_printer(),
+            )
+            section["printer"] = printer
+
+    if not error_found:
+        print("No error found. Configuration file looks good.")
     return config_object
 
 
 if __name__ == "__main__":
-
     configure_logger()
     check_ghostscript()
 
@@ -271,7 +423,7 @@ if __name__ == "__main__":
     while True:
         action = input_choice(
             "What actions should be taken?:",
-            ["save", "s", "close", "c", "add", "a", "delete", "d", "show", "change"],
+            generate_list_of_available_commands(config),
             "close",
         )
 
@@ -282,12 +434,16 @@ if __name__ == "__main__":
             config = add_section(config)
         elif action in ["delete", "d"]:
             config = delete_section(config)
-
+        elif action in ["repair", "r"]:
+            config = repair_config(config)
         elif action in ["show"]:
             print()
             print_configuration(config)
         elif action in ["change"]:
-            print("change".upper())
+            config = change_section_position(config)
+        elif action in ["edit", "e"]:
+            config = edit_section_command(config)
+
         elif action in ["close", "c"]:
             if load_config() == config:
                 break
@@ -296,3 +452,5 @@ if __name__ == "__main__":
                 True,
             ):
                 break
+        elif action in ["help", "h"]:
+            show_help()
