@@ -6,9 +6,8 @@
   - [Integrate in browser workflow](#integrate-in-browser-workflow)
   - [Main commands](#main-commands)
   - [Configuration example](#configuration-example)
-  - [Systemvoraussetzungen](#systemvoraussetzungen)
+  - [Software dependencies](#software-dependencies)
   - [How it works](#how-it-works)
-  - [Planed improvements](#planed-improvements)
   - [About](#about)
 
 <!--TOC-->
@@ -81,9 +80,7 @@ The file `ABC.docx` would be shown with MS Word (if installed).
 ```
 
 
-
-
-## Systemvoraussetzungen
+## Software dependencies
 Um die Software gut nutzen zu können werden folgende Programme benötigt:
 
 - [Ghostscript](https://www.ghostscript.com/releases/gsdnld.html)
@@ -101,11 +98,6 @@ If a suffix or a prefix is not given the comparison is true either way.
 5. The file is then eiter Printed and/or shown depending on the configuration.
 
 Everything is logged and can be locked up in the auto_print.log file!
-
-## Planed improvements
-
-- [ ] A config file checker that checks 
-if all the used printers exist for this application.
 
 ## About
 
