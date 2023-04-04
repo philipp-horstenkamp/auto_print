@@ -1,11 +1,10 @@
-on:
-  push:
-  pull_request:
+name: workflow test
+on: push
 
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: pi
 
     steps:
     - name: Test with inputs
