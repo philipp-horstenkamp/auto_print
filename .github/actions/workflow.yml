@@ -11,7 +11,7 @@ env:
 jobs:
   lint:
     name: check and test
-    runs-on: ubuntu-latest
+    runs-on: pi
     steps:
     - name: cache go path
       id: cache-go-path
