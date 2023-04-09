@@ -16,7 +16,6 @@ build_options = {
     "excludes": [],
     "optimize": 2,
     "include_files": [
-        "config-example.json",
         "README.md",
         "README.md",
         "doc/ChoosePrinter.PNG",
