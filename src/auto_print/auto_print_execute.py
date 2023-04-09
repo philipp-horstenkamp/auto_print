@@ -15,14 +15,15 @@ import locale
 import logging
 import os
 import sys
+from pathlib import Path
+from typing import Final
 
 import win32api
 import win32print
 
-
 # defines the path of the printer config JSON file.
-PROGRAM_FOLDER = os.getcwd()  # os.path.dirname(sys.argv[0])
-PRINTER_CONFIG_PATH: str = f"{PROGRAM_FOLDER}\\config.json"
+PROGRAM_FOLDER: Final[str] = os.getcwd()  # os.path.dirname(sys.argv[0])
+PRINTER_CONFIG_PATH: Final[Path] = Path.home() / Path("auto-printer-config.json")
 
 LOG_FILE: str = f"{PROGRAM_FOLDER}\\auto_print.log"
 
@@ -31,10 +32,12 @@ LOG_FILE: str = f"{PROGRAM_FOLDER}\\auto_print.log"
 
 
 def get_default_printer() -> str:
+    """Returns the default printers name"""
     return str(win32print.GetDefaultPrinter())
 
 
 def get_printer_list() -> list[str]:
+    """Returns a list of printers."""
     return [section[1].split(",")[0] for section in win32print.EnumPrinters(2)]
 
 
@@ -48,8 +51,8 @@ def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None
     :return: None
     """
     logging.info(
-        f'The printer "{printer_name}" will be chosen to print the file "{file_to_print_arg}"'
-        "\nWhile showing the file!",
+        f'The printer "{printer_name}" will be chosen to print the file "{printer_name}" on "{file_path}"\n'
+        "While showing the file!",
     )
     try:
         h_printer = win32print.OpenPrinter(printer_name)
@@ -70,16 +73,18 @@ def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None
             pass
         finally:
             win32print.ClosePrinter(h_printer)
-    except Exception as err:  # pylint: disable=W0703
-        if err[0] == 1801:  # type: ignore
+    except Exception as error:  # pylint: disable=W0703
+        # pylint: disable=unsubscriptable-object
+        if error[0] == 1801:  # type: ignore
             logging.error(
                 f'The printer with the name "{printer_name}" does not exists.'
             )
         else:
-            raise err
+            raise error
 
 
 def install_ghostscript():
+    """Helps to install ghostscript if it's missing on the system"""
     for sys_arg in sys.argv:
         logging.error(f"Started with arguments: {sys_arg}")
     from tkinter import messagebox
@@ -98,6 +103,15 @@ def install_ghostscript():
     sys.exit(-5)
 
 
+def check_ghostscript():
+    """Check if ghostscript is installed"""
+    try:
+        import ghostscript  # noqa: F401
+    except RuntimeError as err:
+        logging.error(err)
+        install_ghostscript()
+
+
 def printer_ghost_script(file_path: str, printer_name: str) -> None:
     """
     Prints a document with the ghostscript printer.
@@ -111,11 +125,7 @@ def printer_ghost_script(file_path: str, printer_name: str) -> None:
     )
 
     # try to load the ghostscript software!
-    try:
-        import ghostscript
-    except RuntimeError as err:
-        logging.error(err)
-        install_ghostscript()
+    check_ghostscript()
 
     printer_args = [
         "-dPrinted",
@@ -128,9 +138,10 @@ def printer_ghost_script(file_path: str, printer_name: str) -> None:
         "-sDEVICE#mswinpr2",
         f'-sOutputFile#"%printer%{printer_name}"',
     ]
+    import ghostscript
 
     with ghostscript.Ghostscript(*printer_args) as gs:
-        gs.run_filename(file_to_print_arg.encode(locale.getpreferredencoding()))
+        gs.run_filename(file_path.encode(locale.getpreferredencoding()))
 
 
 def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) -> bool:
@@ -149,6 +160,7 @@ def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) 
 
 
 def configure_logger() -> None:
+    """Configure a logger."""
     try:
         logging.basicConfig(
             filename=LOG_FILE,
@@ -156,8 +168,8 @@ def configure_logger() -> None:
             level=logging.DEBUG,
             filemode="a",
         )
-    except Exception as e:
-        print(e)
+    except Exception as error:  # pylint: disable=broad-exception-caught
+        print(error)
 
 
 # The main function should be started as shown above.
@@ -203,9 +215,9 @@ if __name__ == "__main__":
     try:
         with open(PRINTER_CONFIG_PATH, encoding="utf-8") as printer_config_file:
             printer_config = json.load(printer_config_file)
-    except Exception as e:
-        logging.error(e)
-        print(e)
+    except Exception as main_error:  # pylint: disable=broad-exception-caught
+        logging.error(main_error)
+        print(main_error)
         sys.exit(-4)
 
     for action_key in printer_config:

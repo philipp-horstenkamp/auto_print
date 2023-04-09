@@ -1,6 +1,6 @@
 [build-system]
-requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
 
 [tool.black]
 target-version = ["py310"]
@@ -9,49 +9,47 @@ target-version = ["py310"]
 profile = "black"
 
 [tool.poetry]
-name = "auto-print"
-version = "2.0.0rc1"
-description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
 authors = ["Philipp Horstenkamp <philipp@horstenkamp.de>"]
+description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
+name = "auto-print"
+version = "2.0.0rc2"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.11"
-ghostscript = "^0.7"
-pywin32 = "^305"
 case-insensitive-dictionary = "^0.2.1"
-
-[tool.poetry.group.dev.dependencies]
-pre-commit = "^2.16.0"
-jupyter = "^1.0.0"
-
-[tool.poetry.group.lint.dependencies]
-isort = "^5.10.1"
-black = "*"
-flake8 = "^5.0.4"
-pylint = "^2.12.2"
-mypy = "^0.991"
-bandit = "^1.7.4"
-pip-audit = "^2.4.5"
-vulture = "^2.6"
+ghostscript = "^0.7"
+python = "3.11.*"
+pywin32 = "^306"
 
 [tool.poetry.group.build.dependencies]
 cx-freeze = "^6.13.1"
 
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
+pre-commit = "^2.16.0"
+
+[tool.poetry.group.lint.dependencies]
+bandit = "^1.7.4"
+black = "*"
+flake8 = "^5.0.4"
+isort = "^5.10.1"
+mypy = "^0.991"
+pip-audit = "^2.4.5"
+pylint = "^2.12.2"
+vulture = "^2.6"
 
 [tool.pylint.basic]
 good-names = [
-    "gs",
+  "gs"
 ]
 
 [tool.pylint.messages_control]
 confidence = []
 disable = [
-    "logging-fstring-interpolation",
-    "broad-execpt",
-    "c-extension-no-member",
-    "line-too-long",
-    "import-outside-toplevel",
-    "broad-except",
+  "logging-fstring-interpolation",
+  "c-extension-no-member",
+  "line-too-long",
+  "import-outside-toplevel",
+  "unused-import"
 ]
 
 [tool.vulture]

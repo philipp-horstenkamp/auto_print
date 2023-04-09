@@ -1,10 +1,13 @@
+"""
+Build modele.
+"""
 import os.path
 
 from cx_Freeze import Executable, setup
 
 import auto_print
-import auto_print.auto_print_execute as ap
 import auto_print.auto_print_config_generator as ag
+import auto_print.auto_print_execute as ap
 
 # Dependencies are automatically detected, but it might need
 # fine tuning.
@@ -13,7 +16,7 @@ build_options = {
     "excludes": [],
     "optimize": 2,
     "include_files": [
-        # "config.json",
+        "config-example.json",
         "README.md",
         "README.md",
         "doc/ChoosePrinter.PNG",
@@ -72,11 +75,11 @@ bdist_msi_options = {
     # "initial_target_dir" : None
 }
 
-base = "Win32GUI"
+BASE = "Win32GUI"
 # base = 'Win32Service' if sys.platform=='win32' else None
 
 executables = [
-    Executable(ap.__file__, base=base, target_name="auto_print", icon="printer.ico"),
+    Executable(ap.__file__, base=BASE, target_name="auto_print", icon="printer.ico"),
     Executable(
         ag.__file__, base=None, target_name="generator", icon="printer-gear.ico"
     ),

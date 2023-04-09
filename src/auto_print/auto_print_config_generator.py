@@ -1,21 +1,33 @@
-import os.path
+"""
+Configuration generator for the module.
+"""
 import json
-import logging
+import os.path
 import webbrowser
+from typing import Any
 
 from case_insensitive_dict import CaseInsensitiveDict
 
 from auto_print.auto_print_execute import (
     PRINTER_CONFIG_PATH,
-    install_ghostscript,
+    check_ghostscript,
     configure_logger,
     get_default_printer,
     get_printer_list,
 )
-from typing import Any
 
 
 def input_choice(description: str, input_list: list[str], default: str):
+    """Checks an input against a list of possible inputs and norms the input.
+
+    Args:
+        description: The description that should be made with the input.
+        input_list: A list of possible inputs.
+        default: The default value for the input.
+
+    Returns:
+        The choice made.
+    """
     if not input_list:
         raise ValueError(
             "The list of possible inputs need to be defined and have a minimum length of one."
@@ -39,6 +51,15 @@ def input_choice(description: str, input_list: list[str], default: str):
 
 
 def bool_decision(description: str, default: bool) -> bool:
+    """Tooling to interpret a yes/no decision.
+
+    Args:
+        description: The description for the decision.
+        default: The default value.
+
+    Returns:
+        True or false depending on user input.
+    """
     return (
         input_choice(description, ["yes", "y", "no", "n"], "yes" if default else "no")[
             0
@@ -47,7 +68,14 @@ def bool_decision(description: str, default: bool) -> bool:
     )
 
 
-def print_element(name: str, config_element: dict[str, Any], index: int | None):
+def print_element(name: str, config_element: dict[str, Any], index: int | None) -> None:
+    """Print a printer configuration.
+
+    Args:
+        name: The name of the printer configuration section.
+        config_element: The complete section of the printer configuration.
+        index: The index of the section. Can be None if a section should not be printed with index.
+    """
     printer = config_element.get("printer", get_default_printer())
     printing = config_element.get("print", False)
     suffix = config_element.get("suffix", None)
@@ -82,12 +110,14 @@ def print_element(name: str, config_element: dict[str, Any], index: int | None):
 
 
 def print_configuration(config_object: CaseInsensitiveDict[str, dict]) -> None:
-    print("The current config works as follows:")
-    print()
-    if config_object is None:
-        print("No config found!")
-        print()
+    """Print the complete configuration.
 
+    Args:
+        config_object: A auto-print configuration object.
+    """
+    print("The current config works as follows:\n")
+    if config_object is None:
+        print("No config found!\n")
         return
 
     for count, (name, config_element) in enumerate(config_object.items()):
@@ -96,9 +126,10 @@ def print_configuration(config_object: CaseInsensitiveDict[str, dict]) -> None:
 
 
 def load_config() -> CaseInsensitiveDict[str, dict[str, Any]]:
+    """Loads the configuration."""
     if not os.path.exists(PRINTER_CONFIG_PATH):
         return CaseInsensitiveDict[str, dict](data={})
-    with open(PRINTER_CONFIG_PATH) as file:
+    with open(PRINTER_CONFIG_PATH, encoding="utf-8") as file:
         try:
             return CaseInsensitiveDict[str, dict](data=json.load(file))
         except FileNotFoundError:
@@ -106,22 +137,24 @@ def load_config() -> CaseInsensitiveDict[str, dict[str, Any]]:
 
 
 def save_config(config_object: CaseInsensitiveDict[str, dict[str, Any]]) -> None:
-    with open(PRINTER_CONFIG_PATH, "w") as file:
+    """Saves the configuration."""
+    with open(PRINTER_CONFIG_PATH, "w", encoding="utf-8") as file:
         json.dump(dict(config_object), file)
     print("Config saved!")
-
-
-def check_ghostscript():
-    try:
-        import ghostscript  # noqa: F401
-    except RuntimeError as err:
-        logging.error(err)
-        install_ghostscript()
 
 
 def edit_section(
     name: str, config_element: dict[str, Any]
 ) -> tuple[str, dict[str, Any]]:
+    """Reconfiguration for a printer configuration.
+
+    Args:
+        name: The name of the section that should be reconfigured.
+        config_element: The complete auto-print configuration.
+
+    Returns:
+        The new section of the auto-print configuration.
+    """
     while True:
         # prefix
         print(
@@ -185,6 +218,14 @@ def edit_section(
 def create_section(
     config_object: CaseInsensitiveDict[str, dict[str, Any]]
 ) -> tuple[str, dict[str, Any]]:
+    """Create a new printer configuration.
+
+    Args:
+        config_object: The complete auto-printer configuration.
+
+    Returns:
+        The new auto-printer configuration.
+    """
     config_element: dict[str, Any] = {}
     name = ""
     while not name:
@@ -205,6 +246,16 @@ def insert_section(
     name_to_add: str,
     section_to_add: dict[str, Any],
 ) -> CaseInsensitiveDict[str, dict[str, Any]]:
+    """Insert a section at a specified place into the order of printers.
+
+    Args:
+        config_object: The printer configuration that should be added to the full configuration.
+        name_to_add: The name under wich the section should be added.
+        section_to_add: The section to add.
+
+    Returns:
+        The new completed section.
+    """
     for insert_pos, (name, section) in enumerate(config_object.items()):
         print(f"Insert Position {insert_pos} ->")
         print_element(name, section, None)
@@ -239,7 +290,15 @@ def insert_section(
 def add_section(
     config_object: CaseInsensitiveDict[str, dict[str, Any]]
 ) -> CaseInsensitiveDict[str, dict[str, Any]]:
-    print("Add a new section:")
+    """Add a new configuration to a printer.
+
+    Args:
+        config_object: The printer configuration where a section should be added.
+
+    Returns:
+        The new configuration.
+    """
+    print("Add a new printer configuration:")
     new_name, new_section = create_section(config_object)
     return insert_section(config_object, new_name, new_section)
 
@@ -343,6 +402,7 @@ def edit_section_command(
 
 
 def show_help():
+    """Displays the help file in the browser."""
     webbrowser.open("file://" + os.path.realpath("README.html"))
     print("Opening the browser to show the help files!")
 
@@ -418,7 +478,7 @@ if __name__ == "__main__":
 
     while True:
         action = input_choice(
-            "What actions should be taken?:",
+            "What workflows should be taken?:",
             generate_list_of_available_commands(config),
             "close",
         )
