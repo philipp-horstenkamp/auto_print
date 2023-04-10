@@ -22,7 +22,6 @@ repos:
   - id: check-symlinks
   - id: check-docstring-first
   - id: mixed-line-ending
-  - id: mixed-line-ending
   - id: destroyed-symlinks
   - id: debug-statements
   - id: pretty-format-json
@@ -71,8 +70,8 @@ repos:
 
 - repo: https://github.com/frnmst/md-toc
   rev: 8.1.9
-  hooks:
-  - id: md-toc
+  hooks: []
+#  - id: md-toc
 
 - repo: https://github.com/Lucas-C/pre-commit-hooks-java
   rev: 1.3.10

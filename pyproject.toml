@@ -12,7 +12,7 @@ profile = "black"
 authors = ["Philipp Horstenkamp <philipp@horstenkamp.de>"]
 description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
 name = "auto-print"
-version = "2.0.1"
+version = "2.0.2"
 
 [tool.poetry.dependencies]
 case-insensitive-dictionary = "0.2.1"

@@ -2,15 +2,32 @@
 
 <!--TOC-->
 
-- [Auto Print](#auto-print)
-  - [Integrate in browser workflow](#integrate-in-browser-workflow)
-  - [Main commands](#main-commands)
-  - [Configuration example](#configuration-example)
-  - [Software dependencies](#software-dependencies)
-  - [How it works](#how-it-works)
+
+
+- [Auto Print](#auto-print)
+
+  - [Integrate in browser workflow](#integrate-in-browser-workflow)
+
+  - [Main commands](#main-commands)
+
+  - [Configuration example](#configuration-example)
+
+  - [Software dependencies](#software-dependencies)
+
+  - [How it works](#how-it-works)
+
   - [About](#about)
 
+
+
 <!--TOC-->
+
+
+
+
+
+
+
 
 
 

@@ -22,10 +22,11 @@ import win32api
 import win32print
 
 # defines the path of the printer config JSON file.
-PROGRAM_FOLDER: Final[str] = os.getcwd()  # os.path.dirname(sys.argv[0])
-PRINTER_CONFIG_PATH: Final[Path] = Path.home() / Path("auto-printer-config.json")
+PRINTER_CONFIG_PATH: Final[Path] = (
+    Path.home() / Path("auto-printer") / Path("auto-printer-config.json")
+)
 
-LOG_FILE: str = f"{PROGRAM_FOLDER}\\auto_print.log"
+LOG_FILE: Final[Path] = Path.home() / Path("auto-printer") / Path("auto_print.log")
 
 # Try to load the ghostscript api.
 # This programm will shut down if ghostscript is not installed.

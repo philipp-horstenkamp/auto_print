@@ -20,6 +20,8 @@ build_options = {
         "README.md",
         "doc/ChoosePrinter.PNG",
         "doc/Settings.PNG",
+        "printer-gear.ico",
+        "printer.ico",
     ],
 }
 
