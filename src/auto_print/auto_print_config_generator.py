@@ -139,7 +139,7 @@ def load_config() -> CaseInsensitiveDict[str, dict[str, Any]]:
 def save_config(config_object: CaseInsensitiveDict[str, dict[str, Any]]) -> None:
     """Saves the configuration."""
     with open(PRINTER_CONFIG_PATH, "w", encoding="utf-8") as file:
-        json.dump(dict(config_object), file)
+        json.dump(config_object.__dict__, file, indent=2)
     print("Config saved!")
 
 

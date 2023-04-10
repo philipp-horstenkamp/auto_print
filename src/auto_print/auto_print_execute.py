@@ -11,9 +11,9 @@ If a suffix or a prefix is not given the comparison is true either way.
 Everything is logged and can be locked up in the auto_print.log file!
 """
 import json
-import locale
 import logging
 import os
+import subprocess
 import sys
 from pathlib import Path
 from typing import Final
@@ -126,28 +126,25 @@ def printer_ghost_script(file_path: str, printer_name: str) -> None:
     :return: None
     """
     logging.info(
-        f"The printer {printer_name} will be chosen to print the file {file_path}"
+        f'The printer "{printer_name}" will be chosen to print the file {file_path}'
         " while not showing the file and using ghostscript!"
     )
 
     # try to load the ghostscript software!
     check_ghostscript()
 
-    printer_args = [
-        "-dPrinted",
-        "-dBATCH",
-        "-dNOSAFER",
-        "-dNOPAUSE",
-        "-dNOPROMPT",
-        "-q",
-        "-dNumCopies#1",
-        "-sDEVICE#mswinpr2",
-        f'-sOutputFile#"%printer%{printer_name}"',
-    ]
-    import ghostscript
-
-    with ghostscript.Ghostscript(*printer_args) as gs:
-        gs.run_filename(file_path.encode(locale.getpreferredencoding()))
+    abspath = os.path.abspath(file_path)
+    subprocess.call(
+        "gswin32c "
+        f'-sOutputFile="%printer%{printer_name}" '
+        "-dNOPROMPT "
+        "-dPrinted "
+        "-dBATCH "
+        "-dNOPAUSE "
+        "-dNOSAFER "
+        "-sDEVICE=mswinpr2 "
+        f"-sDEVICE#mswinpr2 {abspath}"
+    )
 
 
 def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) -> bool:
@@ -249,8 +246,10 @@ if __name__ == "__main__":
                 printer_pdf_reader(
                     file_to_print_arg, file_to_print_name, printer_to_use
                 )
+                sys.exit(0)
             else:
                 printer_ghost_script(file_to_print_arg, printer_to_use)
+                sys.exit(0)
         else:
             logging.info("Showing the file! No printing!")
             os.startfile(file_to_print_arg)

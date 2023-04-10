@@ -35,7 +35,7 @@ shortcut_table = [
         "TARGETDIR",  # Component_
         "[TARGETDIR]generator.exe",  # Target
         None,  # Arguments
-        str(auto_print.__description__),  # Description
+        "auto_print",  # Description
         None,  # Hotkey
         os.path.abspath("printer-gear.ico"),  # Icon
         None,  # IconIndex
@@ -51,7 +51,7 @@ msi_data = {
             "Prog.Id",
             None,
             None,
-            auto_print.__description__,
+            "auto_print",
             "IconId",
             None,
         ),
@@ -89,10 +89,7 @@ executables = [
 setup(
     name="auto_print",
     version=auto_print.__version__,
-    description=(
-        "A Short programm that checks a file for its filename and routs the file to a printer or the default"
-        " software to print defined in the OS or any other software."
-    ),
+    description="auto_print",
     options={"build_exe": build_options, "bdist_msi": bdist_msi_options},
     executables=executables,
 )
