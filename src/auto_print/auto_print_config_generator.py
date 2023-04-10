@@ -191,7 +191,7 @@ def edit_section(
                 get_default_printer(),
             )
         else:
-            del config_element["printer"]
+            config_element["printer"] = get_default_printer()
 
         # show
         config_element["show"] = bool_decision(
