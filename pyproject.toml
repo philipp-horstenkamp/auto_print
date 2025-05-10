@@ -21,7 +21,7 @@ python = ">=3.9,<3.12"
 pywin32 = "^306"
 
 [tool.poetry.group.build.dependencies]
-cx-freeze = "^6.13.1"
+cx-freeze = "^8.0.0"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
