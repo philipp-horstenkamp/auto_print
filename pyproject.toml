@@ -25,7 +25,7 @@ cx-freeze = "^6.13.1"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
-pre-commit = "^2.16.0"
+pre-commit = "^4.0.0"
 
 [tool.poetry.group.lint.dependencies]
 bandit = "^1.7.4"
