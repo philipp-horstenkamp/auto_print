@@ -17,7 +17,7 @@ version = "2.0.5"
 [tool.poetry.dependencies]
 case-insensitive-dictionary = "0.2.1"
 ghostscript = "^0.7"
-python = ">=3.9,<3.12"
+python = ">=3.13,<3.14"
 pywin32 = "^306"
 
 [tool.poetry.group.build.dependencies]
