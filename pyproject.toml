@@ -34,7 +34,7 @@ flake8 = "^5.0.4"
 isort = "^5.10.1"
 mypy = "^0.991"
 pip-audit = "^2.4.5"
-pylint = "^2.12.2"
+pylint = "^3.0.0"
 vulture = "^2.6"
 
 [tool.pylint.basic]
