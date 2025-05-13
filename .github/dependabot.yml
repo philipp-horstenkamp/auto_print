@@ -1,0 +1,86 @@
+version: 2
+updates:
+  # Maintain dependencies for Python packages (minor/patch only, auto-merge enabled)
+- package-ecosystem: pip
+  directory: /
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  labels:
+  - dependencies
+  - python
+  commit-message:
+    prefix: pip
+    include: scope
+  auto-merge: true
+  merge-strategy: squash
+  automerge-strategy: squash
+  ignore:
+  - dependency-name: '*'
+    update-types:
+    - version-update:semver-major
+
+  # Propose major updates for pip, but don't auto-merge
+- package-ecosystem: pip
+  directory: /
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 5
+  labels:
+  - dependencies
+  - python
+  - major
+  commit-message:
+    prefix: pip
+    include: scope
+  allow:
+  - dependency-type: all
+  ignore:
+  - dependency-name: '*'
+    update-types:
+    - version-update:semver-minor
+    - version-update:semver-patch
+  auto-merge: false
+
+  # Maintain dependencies for GitHub Actions
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  labels:
+  - dependencies
+  - github-actions
+  commit-message:
+    prefix: github-actions
+    include: scope
+  auto-merge: true
+  merge-strategy: squash
+  automerge-strategy: squash
+  ignore:
+  - dependency-name: '*'
+    update-types:
+    - version-update:semver-major
+
+  # Maintain dependencies for pre-commit hooks
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  labels:
+  - dependencies
+  - pre-commit
+  commit-message:
+    prefix: pre-commit
+    include: scope
+  auto-merge: true
+  merge-strategy: squash
+  automerge-strategy: squash
+  versioning-strategy: lockfile-only
+  allow:
+  - dependency-type: all
+  ignore:
+  - dependency-name: '*'
+    update-types:
+    - version-update:semver-major

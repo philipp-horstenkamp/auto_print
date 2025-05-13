@@ -18,6 +18,8 @@
 
   - [About](#about)
 
+  - [License](#license)
+
 
 
 <!--TOC-->
@@ -36,9 +38,9 @@ One of the use cases is to use this software as a default PDF executable from Fi
 Here some images on how to configure that:
 
 1. Open the Settings Tab in your Browser as shown by the firefox browser:
-![go to settings](doc/Settings.PNG)
+![go to settings](docs/Settings.PNG)
 2. Choose the auto-printer.exe as your default executable for pdf and all pdf like formats.
-![Choose auto-printer.exe as your default software](doc/ChoosePrinter.PNG)
+![Choose auto-printer.exe as your default software](docs/ChoosePrinter.PNG)
 
 ## Main commands
 
@@ -54,7 +56,7 @@ Here some images on how to configure that:
 |  help   | h     | Show the help information.                                |
 | repair  | r     | Repair the config file by checking if all printers exist. |
 
- 
+
 
 ## Configuration example
 
@@ -120,3 +122,7 @@ Everything is logged and can be locked up in the auto_print.log file!
 
 This project was written by Philipp Horstenkamp in the hope 
 that it will make some office processes a bit more smooth.
+
+## License
+
+This project is licensed under the MIT License.

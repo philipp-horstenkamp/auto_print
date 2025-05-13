@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+  release:
+    types: [published]
+
+jobs:
+
+  test:
+    name: Test
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install --only main,test
+    - name: Run tests
+      run: |
+        poetry run pytest -v
+
+  docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install --only main,docs
+    - name: Build English documentation
+      run: |
+        cd docs
+        poetry run make html
+    - name: Build German documentation
+      run: |
+        cd docs
+        poetry run make gettext
+        poetry run sphinx-intl update -p _build/gettext -l de
+        poetry run make -e SPHINXOPTS="-D language='de'" html
+    - name: Upload documentation
+      uses: actions/upload-artifact@v4
+      with:
+        name: documentation
+        path: |
+          docs/_build/html
+          docs/_build/de/html
+
+  build:
+    name: Build
+    needs: [test, docs]
+    runs-on: windows-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+    steps:
+    - uses: actions/checkout@v4
+    - name: Hello World
+      run: echo "Hello World! Build step would go here."
+
+  deploy-docs:
+    name: Deploy Documentation
+    needs: [docs]
+    runs-on: ubuntu-latest
+    # if: github.event_name == 'release' && github.event.action == 'published'
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download documentation artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: documentation
+        path: documentation
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./documentation

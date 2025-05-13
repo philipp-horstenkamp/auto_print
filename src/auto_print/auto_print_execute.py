@@ -10,6 +10,8 @@ If a suffix or a prefix is not given the comparison is true either way.
 
 Everything is logged and can be locked up in the auto_print.log file!
 """
+
+import argparse
 import json
 import logging
 import os
@@ -18,8 +20,24 @@ import sys
 from pathlib import Path
 from typing import Final
 
-import win32api
-import win32print
+import win32api  # type: ignore
+import win32print  # type: ignore
+
+
+def get_parser():
+    """
+    Create an argument parser for the auto_print_execute module.
+    This function is used for documentation purposes only.
+
+    Returns:
+        argparse.ArgumentParser: The argument parser
+    """
+    parser = argparse.ArgumentParser(
+        description="Auto-print: A document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns."
+    )
+    parser.add_argument("file_path", help="Path to the file to be processed", type=str)
+    return parser
+
 
 # defines the path of the printer config JSON file.
 AUTO_PRINTER_FOLDER: Final[Path] = Path.home() / Path("auto-printer")
@@ -39,7 +57,10 @@ LOG_FILE: Final[Path] = AUTO_PRINTER_FOLDER / Path("auto_print.log")
 
 def get_default_printer() -> str:
     """Returns the default printers name"""
-    return str(win32print.GetDefaultPrinter())
+    try:
+        return str(win32print.GetDefaultPrinter())
+    except RuntimeError:
+        return "No default printer"
 
 
 def get_printer_list() -> list[str]:
@@ -112,7 +133,7 @@ def install_ghostscript():
 def check_ghostscript():
     """Check if ghostscript is installed"""
     try:
-        import ghostscript  # noqa: F401
+        import ghostscript  # type: ignore # noqa: F401
     except RuntimeError as err:
         logging.error(err)
         install_ghostscript()
@@ -176,7 +197,7 @@ def configure_logger() -> None:
 
 
 # The main function should be started as shown above.
-if __name__ == "__main__":
+def main() -> None:  # noqa: PLR0912
     # loads the argument that where used to start this software.
     configure_logger()
     logging.info("Starting the program!")
@@ -252,5 +273,5 @@ if __name__ == "__main__":
                 sys.exit(0)
         else:
             logging.info("Showing the file! No printing!")
-            os.startfile(file_to_print_arg)
+            os.startfile(file_to_print_arg)  # type: ignore
     logging.error("No valid action found.")
