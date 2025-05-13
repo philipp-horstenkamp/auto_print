@@ -273,5 +273,5 @@ def main() -> None:  # noqa: PLR0912
                 sys.exit(0)
         else:
             logging.info("Showing the file! No printing!")
-            os.startfile(file_to_print_arg)
+            os.startfile(file_to_print_arg)  # type: ignore
     logging.error("No valid action found.")
