@@ -25,7 +25,7 @@ repos:
   - id: destroyed-symlinks
   - id: debug-statements
   - id: pretty-format-json
-    exclude: (^config.json$)
+    exclude: (^config.json$|\.ipynb$)
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.11.9
