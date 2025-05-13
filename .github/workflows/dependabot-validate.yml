@@ -1,13 +1,15 @@
 name: dependabot validate
-
 on:
-  pull_request:
+  pull_request_target:
     paths:
     - .github/dependabot.yml
     - .github/workflows/dependabot-validate.yml
 jobs:
   validate:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
     steps:
     - uses: actions/checkout@v4
     - uses: marocchino/validate-dependabot@v3
