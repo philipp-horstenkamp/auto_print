@@ -70,6 +70,8 @@ jobs:
     needs: [test, docs]
     runs-on: windows-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+    permissions:
+      contents: read
     steps:
     - uses: actions/checkout@v4
     - name: Hello World
