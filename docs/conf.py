@@ -23,10 +23,8 @@ release = "2.0.5"
 
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx.ext.viewcode",
+    # "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    "sphinx_autodoc_typehints",
-    "sphinx_click",
     "sphinx.ext.intersphinx",
     "sphinxarg.ext",
 ]

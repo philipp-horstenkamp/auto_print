@@ -18,6 +18,8 @@
 
   - [About](#about)
 
+  - [License](#license)
+
 
 
 <!--TOC-->
@@ -54,7 +56,7 @@ Here some images on how to configure that:
 |  help   | h     | Show the help information.                                |
 | repair  | r     | Repair the config file by checking if all printers exist. |
 
- 
+
 
 ## Configuration example
 
@@ -120,3 +122,7 @@ Everything is logged and can be locked up in the auto_print.log file!
 
 This project was written by Philipp Horstenkamp in the hope 
 that it will make some office processes a bit more smooth.
+
+## License
+
+This project is licensed under the MIT License.
