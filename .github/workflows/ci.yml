@@ -51,6 +51,8 @@ jobs:
       run: |
         cd docs
         poetry run make gettext
+        # Remove locale directory if it exists to prevent FileExistsError
+        rm -rf locale
         poetry run sphinx-intl update -p _build/gettext -l de
         poetry run make -e SPHINXOPTS="-D language='de'" html
     - name: Upload documentation
