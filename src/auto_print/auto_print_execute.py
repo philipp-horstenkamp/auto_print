@@ -57,7 +57,10 @@ LOG_FILE: Final[Path] = AUTO_PRINTER_FOLDER / Path("auto_print.log")
 
 def get_default_printer() -> str:
     """Returns the default printers name"""
-    return str(win32print.GetDefaultPrinter())
+    try:
+        return str(win32print.GetDefaultPrinter())
+    except RuntimeError:
+        return "No default printer"
 
 
 def get_printer_list() -> list[str]:
@@ -194,7 +197,7 @@ def configure_logger() -> None:
 
 
 # The main function should be started as shown above.
-if __name__ == "__main__":
+def main() -> None:  # noqa: PLR0912
     # loads the argument that where used to start this software.
     configure_logger()
     logging.info("Starting the program!")

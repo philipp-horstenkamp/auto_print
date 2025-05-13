@@ -483,7 +483,7 @@ def repair_config(
     return config_object
 
 
-if __name__ == "__main__":
+def main() -> None:
     configure_logger()
     check_ghostscript()
 

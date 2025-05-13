@@ -42,6 +42,10 @@ ruff = "^0.1.6"
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.5"
 
+[tool.poetry.scripts]
+auto-print = "auto_print.auto_print_execute:main"
+auto-print-config = "auto_print.auto_print_config_generator:main"
+
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
 exclude = [
