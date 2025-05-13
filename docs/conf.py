@@ -14,6 +14,9 @@ from unittest.mock import MagicMock
 class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
+        # Return None for special attributes to prevent recursion
+        if name.startswith("_"):
+            return None
         return Mock()
 
 
