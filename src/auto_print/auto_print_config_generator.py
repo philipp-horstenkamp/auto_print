@@ -1,6 +1,8 @@
 """
 Configuration generator for the module.
 """
+
+import argparse
 import json
 import os.path
 import webbrowser
@@ -15,6 +17,21 @@ from auto_print.auto_print_execute import (
     get_default_printer,
     get_printer_list,
 )
+
+
+def get_parser():
+    """
+    Create an argument parser for the auto_print_config_generator module.
+    This function is used for documentation purposes only.
+
+    Returns:
+        argparse.ArgumentParser: The argument parser
+    """
+    parser = argparse.ArgumentParser(
+        description="Interactive configuration generator for auto-print. "
+        "This tool helps you create and manage printer configurations."
+    )
+    return parser
 
 
 def input_choice(description: str, input_list: list[str], default: str):
@@ -41,7 +58,7 @@ def input_choice(description: str, input_list: list[str], default: str):
     possible_inputs = input_list[:]
     while True:
         print(description)
-        print(f'Options: {", ".join(possible_inputs)}')
+        print(f"Options: {', '.join(possible_inputs)}")
         text_in = input(f"Choose [{default}]:").strip()
         if not text_in:
             text_in = default
@@ -216,7 +233,7 @@ def edit_section(
 
 
 def create_section(
-    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+    config_object: CaseInsensitiveDict[str, dict[str, Any]],
 ) -> tuple[str, dict[str, Any]]:
     """Create a new printer configuration.
 
@@ -288,7 +305,7 @@ def insert_section(
 
 
 def add_section(
-    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+    config_object: CaseInsensitiveDict[str, dict[str, Any]],
 ) -> CaseInsensitiveDict[str, dict[str, Any]]:
     """Add a new configuration to a printer.
 
@@ -304,12 +321,12 @@ def add_section(
 
 
 def delete_section(
-    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+    config_object: CaseInsensitiveDict[str, dict[str, Any]],
 ) -> CaseInsensitiveDict[str, dict[str, Any]]:
     """Deletes a specified section.
 
     Args:
-        config_object: A configurations object.
+        config_object: A configuration object.
 
     Returns:
         The newly generated/edited config_object.
@@ -320,7 +337,7 @@ def delete_section(
     print_configuration(config_object)
     delete_object = input_choice(
         "Chose what section to delete or to cancel the operation!",
-        list(config_object.keys()) + ["cancel", "c"],
+        [*list(config_object.keys()), "cancel", "c"],
         "cancel",
     )
     if delete_object in ["cancel", "c"]:
@@ -340,12 +357,12 @@ def delete_section(
 
 
 def change_section_position(
-    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+    config_object: CaseInsensitiveDict[str, dict[str, Any]],
 ) -> CaseInsensitiveDict[str, dict[str, Any]]:
     """Changes the filter order.
 
     Args:
-        config_object: A configurations object.
+        config_object: A configuration object.
 
     Returns:
         The newly generated/edited config_object.
@@ -371,12 +388,12 @@ def change_section_position(
 
 
 def edit_section_command(
-    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+    config_object: CaseInsensitiveDict[str, dict[str, Any]],
 ) -> CaseInsensitiveDict[str, dict[str, Any]]:
     """Edits a section in the configuration.
 
     Args:
-        config_object: A configurations object.
+        config_object: A configuration object.
 
     Returns:
         The newly generated/edited config_object.
@@ -408,15 +425,15 @@ def show_help():
 
 
 def generate_list_of_available_commands(
-    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+    config_object: CaseInsensitiveDict[str, dict[str, Any]],
 ) -> list[str]:
     """Checks to config for operations that would make sense and generates a list of possible commands accordingly.
 
     Args:
-        config_object: A configurations object.
+        config_object: A configuration object.
 
     Returns:
-        The generates list fo possible commands.
+        The generated list of possible commands.
     """
     options = ["save", "s", "close", "c", "add", "a"]
     if config_object:
@@ -431,15 +448,15 @@ def generate_list_of_available_commands(
 
 
 def repair_config(
-    config_object: CaseInsensitiveDict[str, dict[str, Any]]
+    config_object: CaseInsensitiveDict[str, dict[str, Any]],
 ) -> CaseInsensitiveDict[str, dict[str, Any]]:
     """Repair the configuration file.
 
     Args:
-        config_object: A configurations object.
+        config_object: A configuration object.
 
     Returns:
-        The generates list fo possible commands.
+        The generated list of possible commands.
     """
     printer_list = get_printer_list()
     error_found = False

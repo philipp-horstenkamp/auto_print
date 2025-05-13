@@ -1,6 +1,7 @@
 """
 Build modele.
 """
+
 import os.path
 
 from cx_Freeze import Executable, setup

@@ -36,9 +36,9 @@ One of the use cases is to use this software as a default PDF executable from Fi
 Here some images on how to configure that:
 
 1. Open the Settings Tab in your Browser as shown by the firefox browser:
-![go to settings](doc/Settings.PNG)
+![go to settings](docs/Settings.PNG)
 2. Choose the auto-printer.exe as your default executable for pdf and all pdf like formats.
-![Choose auto-printer.exe as your default software](doc/ChoosePrinter.PNG)
+![Choose auto-printer.exe as your default software](docs/ChoosePrinter.PNG)
 
 ## Main commands
 

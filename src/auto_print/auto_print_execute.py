@@ -10,6 +10,8 @@ If a suffix or a prefix is not given the comparison is true either way.
 
 Everything is logged and can be locked up in the auto_print.log file!
 """
+
+import argparse
 import json
 import logging
 import os
@@ -20,6 +22,22 @@ from typing import Final
 
 import win32api
 import win32print
+
+
+def get_parser():
+    """
+    Create an argument parser for the auto_print_execute module.
+    This function is used for documentation purposes only.
+
+    Returns:
+        argparse.ArgumentParser: The argument parser
+    """
+    parser = argparse.ArgumentParser(
+        description="Auto-print: A document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns."
+    )
+    parser.add_argument("file_path", help="Path to the file to be processed", type=str)
+    return parser
+
 
 # defines the path of the printer config JSON file.
 AUTO_PRINTER_FOLDER: Final[Path] = Path.home() / Path("auto-printer")

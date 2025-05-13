@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Run pre-commit
+      uses: pre-commit/action@v3.0.0
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11']
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install --with dev
+    - name: Run tests
+      run: |
+        poetry run pytest -v
+
+  docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install --with docs
+    - name: Build English documentation
+      run: |
+        cd docs
+        make html
+    - name: Build German documentation
+      run: |
+        cd docs
+        make gettext
+        sphinx-intl update -p _build/gettext -l de
+        make -e SPHINXOPTS="-D language='de'" html
+    - name: Upload documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: |
+          docs/_build/html
+          docs/_build/de/html
+
+  build:
+    name: Build
+    needs: [lint, test, docs]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+    steps:
+    - uses: actions/checkout@v3
+    - name: Hello World
+      run: echo "Hello World! Build step would go here."
