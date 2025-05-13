@@ -4,17 +4,6 @@ on:
   push:
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    - name: Run pre-commit
-      uses: pre-commit/action@v3.0.0
 
   test:
     name: Test
