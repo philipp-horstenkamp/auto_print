@@ -8,6 +8,21 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 
+from unittest.mock import MagicMock
+
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        # Return None for special attributes to prevent recursion
+        if name.startswith("_"):
+            return None
+        return Mock()
+
+
+MOCK_MODULES = ["win32api", "win32print"]
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 

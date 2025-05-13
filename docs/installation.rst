@@ -1,7 +1,7 @@
 .. _installation:
 
 Installation
-===========
+============
 
 You can install the auto-print package using pip:
 
@@ -16,7 +16,7 @@ Or using Poetry:
     poetry add auto-print
 
 Development Installation
------------------------
+------------------------
 
 For development, you can clone the repository and install the package with development dependencies:
 

@@ -12,7 +12,7 @@ Auto-print is a document routing application that acts as a switch for incoming 
 2. Open the document with the default application
 
 Command Line Usage
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 The simplest way to use auto-print is from the command line:
 
@@ -21,7 +21,7 @@ The simplest way to use auto-print is from the command line:
     python -m auto_print.auto_print_execute path/to/your/file.pdf
 
 Browser Integration
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 One of the most powerful features of auto-print is its ability to integrate with web browsers. This allows you to automatically route downloaded documents to the appropriate printer or application.
 
@@ -84,7 +84,7 @@ Configuration Options:
 * **show**: Whether to open the document with the default application (true/false)
 
 Document Routing Logic
----------------------
+----------------------
 
 Auto-print uses the following logic to route documents:
 
@@ -99,7 +99,7 @@ Auto-print uses the following logic to route documents:
    - Both printed and shown if both are true
 
 Example Scenarios
-----------------
+-----------------
 
 Here are some examples of how auto-print routes different files:
 
