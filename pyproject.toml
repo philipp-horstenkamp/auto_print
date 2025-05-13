@@ -25,7 +25,7 @@ version = "2.0.5"
 case-insensitive-dictionary = "0.2.1"
 ghostscript = "^0.7"
 python = ">=3.11,<3.14"
-pywin32 = "^306"
+pywin32 = ">=306,<311"
 
 [tool.poetry.group.build.dependencies]
 cx-freeze = "^8.0.0"
