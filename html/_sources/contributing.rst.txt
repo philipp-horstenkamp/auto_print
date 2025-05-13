@@ -6,7 +6,7 @@ Contributing
 Thank you for considering contributing to auto-print! This document provides guidelines for contributing to the project.
 
 Development Setup
----------------
+-----------------
 
 1. Clone the repository:
 
@@ -28,7 +28,7 @@ Development Setup
        pre-commit install
 
 Code Style
----------
+----------
 
 This project uses:
 
@@ -42,7 +42,7 @@ You can run these tools using pre-commit:
     pre-commit run --all-files
 
 Testing
-------
+-------
 
 Run tests using pytest:
 
@@ -51,7 +51,7 @@ Run tests using pytest:
     poetry run pytest
 
 Documentation
-------------
+-------------
 
 To build the documentation:
 
@@ -71,7 +71,7 @@ For the German translation:
     make -e SPHINXOPTS="-D language='de'" html
 
 Pull Request Process
-------------------
+--------------------
 
 1. Create a new branch for your feature or bugfix
 2. Make your changes

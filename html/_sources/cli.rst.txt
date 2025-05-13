@@ -1,7 +1,7 @@
 .. _cli:
 
 Command Line Interface
-=====================
+======================
 
 auto-print provides two command-line interfaces:
 
@@ -11,7 +11,7 @@ auto-print provides two command-line interfaces:
 .. _config-generator:
 
 Configuration Generator
-----------------------
+-----------------------
 
 .. argparse::
    :module: auto_print.auto_print_config_generator
@@ -25,7 +25,7 @@ The configuration generator provides an interactive interface to create and mana
     python -m auto_print.auto_print_config_generator
 
 Interactive Commands
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 Once the configuration generator is running, you can use the following interactive commands:
 
@@ -42,7 +42,7 @@ Once the configuration generator is running, you can use the following interacti
 .. _print-executor:
 
 Print Executor
--------------
+--------------
 
 .. argparse::
    :module: auto_print.auto_print_execute
@@ -59,7 +59,7 @@ Arguments:
     * ``file_path``: Path to the file to be printed
 
 Process Flow
-~~~~~~~~~~~
+~~~~~~~~~~~~
 
 When you run the print executor with a file path, it follows this process:
 
@@ -84,7 +84,7 @@ Example:
 This will print the file "invoice_123.pdf" to the appropriate printer based on your configuration.
 
 Exit Codes
-~~~~~~~~~
+~~~~~~~~~~
 
 The print executor returns the following exit codes:
 
