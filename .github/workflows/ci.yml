@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: ['3.11']
+        python-version: ['3.11', '3.12', '3.13']
       fail-fast: false
     steps:
     - uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install poetry
-        poetry install --with dev
+        poetry install --only main,test
     - name: Run tests
       run: |
         poetry run pytest -v
@@ -40,7 +40,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install poetry
-        poetry install --with docs
+        poetry install --only main,docs
     - name: Build English documentation
       run: |
         cd docs
