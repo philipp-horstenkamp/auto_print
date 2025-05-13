@@ -8,6 +8,12 @@ target-version = ["py310"]
 [tool.isort]
 profile = "black"
 
+[tool.mypy]
+follow_imports = "silent"
+
+[[tool.mypy.overrides.cx_Freeze]]
+ignore_missing_imports = true
+
 [tool.poetry]
 authors = ["Philipp Horstenkamp <philipp@horstenkamp.de>"]
 description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
@@ -22,7 +28,7 @@ python = ">=3.11,<3.14"
 pywin32 = "^306"
 
 [tool.poetry.group.build.dependencies]
-cx-freeze = "^6.13.1"
+cx-freeze = "^8.0.0"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"

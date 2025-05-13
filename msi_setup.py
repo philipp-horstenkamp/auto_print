@@ -4,7 +4,7 @@ Build modele.
 
 import os.path
 
-from cx_Freeze import Executable, setup
+from cx_Freeze import Executable, setup  # type: ignore
 
 import auto_print
 import auto_print.auto_print_config_generator as ag

@@ -20,8 +20,8 @@ import sys
 from pathlib import Path
 from typing import Final
 
-import win32api
-import win32print
+import win32api  # type: ignore
+import win32print  # type: ignore
 
 
 def get_parser():
@@ -133,7 +133,7 @@ def install_ghostscript():
 def check_ghostscript():
     """Check if ghostscript is installed"""
     try:
-        import ghostscript  # noqa: F401
+        import ghostscript  # type: ignore # noqa: F401
     except RuntimeError as err:
         logging.error(err)
         install_ghostscript()
