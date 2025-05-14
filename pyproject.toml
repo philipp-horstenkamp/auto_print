@@ -19,7 +19,7 @@ authors = ["Philipp Horstenkamp <philipp@horstenkamp.de>"]
 description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
 license = "MIT"
 name = "auto-print"
-version = "2.0.5"
+version = "2.0.0a"
 
 [tool.poetry.dependencies]
 case-insensitive-dictionary = "0.2.1"
@@ -29,6 +29,7 @@ pywin32 = {version = ">=306,<311", markers = "sys_platform == 'win32'"}
 
 [tool.poetry.group.build.dependencies]
 cx-freeze = "^8.0.0"
+nuitka = "^2.7.2"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
