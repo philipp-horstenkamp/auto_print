@@ -29,7 +29,6 @@ pywin32 = {version = ">=306,<311", markers = "sys_platform == 'win32'"}
 
 [tool.poetry.group.build.dependencies]
 cx-freeze = "^8.0.0"
-nuitka = "^2.7.2"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
