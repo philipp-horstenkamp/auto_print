@@ -6,6 +6,13 @@
 
 - [Auto Print](#auto-print)
 
+  - [Rust Implementation](#rust-implementation)
+
+  - [Python Implementation](#python-implementation)
+    - [Installation](#installation)
+      - [Using MSI Installer](#using-msi-installer)
+      - [From Source (Python)](#from-source-python)
+
   - [Integrate in browser workflow](#integrate-in-browser-workflow)
 
   - [Main commands](#main-commands)
@@ -25,6 +32,52 @@
 <!--TOC-->
 
 
+## Rust Implementation
+
+This project has been translated from Python to Rust. The Rust implementation provides the same functionality with improved performance and memory safety.
+
+### Requirements
+
+- Rust 1.70 or later
+- Windows operating system
+- Ghostscript (for printing without showing documents)
+
+### Installation
+
+#### From Source
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/auto_print.git
+   cd auto_print
+   ```
+
+2. Build the application:
+   ```
+   cargo build --release
+   ```
+
+3. The executables will be available in the `target/release` directory:
+   - `auto_print_execute.exe`: The main document processing application
+   - `auto_print_config_generator.exe`: The configuration tool
+
+### Usage
+
+#### Configuration
+
+Run the configuration generator:
+
+```
+cargo run --bin auto_print_config_generator
+```
+
+#### Processing Documents
+
+To process a document:
+
+```
+cargo run --bin auto_print_execute -- path/to/your/document.pdf
+```
 
 
 
@@ -32,6 +85,52 @@
 
 
 
+
+
+
+## Python Implementation
+
+### Installation
+
+#### Using MSI Installer
+
+An MSI installer is available for Windows users. This installer:
+- Installs the application with all necessary dependencies
+- Creates shortcuts in the Start Menu
+- Adds a file association for PDF files (without overriding your default PDF application)
+
+To build the MSI installer:
+
+1. Ensure you have Python 3.11 or later installed
+2. Install the required dependencies:
+   ```
+   pip install poetry
+   poetry install --with build
+   ```
+3. Run the MSI setup script:
+   ```
+   python msi_setup.py bdist_msi
+   ```
+4. The MSI installer will be created in the `dist` directory
+
+#### From Source (Python)
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/auto_print.git
+   cd auto_print
+   ```
+
+2. Install dependencies:
+   ```
+   pip install poetry
+   poetry install
+   ```
+
+3. Run the application:
+   ```
+   poetry run auto-print path/to/your/document.pdf
+   ```
 
 ## Integrate in browser workflow
 One of the use cases is to use this software as a default PDF executable from Firefox or Chrome:
@@ -100,10 +199,11 @@ The file `ABC.docx` would be shown with MS Word (if installed).
 
 
 ## Software dependencies
-Um die Software gut nutzen zu können werden folgende Programme benötigt:
+To use the software effectively, the following programs are needed:
 
 - [Ghostscript](https://www.ghostscript.com/releases/gsdnld.html)
 - [Adobe PDF Reader](https://www.adobe.com/de/acrobat/pdf-reader.html)
+- [Rust](https://www.rust-lang.org/tools/install) (for building from source)
 
 ## How it works 
 
@@ -120,8 +220,11 @@ Everything is logged and can be locked up in the auto_print.log file!
 
 ## About
 
-This project was written by Philipp Horstenkamp in the hope 
+This project was originally written in Python by Philipp Horstenkamp in the hope 
 that it will make some office processes a bit more smooth.
+
+The Rust implementation maintains the same functionality while providing improved 
+performance and memory safety.
 
 ## License
 

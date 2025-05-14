@@ -1,96 +1,95 @@
-"""
-Build modele.
-"""
+import sys
+from importlib.metadata import metadata
+from pathlib import Path
 
-import os.path
+from cx_Freeze import Executable, setup
 
-from cx_Freeze import Executable, setup  # type: ignore
+# Load metadata from installed package (after `pip install -e .`)
+meta = metadata("auto-print")
 
-import auto_print
-import auto_print.auto_print_config_generator as ag
-import auto_print.auto_print_execute as ap
-
-# Dependencies are automatically detected, but it might need
-# fine tuning.
-build_options = {
-    "packages": [],
-    "excludes": [],
-    "optimize": 2,
-    "include_files": [
-        "README.md",
-        "README.md",
-        "doc/ChoosePrinter.PNG",
-        "doc/Settings.PNG",
-        "printer-gear.ico",
-        "printer.ico",
-    ],
-}
-
-# directory_table = []
-
-shortcut_table = [
-    (
-        "DesktopShortcut",  # Shortcut
-        "DesktopFolder",  # Directory_
-        "Auto Print Configurator",  # Name
-        "TARGETDIR",  # Component_
-        "[TARGETDIR]generator.exe",  # Target
-        None,  # Arguments
-        "auto_print",  # Description
-        None,  # Hotkey
-        os.path.abspath("printer-gear.ico"),  # Icon
-        None,  # IconIndex
-        None,  # ShowCmd
-        "TARGETDIR",  # WkDir
-    )
-]
-
-msi_data = {
-    # "Directory": directory_table,
-    "ProgId": [
-        (
-            "Prog.Id",
-            None,
-            None,
-            "auto_print",
-            "IconId",
-            None,
-        ),
-    ],
-    "Icon": [
-        ("IconId", "printer.ico"),  # "icon.ico"
-    ],
-    "Shortcut": shortcut_table,
-}
-
+# Define the bdist_msi options with registry entries for PDF file association
 bdist_msi_options = {
+    "upgrade_code": "{87CE1A83-346A-470C-9214-891B42186848}",
     "add_to_path": True,
-    "data": msi_data,
-    "upgrade_code": "{FD1CA5B3-593F-4DF1-841D-2CFB9B2D4F58}",
-    "summary_data": {
-        "author": auto_print.__author__,
-        "comments": str(auto_print.__description__),
-        "keywords": ", ".join(["printer", "autoprinter", "ghostscript"]),
+    "data": {
+        "Registry": [
+            # Register Auto Print in the Applications key
+            # Register app in the Applications section (via HKLM)
+            (
+                "Registry",
+                "HKLM",
+                r"Software\Classes\Applications\auto-print.exe\shell\open\command",
+                None,
+                r'"[TARGETDIR]auto-print.exe" "%1"',
+            ),
+            (
+                "Registry",
+                "HKLM",
+                r"Software\Classes\Applications\auto-print.exe",
+                "FriendlyAppName",
+                "Auto Print",
+            ),
+            # Add right-click context menu item for PDF files
+            (
+                "Registry",
+                "HKCR",
+                r".pdf\Shell\AutoPrintWithApp",
+                None,
+                "Auto Print with Auto Print",
+            ),
+            (
+                "Registry",
+                "HKCR",
+                r".pdf\Shell\AutoPrintWithApp\command",
+                None,
+                r'"[TARGETDIR]auto-print.exe" "%1"',
+            ),
+        ]
     },
-    # "install_icon": "printer-gear.ico",
-    "all_users": True,
-    # "initial_target_dir" : None
 }
 
-BASE = "Win32GUI"
-# base = 'Win32Service' if sys.platform=='win32' else None
+# Define the base executable
+base = None
+if sys.platform == "win32":
+    base = "Win32GUI"  # Use this for a Windows GUI application
 
+# Define the executables
 executables = [
-    Executable(ap.__file__, base=BASE, target_name="auto_print", icon="printer.ico"),
     Executable(
-        ag.__file__, base=None, target_name="generator", icon="printer-gear.ico"
+        script="src\\auto_print\\auto_print_execute.py",  # Main script to execute
+        base=base,
+        target_name="auto-print.exe",  # Name of the executable
+        icon="printer.ico",  # Icon for the executable
+        # shortcut_name="Auto Print",
+        # shortcut_dir="ProgramMenuFolder",
+    ),
+    Executable(
+        script="src\\auto_print\\auto_print_config_generator.py",  # Config generator script
+        base=base,
+        target_name="auto-print-config.exe",  # Name of the executable
+        icon="printer-gear.ico",  # Icon for the executable
+        shortcut_name="Auto Print Config",
+        shortcut_dir="ProgramMenuFolder",
     ),
 ]
 
 setup(
-    name="auto_print",
-    version=auto_print.__version__,
-    description="auto_print",
-    options={"build_exe": build_options, "bdist_msi": bdist_msi_options},
+    name=meta["Name"],
+    version=meta["Version"],
+    description=meta["Summary"],
+    long_description=Path("README.md").read_text(encoding="utf-8"),
+    author=meta["Author"],
+    author_email=meta["Author-email"],
+    url=meta["Home-page"],
+    license=meta["License"],
+    options={
+        "build_exe": {
+            "packages": ["auto_print"],
+            "include_files": ["config.json"],
+        },
+        "bdist_msi": bdist_msi_options,
+    },
     executables=executables,
 )
+# To build the MSI installer, run:
+# python msi_setup.py bdist_msi
