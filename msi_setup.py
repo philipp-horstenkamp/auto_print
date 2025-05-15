@@ -41,12 +41,18 @@ bdist_msi_options = {
         "author": meta["Author"],
         "comments": meta["Summary"],
     },
-    # "data": {
-    #     "Registry": [],
-    #     "RemoveRegistry": [],
-    #     "Component": [],
-    #     "FeatureComponents": [],
-    # },
+    "data": {
+        "Component": [
+            (
+                "AutoPrintComponent",
+                "{87CE1A83-346A-470C-9214-891B42186849}",  # Using a fixed GUID based on the upgrade_code
+                "TARGETDIR",  # Install location
+                0,  # Attributes
+                None,  # Condition
+                "auto-print.exe",  # KeyPath (must match target_name of Executable)
+            )
+        ],
+    },
 }
 
 # Setup
