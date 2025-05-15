@@ -527,3 +527,7 @@ def main() -> None:
                 break
         elif action in ["help", "h"]:
             show_help()
+
+
+if __name__ == "__main__":
+    main()
