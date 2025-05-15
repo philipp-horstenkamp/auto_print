@@ -22,6 +22,153 @@ from pathlib import Path
 
 from cx_Freeze import Executable, setup
 
+# Define component name for registry entries
+component_name = "AutoPrintComponent"
+
+"""
+Registry Entries Documentation
+
+Each registry entry is a tuple with the following structure:
+(id, root, key, name, value, component)
+
+Where:
+1. id: A unique identifier for this registry entry (string)
+2. root: The root key in the Windows Registry (integer)
+   - 0 = HKEY_CLASSES_ROOT
+   - 1 = HKEY_CURRENT_USER
+   - 2 = HKEY_LOCAL_MACHINE
+   - 3 = HKEY_USERS
+3. key: The registry key path (string)
+4. name: The name of the registry value (string or None)
+   - None means this is a default value for the key
+   - A string specifies a named value
+5. value: The data to be stored in the registry (string)
+6. component: The component this registry entry belongs to (string)
+   - Must match a component defined in the MSI
+
+The registry entries below configure:
+- File associations for PDF files with auto-print.exe
+- Context menu integration for PDF files
+- Application information for Windows
+"""
+
+# Registry entries (added during install)
+registry_entries = [
+    # Defines the command to execute when a PDF file is opened with auto-print.exe
+    # This entry tells Windows to run auto-print.exe with the file path as an argument
+    (
+        "AutoPrint_OpenCommand",
+        0,
+        r"Applications\auto-print.exe\shell\open\command",
+        None,
+        r'"[TARGETDIR]auto-print.exe" "%1"',
+        component_name,
+    ),
+    # Sets a friendly name for the application in Windows
+    # This name appears in various Windows UI elements like "Open with" dialogs
+    (
+        "AutoPrint_FriendlyName",
+        0,
+        r"Applications\auto-print.exe",
+        "FriendlyAppName",
+        "Auto Print",
+        component_name,
+    ),
+    # Registers auto-print.exe as an application that can handle PDF files
+    # This allows PDF files to be associated with the application
+    (
+        "AutoPrint_SupportedType_PDF",
+        0,
+        r"Applications\auto-print.exe\SupportedTypes",
+        ".pdf",
+        "",
+        component_name,
+    ),
+    # Adds an entry to the context menu for PDF files
+    # This creates the menu item text that appears when right-clicking a PDF file
+    (
+        "AutoPrint_ContextLabel",
+        0,
+        r".pdf\shell\AutoPrintWithApp",
+        None,
+        "Auto Print with Auto Print",
+        component_name,
+    ),
+    # Defines the command to execute when the context menu item is clicked
+    # This tells Windows what command to run when the user selects the context menu option
+    (
+        "AutoPrint_ContextCommand",
+        0,
+        r".pdf\shell\AutoPrintWithApp\command",
+        None,
+        r'"[TARGETDIR]auto-print.exe" "%1"',
+        component_name,
+    ),
+]
+
+"""
+RemoveRegistry Entries Documentation
+
+Each remove registry entry is a tuple with the following structure:
+(id, root, key, name, component)
+
+Where:
+1. id: A unique identifier for this removal entry (string)
+2. root: The root key in the Windows Registry (integer)
+   - 0 = HKEY_CLASSES_ROOT
+   - 1 = HKEY_CURRENT_USER
+   - 2 = HKEY_LOCAL_MACHINE
+   - 3 = HKEY_USERS
+3. key: The registry key path to remove (string)
+4. name: The name of the registry value to remove (string or None)
+   - None means remove the entire key
+   - A string specifies a named value to remove
+5. component: The component this registry entry belongs to (string)
+   - Must match a component defined in the MSI
+
+These entries ensure clean uninstallation by removing all registry entries
+created during installation. Each entry corresponds to a registry entry
+added in the registry_entries list above.
+"""
+
+# RemoveRegistry entries (run automatically on uninstall)
+remove_registry_entries = [
+    # Removes the command association for opening files with auto-print.exe
+    (
+        "Remove_OpenCommand",
+        0,
+        r"Applications\auto-print.exe\shell\open\command",
+        None,
+        component_name,
+    ),
+    # Removes the friendly name association for the application
+    (
+        "Remove_FriendlyName",
+        0,
+        r"Applications\auto-print.exe",
+        "FriendlyAppName",
+        component_name,
+    ),
+    # Removes the PDF file type association
+    (
+        "Remove_SupportedType_PDF",
+        0,
+        r"Applications\auto-print.exe\SupportedTypes",
+        ".pdf",
+        component_name,
+    ),
+    # Removes the context menu label for PDF files
+    ("Remove_ContextLabel", 0, r".pdf\shell\AutoPrintWithApp", None, component_name),
+    # Removes the context menu command for PDF files
+    (
+        "Remove_ContextCommand",
+        0,
+        r".pdf\shell\AutoPrintWithApp\command",
+        None,
+        component_name,
+    ),
+]
+
 """
 Load package metadata from the installed auto-print package.
 
@@ -84,7 +231,10 @@ This dictionary defines all the MSI-specific options for the installer:
 - install_icon: Icon displayed during installation
 - environment_variables: Environment variables to set during installation
 - summary_data: Metadata for the installer (author, comments)
-- data: Component definitions for the Windows Installer
+- data: Component definitions for the Windows Installer, including:
+  - Component: The main component containing the application
+  - Registry: Registry entries for file associations and context menu integration
+  - RemoveRegistry: Entries to clean up registry during uninstallation
 
 The Component section defines:
 - AutoPrintComponent: The main component containing the application
@@ -98,7 +248,7 @@ bdist_msi_options = {
     "upgrade_code": "{87CE1A83-346A-470C-9214-891B42186848}",
     "add_to_path": True,
     "initial_target_dir": r"[ProgramFilesFolder]\auto-print",
-    # "all_users": True,
+    "all_users": True,
     "install_icon": "printer.ico",
     "environment_variables": {
         "PATH": "$INSTDIR;.",
@@ -110,7 +260,7 @@ bdist_msi_options = {
     "data": {
         "Component": [
             (
-                "AutoPrintComponent",
+                component_name,
                 "{87CE1A83-346A-470C-9214-891B42186849}",  # Using a fixed GUID based on the upgrade_code
                 "TARGETDIR",  # Install location
                 0,  # Attributes
@@ -118,6 +268,8 @@ bdist_msi_options = {
                 "auto-print.exe",  # KeyPath (must match target_name of Executable)
             )
         ],
+        "Registry": registry_entries,
+        "RemoveRegistry": remove_registry_entries,
     },
 }
 
