@@ -22,16 +22,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Setup Poetry cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/pypoetry
-          ~\AppData\Local\pypoetry
-          ~\AppData\Roaming\pypoetry
-        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-poetry-${{ matrix.python-version }}-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -53,13 +43,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
-    - name: Setup Poetry cache
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pypoetry
-        key: ${{ runner.os }}-poetry-3.12-${{ hashFiles('**/poetry.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-poetry-3.12-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
