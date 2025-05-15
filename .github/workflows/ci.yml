@@ -28,9 +28,19 @@ jobs:
         python -m pip install pipx
         pipx install poetry
         poetry install --only main,test
-    - name: Run tests
+    - name: Run tests with coverage
       run: |
-        poetry run pytest -v
+        poetry run pytest -v --cov=auto_print --cov-report=xml --cov-report=term
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+    - name: Upload coverage reports as artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage.xml
 
   docs:
     name: Build Documentation

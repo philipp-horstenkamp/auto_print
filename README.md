@@ -1,14 +1,6 @@
 # Auto Print
 
-## Rust Implementation
-
-This project has been translated from Python to Rust. The Rust implementation provides the same functionality with improved performance and memory safety.
-
-### Requirements
-
-- Rust 1.70 or later
-- Windows operating system
-- Ghostscript (for printing without showing documents)
+[![CI](https://github.com/philipp-horstenkamp/auto_print/actions/workflows/ci.yml/badge.svg)](https://github.com/philipp-horstenkamp/auto_print/actions/workflows/ci.yml)
 
 ### Installation
 

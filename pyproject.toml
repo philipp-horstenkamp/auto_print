@@ -47,10 +47,15 @@ ruff = "^0.1.6"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.5"
+pytest-cov = "^4.1.0"
 
 [tool.poetry.scripts]
 auto-print = "auto_print.auto_print_execute:main"
 auto-print-config = "auto_print.auto_print_config_generator:main"
+
+[tool.pytest.ini_options]
+addopts = "--cov=auto_print --cov-report=xml --cov-report=term"
+testpaths = ["tests"]
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
