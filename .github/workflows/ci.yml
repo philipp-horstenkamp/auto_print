@@ -71,7 +71,7 @@ jobs:
 
   wheel-build:
     name: Wheel Build
-    # needs: [test, docs]
+    needs: [test, docs]
     runs-on: windows-latest
     # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
     permissions:
@@ -99,7 +99,7 @@ jobs:
 
   msi-build:
     name: MSI-Build
-    # needs: [test, docs]
+    needs: [test, docs]
     runs-on: windows-latest
     # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
     permissions:
