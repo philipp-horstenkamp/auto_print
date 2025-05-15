@@ -118,7 +118,7 @@ jobs:
 
     - name: MSI-build
       run: |
-        poetry install --only main, build
+        poetry install --only main,build
         poetry run msi_setup.py bdist_msi
     - name: Upload MSI artifacts
       uses: actions/upload-artifact@v4
