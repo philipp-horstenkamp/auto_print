@@ -25,7 +25,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install poetry
+        python -m pip install pipx
+        pipx install poetry
         poetry install --only main,test
     - name: Run tests
       run: |
@@ -45,7 +46,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install poetry
+        python -m pip install pipx
+        pipx install poetry
         poetry install --only main,docs
     - name: Build English documentation
       run: |
@@ -76,8 +78,29 @@ jobs:
       contents: read
     steps:
     - uses: actions/checkout@v4
-    - name: Hello World
-      run: echo "Hello World! Build step would go here."
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install pipx
+        pipx install poetry
+        poetry install
+    - name: Build Python wheel
+      run: |
+        poetry build
+    - name: Build MSI installer
+      run: |
+        python msi_setup.py bdist_msi
+    - name: Upload wheel and MSI artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: distribution-packages
+        path: |
+          dist/*.whl
+          dist/*.msi
 
   deploy-docs:
     name: Deploy Documentation
