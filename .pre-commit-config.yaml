@@ -21,6 +21,7 @@ repos:
   - id: check-case-conflict
   - id: check-symlinks
   - id: check-docstring-first
+    exclude: msi_setup.py
   - id: mixed-line-ending
   - id: destroyed-symlinks
   - id: debug-statements

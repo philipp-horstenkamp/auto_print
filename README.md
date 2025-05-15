@@ -1,28 +1,51 @@
 # Auto Print
 
-<!--TOC-->
+## Rust Implementation
 
+This project has been translated from Python to Rust. The Rust implementation provides the same functionality with improved performance and memory safety.
 
+### Requirements
 
-- [Auto Print](#auto-print)
+- Rust 1.70 or later
+- Windows operating system
+- Ghostscript (for printing without showing documents)
 
-  - [Integrate in browser workflow](#integrate-in-browser-workflow)
+### Installation
 
-  - [Main commands](#main-commands)
+#### From Source
 
-  - [Configuration example](#configuration-example)
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/auto_print.git
+   cd auto_print
+   ```
 
-  - [Software dependencies](#software-dependencies)
+2. Build the application:
+   ```
+   cargo build --release
+   ```
 
-  - [How it works](#how-it-works)
+3. The executables will be available in the `target/release` directory:
+   - `auto_print_execute.exe`: The main document processing application
+   - `auto_print_config_generator.exe`: The configuration tool
 
-  - [About](#about)
+### Usage
 
-  - [License](#license)
+#### Configuration
 
+Run the configuration generator:
 
+```
+cargo run --bin auto_print_config_generator
+```
 
-<!--TOC-->
+#### Processing Documents
+
+To process a document:
+
+```
+cargo run --bin auto_print_execute -- path/to/your/document.pdf
+```
 
 
 
@@ -41,6 +64,28 @@ Here some images on how to configure that:
 ![go to settings](docs/Settings.PNG)
 2. Choose the auto-printer.exe as your default executable for pdf and all pdf like formats.
 ![Choose auto-printer.exe as your default software](docs/ChoosePrinter.PNG)
+
+## Running the Configuration Generator
+
+### Python Implementation
+To run the configuration generator from the command line:
+
+```
+auto-print-config
+```
+
+Or if you're running from the source code:
+
+```
+python -m auto_print.auto_print_config_generator
+```
+
+### Rust Implementation
+To run the configuration generator:
+
+```
+cargo run --bin auto_print_config_generator
+```
 
 ## Main commands
 
@@ -100,10 +145,11 @@ The file `ABC.docx` would be shown with MS Word (if installed).
 
 
 ## Software dependencies
-Um die Software gut nutzen zu können werden folgende Programme benötigt:
+To use the software effectively, the following programs are needed:
 
 - [Ghostscript](https://www.ghostscript.com/releases/gsdnld.html)
 - [Adobe PDF Reader](https://www.adobe.com/de/acrobat/pdf-reader.html)
+- [Rust](https://www.rust-lang.org/tools/install) (for building from source)
 
 ## How it works 
 
@@ -120,8 +166,11 @@ Everything is logged and can be locked up in the auto_print.log file!
 
 ## About
 
-This project was written by Philipp Horstenkamp in the hope 
+This project was originally written in Python by Philipp Horstenkamp in the hope 
 that it will make some office processes a bit more smooth.
+
+The Rust implementation maintains the same functionality while providing improved 
+performance and memory safety.
 
 ## License
 
