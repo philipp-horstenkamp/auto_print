@@ -115,10 +115,9 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pipx
         pipx install poetry
-
+        poetry install --only main,build
     - name: MSI-build
       run: |
-        poetry install --only main,build
         poetry run msi_setup.py bdist_msi
     - name: Upload MSI artifacts
       uses: actions/upload-artifact@v4
