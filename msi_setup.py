@@ -33,7 +33,10 @@ bdist_msi_options = {
     "add_to_path": True,
     "initial_target_dir": r"[ProgramFilesFolder]\auto-print",
     "all_users": True,
-    # "install_icon": "printer.ico",  # Optional
+    "install_icon": "printer.ico",
+    "environment_variables": {
+        "PATH": "$INSTDIR;.",
+    },
     "summary_data": {
         "author": meta["Author"],
         "comments": meta["Summary"],
