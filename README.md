@@ -39,16 +39,7 @@ To process a document:
 cargo run --bin auto_print_execute -- path/to/your/document.pdf
 ```
 
-
-
-
-
-
-
-
-
-
-## Integrate in browser workflow
+## Integrate in the browser workflow
 One of the use cases is to use this software as a default PDF executable from Firefox or Chrome:
 Here some images on how to configure that:
 
@@ -159,7 +150,7 @@ Everything is logged and can be locked up in the auto_print.log file!
 ## About
 
 This project was originally written in Python by Philipp Horstenkamp in the hope 
-that it will make some office processes a bit more smooth.
+that it will make some office processes a bit smoother.
 
 The Rust implementation maintains the same functionality while providing improved 
 performance and memory safety.
