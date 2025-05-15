@@ -69,8 +69,8 @@ jobs:
           docs/_build/html
           docs/_build/de/html
 
-  build:
-    name: Build
+  wheel-build:
+    name: Wheel Build
     needs: [test, docs]
     runs-on: windows-latest
     # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
@@ -87,14 +87,40 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pipx
         pipx install poetry
-        poetry install
-    - name: Build Python wheel
+    - name: wheel-build
       run: |
         poetry build
-    - name: Build MSI installer
+    - name: Upload wheel artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: distribution-packages
+        path: |
+          dist/*.whl
+
+  msi-build:
+    name: MSI-Build
+    needs: [test, docs]
+    runs-on: windows-latest
+    # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
       run: |
-        python msi_setup.py bdist_msi
-    - name: Upload wheel and MSI artifacts
+        python -m pip install --upgrade pip
+        python -m pip install pipx
+        pipx install poetry
+
+    - name: MSI-build
+      run: |
+        poetry install --only main, build
+        poetry run python msi_setup.py bdist_msi
+    - name: Upload MSI artifacts
       uses: actions/upload-artifact@v4
       with:
         name: distribution-packages
