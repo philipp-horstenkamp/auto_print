@@ -123,9 +123,8 @@ jobs:
     - name: Upload MSI artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: distribution-packages
+        name: MSI
         path: |
-          dist/*.whl
           dist/*.msi
 
   deploy-docs:
