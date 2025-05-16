@@ -1,5 +1,4 @@
-"""
-MSI Installer Setup Script for Auto Print Application with Context Menu Integration
+r"""MSI Installer Setup Script for Auto Print Application with Context Menu Integration.
 
 This script configures and builds a Windows MSI installer for the Auto Print application
 using cx_Freeze. It includes:
@@ -212,6 +211,12 @@ bdist_msi_options = {
 
 
 def txt_to_rtf(input_path: str, output_path: str) -> None:
+    """Convert a text file to RTF format.
+
+    Args:
+        input_path: Path to the input text file.
+        output_path: Path where the RTF file will be saved.
+    """
     text = Path(input_path).read_text(encoding="utf-8")
 
     # Basic RTF header and footer
