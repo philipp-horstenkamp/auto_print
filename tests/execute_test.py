@@ -1,12 +1,12 @@
 """
-Tests for the auto_print_execute module using pytest conventions.
+Tests for the execute module using pytest conventions.
 """
 
 from unittest.mock import Mock
 
 import pytest
 
-from auto_print.auto_print_execute import (
+from auto_print.execute import (
     LOG_FILE,
     configure_logger,
     get_default_printer,
@@ -46,7 +46,7 @@ def test_configure_logger(monkeypatch):
     mock_logging.basicConfig = mock_basic_config
 
     # Patch the logging module
-    monkeypatch.setattr("auto_print.auto_print_execute.logging", mock_logging)
+    monkeypatch.setattr("auto_print.execute.logging", mock_logging)
 
     # Call the function
     configure_logger()
@@ -68,7 +68,7 @@ def test_get_default_printer(monkeypatch):
     mock_win32print.GetDefaultPrinter = mock_get_default_printer
 
     # Patch the win32print module
-    monkeypatch.setattr("auto_print.auto_print_execute.win32print", mock_win32print)
+    monkeypatch.setattr("auto_print.execute.win32print", mock_win32print)
 
     # Call the function
     result = get_default_printer()
@@ -91,7 +91,7 @@ def test_get_printer_list(monkeypatch):
     mock_win32print.EnumPrinters = mock_enum_printers
 
     # Patch the win32print module
-    monkeypatch.setattr("auto_print.auto_print_execute.win32print", mock_win32print)
+    monkeypatch.setattr("auto_print.execute.win32print", mock_win32print)
 
     # Call the function
     result = get_printer_list()
