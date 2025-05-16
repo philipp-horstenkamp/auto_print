@@ -3,9 +3,9 @@
 1. The program is started with a filepath as an argument.
 2. The filename gets extracted.
 3. The filename is compared to a list of suffixes and prefixes.
-4. If suffix and prefix are a match the file gets executed.
-If a suffix or a prefix is not given the comparison is true either way.
-5. The file is then eiter Printed and/or shown depending on the configuration.
+4. If suffix and prefix are a match, the file gets executed.
+   If a suffix or a prefix is not given, the comparison is true either way.
+5. The file is then either Printed and/or shown depending on the configuration.
 
 Everything is logged and can be locked up in the auto_print.log file!
 """
@@ -30,7 +30,7 @@ PRINTER_NOT_FOUND_ERROR: Final[int] = 1801
 def get_parser():
     """Create an argument parser for the auto_print_execute module.
 
-    This function is used for documentation purposes only.
+    This function is used for documentation only.
 
     Returns:
         argparse.ArgumentParser: The argument parser
@@ -55,7 +55,7 @@ PRINTER_CONFIG_PATH: Final[Path] = AUTO_PRINTER_FOLDER / Path(
 LOG_FILE: Final[Path] = AUTO_PRINTER_FOLDER / Path("auto_print.log")
 
 # Try to load the ghostscript api.
-# This programm will shut down if ghostscript is not installed.
+# This program will shut down if ghostscript is not installed.
 
 
 def get_default_printer() -> str:
@@ -73,7 +73,7 @@ def get_printer_list() -> list[str]:
 
 # noinspection PyBroadException
 def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None:
-    """Prints a document via the adobe pdf reader.
+    """Prints a document via the adobe PDF reader.
 
     :param filename: The name of the file that should be printed.
     :param file_path: The path of the file that should be printed.
@@ -93,7 +93,7 @@ def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None
                 win32print.StartPagePrinter(h_printer)
                 win32print.WritePrinter(
                     h_printer, "test"
-                )  # Instead of raw text is there a way to print PDF File ?
+                )  # Instead of raw text, is there a way to print PDF File?
                 win32print.EndPagePrinter(h_printer)
             except (OSError, RuntimeError):
                 logging.exception("Error during printing")
@@ -218,7 +218,7 @@ def main() -> None:  # noqa: PLR0912
     2. Processes command line arguments
     3. Validates the file to print
     4. Loads the printer configuration
-    5. Determines the appropriate action based on the filename
+    5. Determines the appropriate action based on filename comparisons
     6. Either prints the file or opens it with the default application
 
     Exit codes:
