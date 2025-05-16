@@ -1,5 +1,4 @@
-"""Configuration generator for the module.
-"""
+"""Configuration generator for the module."""
 
 import argparse
 import os.path
@@ -18,19 +17,47 @@ from auto_print.utils import (
 )
 
 
+class EmptyInputListError(ValueError):
+    """Raised when the input list is empty."""
+
+    def __init__(self):
+        """Initialize the exception with a descriptive message."""
+        super().__init__(
+            "The list of possible inputs need to be defined and have a minimum length of one."
+        )
+
+
+class EmptyDescriptionError(ValueError):
+    """Raised when the description is empty."""
+
+    def __init__(self):
+        """Initialize the exception with a descriptive message."""
+        super().__init__("The text should be defined.")
+
+
+class DefaultNotInListError(ValueError):
+    """Raised when the default value is not in the input list."""
+
+    def __init__(self):
+        """Initialize the exception with a descriptive message."""
+        super().__init__(
+            "The default input needs to be in the list of allowed choices."
+        )
+
+
 def get_parser():
     """Create an argument parser for the auto_print_config_generator module.
+
     This function is used for documentation purposes only.
 
     Returns:
         argparse.ArgumentParser: The argument parser
 
     """
-    parser = argparse.ArgumentParser(
+    return argparse.ArgumentParser(
         description="Interactive configuration generator for auto-print. "
         "This tool helps you create and manage printer configurations."
     )
-    return parser
 
 
 def input_choice(description: str, input_list: list[str], default: str):
@@ -46,15 +73,11 @@ def input_choice(description: str, input_list: list[str], default: str):
 
     """
     if not input_list:
-        raise ValueError(
-            "The list of possible inputs need to be defined and have a minimum length of one."
-        )
+        raise EmptyInputListError()
     if not description:
-        raise ValueError("The text should be defined.")
+        raise EmptyDescriptionError()
     if default not in input_list:
-        raise ValueError(
-            "The default input needs to be in the list of allowed choices."
-        )
+        raise DefaultNotInListError()
     possible_inputs = input_list[:]
     while True:
         print(description)
@@ -67,12 +90,12 @@ def input_choice(description: str, input_list: list[str], default: str):
             return text_in
 
 
-def bool_decision(description: str, default: bool) -> bool:
+def bool_decision(description: str, *, default: bool) -> bool:
     """Tooling to interpret a yes/no decision.
 
     Args:
         description: The description for the decision.
-        default: The default value.
+        default: The default value. Defaults to True.
 
     Returns:
         True or false depending on user input.
@@ -100,10 +123,7 @@ def print_element(name: str, config_element: dict[str, Any], index: int | None) 
     suffix = config_element.get("suffix")
     prefix = config_element.get("prefix")
 
-    if index is None:
-        next_str = "    Config"
-    else:
-        next_str = f"{index + 1:>2}. Prio config"
+    next_str = "    Config" if index is None else f"{index + 1:>2}. Prio config"
     next_str += f' section with name "{name}" '
     if printing:
         next_str += f'prints on "{printer}"'
@@ -201,7 +221,7 @@ def configure_print_settings(config_element: dict[str, Any]) -> None:
     """
     config_element["print"] = bool_decision(
         "Should the filtered file be printed automatically?",
-        config_element.get("print", True),
+        default=config_element.get("print", True),
     )
 
     if config_element["print"]:
@@ -223,7 +243,7 @@ def configure_display_settings(config_element: dict[str, Any]) -> None:
     """
     config_element["show"] = bool_decision(
         "Should the file be shown by the system default?",
-        config_element.get("show", False),
+        default=config_element.get("show", False),
     )
 
 
@@ -236,7 +256,7 @@ def configure_activation(config_element: dict[str, Any]) -> None:
     """
     config_element["active"] = bool_decision(
         "Should the new section be activated?",
-        config_element.get("active", True),
+        default=config_element.get("active", True),
     )
 
 
@@ -266,7 +286,7 @@ def edit_section(
         print_element(name, config_element, None)
 
         # Check if the configuration is correct
-        if bool_decision("Is the above section correct?", True):
+        if bool_decision("Is the above section correct?", default=True):
             return name, config_element
         print("Please make changes as needed.")
 
@@ -592,7 +612,7 @@ def handle_action(
     elif action in ["close", "c"]:
         if load_config() == config or bool_decision(
             "There are unsaved changes. Please confirm with y/n if you want to close anyway[n]:",
-            True,
+            default=True,
         ):
             exit_program = True
     elif action in ["help", "h"]:

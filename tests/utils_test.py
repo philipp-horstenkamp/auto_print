@@ -4,7 +4,6 @@ from unittest.mock import Mock, patch
 
 from auto_print.utils import (
     LOG_FILE,
-    PRINTER_CONFIG_PATH,
     check_ghostscript,
     configure_logger,
     get_default_printer,
@@ -65,8 +64,8 @@ def test_check_ghostscript_error(mock_install_ghostscript):
         mock_install_ghostscript.assert_called_once()
 
 
-@patch("os.path.exists")
-@patch("builtins.open")
+@patch("pathlib.Path.exists")
+@patch("pathlib.Path.open")
 def test_load_config_file_exists(mock_open, mock_exists):
     """Test the load_config_file function when the config file exists."""
     mock_exists.return_value = True
@@ -77,21 +76,21 @@ def test_load_config_file_exists(mock_open, mock_exists):
         result = load_config_file()
 
     assert result == {"test": "value"}
-    mock_exists.assert_called_once_with(PRINTER_CONFIG_PATH)
-    mock_open.assert_called_once_with(PRINTER_CONFIG_PATH, encoding="utf-8")
+    mock_exists.assert_called_once()
+    mock_open.assert_called_once_with(encoding="utf-8")
     mock_json_load.assert_called_once()
 
 
-@patch("os.path.exists")
+@patch("pathlib.Path.exists")
 def test_load_config_file_not_exists(mock_exists):
     """Test the load_config_file function when the config file does not exist."""
     mock_exists.return_value = False
     result = load_config_file()
     assert result == {}
-    mock_exists.assert_called_once_with(PRINTER_CONFIG_PATH)
+    mock_exists.assert_called_once()
 
 
-@patch("builtins.open")
+@patch("pathlib.Path.open")
 def test_save_config_file(mock_open):
     """Test the save_config_file function."""
     mock_file = Mock()
@@ -100,7 +99,7 @@ def test_save_config_file(mock_open):
     with patch("json.dump") as mock_json_dump:
         save_config_file({"test": "value"})
 
-    mock_open.assert_called_once_with(PRINTER_CONFIG_PATH, "w", encoding="utf-8")
+    mock_open.assert_called_once_with("w", encoding="utf-8")
     mock_json_dump.assert_called_once_with({"test": "value"}, mock_file, indent=2)
 
 

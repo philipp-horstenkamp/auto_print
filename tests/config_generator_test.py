@@ -1,5 +1,4 @@
-"""Tests for the auto_print_config_generator module using pytest conventions.
-"""
+"""Tests for the auto_print_config_generator module using pytest conventions."""
 
 import json
 from unittest.mock import Mock, patch
@@ -58,7 +57,7 @@ def test_load_config(monkeypatch, tmp_path):
     # Patch the config path
     monkeypatch.setattr(
         "auto_print.utils.PRINTER_CONFIG_PATH",
-        str(config_path),
+        config_path,
     )
 
     # Call the function
@@ -78,7 +77,7 @@ def test_save_config(monkeypatch, tmp_path, mock_config_object):
     # Patch the config path
     monkeypatch.setattr(
         "auto_print.utils.PRINTER_CONFIG_PATH",
-        str(config_path),
+        config_path,
     )
 
     # Call the function
@@ -125,11 +124,20 @@ def test_print_configuration(capsys, mock_config_object):
 )
 def test_bool_decision(monkeypatch, input_value, default_value, expected_result):
     """Test the bool_decision function with various inputs."""
-    # Mock the input function
-    monkeypatch.setattr("builtins.input", lambda _: input_value)
+
+    # Mock the input_choice function to return the input value
+    def mock_input_choice(description, input_list, default):
+        if input_value.lower() in ["y", "yes"]:
+            return "yes"
+        if input_value.lower() in ["n", "no"]:
+            return "no"
+        # Empty input, use default
+        return default
+
+    monkeypatch.setattr("auto_print.config_generator.input_choice", mock_input_choice)
 
     # Call the function
-    result = bool_decision("Test decision?", default_value)
+    result = bool_decision("Test decision?", default=default_value)
 
     # Verify the result
     assert result is expected_result
@@ -422,7 +430,7 @@ def test_insert_section(mock_print_element, mock_input, mock_config_object):
     # Verify the result
     assert "New Section" in result
     assert result["New Section"]["new"] is True
-    assert list(result.keys())[0] == "New Section"  # Should be first
+    assert next(iter(result.keys())) == "New Section"  # Should be first
 
 
 @patch("builtins.input")

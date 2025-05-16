@@ -2,7 +2,6 @@
 
 import json
 import logging
-import os
 import sys
 import webbrowser
 from pathlib import Path
@@ -14,8 +13,8 @@ import win32print  # type: ignore
 # Constants
 AUTO_PRINTER_FOLDER: Final[Path] = Path.home() / Path("auto-printer")
 
-if not os.path.exists(AUTO_PRINTER_FOLDER):
-    os.mkdir(AUTO_PRINTER_FOLDER)
+if not AUTO_PRINTER_FOLDER.exists():
+    AUTO_PRINTER_FOLDER.mkdir()
 
 PRINTER_CONFIG_PATH: Final[Path] = AUTO_PRINTER_FOLDER / Path(
     "auto-printer-config.json"
@@ -86,8 +85,8 @@ def check_ghostscript() -> None:
     """
     try:
         import ghostscript  # type: ignore # noqa: F401
-    except RuntimeError as err:
-        logging.exception(err)
+    except RuntimeError:
+        logging.exception("Problem with ghostscript import")
         install_ghostscript()
 
 
@@ -97,10 +96,10 @@ def load_config_file() -> dict:
     Returns:
         dict: The configuration data as a dictionary. Returns an empty dictionary if the file doesn't exist.
     """
-    if not os.path.exists(PRINTER_CONFIG_PATH):
+    if not PRINTER_CONFIG_PATH.exists():
         return {}
     try:
-        with open(PRINTER_CONFIG_PATH, encoding="utf-8") as file:
+        with PRINTER_CONFIG_PATH.open(encoding="utf-8") as file:
             return json.load(file)
     except FileNotFoundError:
         return {}
@@ -112,7 +111,7 @@ def save_config_file(config_data: dict) -> None:
     Args:
         config_data: The configuration data to save.
     """
-    with open(PRINTER_CONFIG_PATH, "w", encoding="utf-8") as file:
+    with PRINTER_CONFIG_PATH.open("w", encoding="utf-8") as file:
         json.dump(config_data, file, indent=2)
     print("Config saved!")
 
@@ -130,6 +129,4 @@ def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) 
     """
     if prefix and not file_name.startswith(prefix):
         return False
-    if suffix and not file_name.endswith(suffix):
-        return False
-    return True
+    return not (suffix and not file_name.endswith(suffix))

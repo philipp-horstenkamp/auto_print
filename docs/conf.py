@@ -5,8 +5,9 @@
 
 import os
 import sys
+from importlib.metadata import metadata
 
-sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath(".."))  # noqa: PTH100
 
 from unittest.mock import MagicMock
 
@@ -26,12 +27,15 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "auto-print"
-copyright = "2023, Philipp Horstenkamp"
-author = "Philipp Horstenkamp"
+# Get metadata from the package
+_DISTRIBUTION_METADATA = metadata("auto-print")
+
+project = _DISTRIBUTION_METADATA["Name"]
+copyright = "2025, Philipp Horstenkamp"  # noqa: A001
+author = _DISTRIBUTION_METADATA["Author"]
 
 # The full version, including alpha/beta/rc tags
-release = "2.0.5"
+release = _DISTRIBUTION_METADATA["Version"]
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

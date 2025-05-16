@@ -15,6 +15,8 @@ import logging
 import os
 import subprocess
 import sys
+from pathlib import Path
+from typing import Final
 
 import win32api  # type: ignore
 import win32print  # type: ignore
@@ -27,9 +29,14 @@ from auto_print.utils import (
     provision_fulfilled,
 )
 
+# Constants
+PRINTER_NOT_FOUND_ERROR: Final[int] = 1801
+MIN_ARGS_COUNT: Final[int] = 2
+
 
 def get_parser():
     """Create an argument parser for the auto_print_execute module.
+
     This function is used for documentation purposes only.
 
     Returns:
@@ -82,7 +89,11 @@ def handle_printer_error(error: Exception, printer_name: str) -> None:
         printer_name: The name of the printer that was used.
     """
     # pylint: disable=unsubscriptable-object
-    if hasattr(error, "args") and len(error.args) > 0 and error.args[0] == 1801:
+    if (
+        hasattr(error, "args")
+        and len(error.args) > 0
+        and error.args[0] == PRINTER_NOT_FOUND_ERROR
+    ):
         logging.error(f'The printer with the name "{printer_name}" does not exists.')
     else:
         raise error
@@ -132,7 +143,7 @@ def printer_ghost_script(file_path: str, printer_name: str) -> None:
     # try to load the ghostscript software!
     check_ghostscript()
 
-    abspath = os.path.abspath(file_path)
+    abspath = Path(file_path).resolve()
     subprocess.call(
         "gswin32c "
         f'-sOutputFile="%printer%{printer_name}" '
@@ -157,13 +168,13 @@ def validate_arguments() -> str:
     for index, arg in enumerate(args):
         logging.debug(f'Argument {index} is "{arg}".')
 
-    if len(args) > 2:
+    if len(args) > MIN_ARGS_COUNT:
         logging.warning(
             "There is more then one additional Argument. Please only use the filename as an Argument!"
         )
         sys.exit(-2)
 
-    if len(args) != 2:
+    if len(args) != MIN_ARGS_COUNT:
         logging.warning("No file to print specified!")
         sys.exit(-1)
 
@@ -174,7 +185,7 @@ def validate_arguments() -> str:
 
     logging.info(f"File to print: {file_to_print_arg}")
 
-    if not os.path.exists(file_to_print_arg):
+    if not Path(file_to_print_arg).exists():
         logging.warning(
             "The file specified in the argument does not exist!\n"
             f'The specified path is: "{file_to_print_arg}".',
@@ -196,8 +207,7 @@ def process_file(
         file_to_print_name: The name of the file to print.
         printer_config: The printer configuration.
     """
-    for action_key in printer_config:
-        printer_action = printer_config[action_key]
+    for action_key, printer_action in printer_config.items():
         if not printer_action.get("active", "false"):
             logging.debug(f"The action {action_key} is not active.")
             continue
@@ -246,18 +256,18 @@ def main() -> None:
     # Configure logging
     configure_logger()
     logging.info("Starting the program!")
-    logging.info(f"Start programm in: {os.path.abspath(sys.path[0])}")
+    logging.info(f"Start programm in: {Path(sys.path[0]).resolve()}")
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
     # Validate arguments and get file path
     file_to_print_arg = validate_arguments()
-    file_to_print_name = os.path.basename(file_to_print_arg)
+    file_to_print_name = Path(file_to_print_arg).name
 
     # Load printer configuration
     try:
         printer_config = load_config_file()
     except Exception as main_error:  # pylint: disable=broad-exception-caught
-        logging.exception(main_error)
+        logging.exception("Error loading configuration file")
         print(main_error)
         sys.exit(-4)
 
