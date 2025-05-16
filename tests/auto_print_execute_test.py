@@ -1,6 +1,4 @@
-"""
-Tests for the auto_print_execute module.
-"""
+"""Tests for the auto_print_execute module."""
 
 from unittest.mock import patch
 
@@ -21,11 +19,11 @@ class TestProvisionFulfilled:
         assert provision_fulfilled("test_file.pdf", None, None) is True
 
     def test_matching_prefix_no_suffix(self):
-        """Test with matching prefix and no suffix."""
+        """Test with a matching prefix and no suffix."""
         assert provision_fulfilled("test_file.pdf", "test_", None) is True
 
     def test_non_matching_prefix_no_suffix(self):
-        """Test with non-matching prefix and no suffix."""
+        """Test with a non-matching prefix and no suffix."""
         assert provision_fulfilled("file.pdf", "test_", None) is False
 
     def test_no_prefix_matching_suffix(self):
@@ -37,11 +35,11 @@ class TestProvisionFulfilled:
         assert provision_fulfilled("file.txt", None, ".pdf") is False
 
     def test_matching_prefix_matching_suffix(self):
-        """Test with matching prefix and matching suffix."""
+        """Test with a matching prefix and matching suffix."""
         assert provision_fulfilled("test_file.pdf", "test_", ".pdf") is True
 
     def test_non_matching_prefix_matching_suffix(self):
-        """Test with non-matching prefix and matching suffix."""
+        """Test with a non-matching prefix and matching suffix."""
         assert provision_fulfilled("file.pdf", "test_", ".pdf") is False
 
     def test_matching_prefix_non_matching_suffix(self):

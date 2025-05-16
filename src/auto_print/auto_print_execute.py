@@ -1,5 +1,4 @@
-"""
-The goal of this project is to simplify the tedious task or printing similar forms.
+"""The goal of this project is to simplify the tedious task or printing similar forms.
 
 1. The program is started with a filepath as an argument.
 2. The filename gets extracted.
@@ -23,10 +22,14 @@ from typing import Final
 import win32api  # type: ignore
 import win32print  # type: ignore
 
+# Constants
+EXPECTED_ARG_COUNT: Final[int] = 2
+PRINTER_NOT_FOUND_ERROR: Final[int] = 1801
+
 
 def get_parser():
-    """
-    Create an argument parser for the auto_print_execute module.
+    """Create an argument parser for the auto_print_execute module.
+
     This function is used for documentation purposes only.
 
     Returns:
@@ -42,8 +45,8 @@ def get_parser():
 # defines the path of the printer config JSON file.
 AUTO_PRINTER_FOLDER: Final[Path] = Path.home() / Path("auto-printer")
 
-if not os.path.exists(AUTO_PRINTER_FOLDER):
-    os.mkdir(AUTO_PRINTER_FOLDER)
+if not AUTO_PRINTER_FOLDER.exists():
+    AUTO_PRINTER_FOLDER.mkdir(exist_ok=True)
 
 PRINTER_CONFIG_PATH: Final[Path] = AUTO_PRINTER_FOLDER / Path(
     "auto-printer-config.json"
@@ -56,7 +59,7 @@ LOG_FILE: Final[Path] = AUTO_PRINTER_FOLDER / Path("auto_print.log")
 
 
 def get_default_printer() -> str:
-    """Returns the default printers name"""
+    """Returns the default printers name."""
     try:
         return str(win32print.GetDefaultPrinter())
     except RuntimeError:
@@ -70,8 +73,8 @@ def get_printer_list() -> list[str]:
 
 # noinspection PyBroadException
 def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None:
-    """
-    Prints a document via the adobe pdf reader.
+    """Prints a document via the adobe pdf reader.
+
     :param filename: The name of the file that should be printed.
     :param file_path: The path of the file that should be printed.
     :param printer_name: The name of the printer that should be used.
@@ -92,26 +95,30 @@ def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None
                     h_printer, "test"
                 )  # Instead of raw text is there a way to print PDF File ?
                 win32print.EndPagePrinter(h_printer)
-            except Exception:  # pylint: disable=W0703
-                pass
+            except (OSError, RuntimeError):
+                logging.exception("Error during printing")
             finally:
                 win32print.EndDocPrinter(h_printer)
-        except Exception:  # pylint: disable=W0703
-            pass
+        except (OSError, RuntimeError):
+            logging.exception("Error during document printing")
         finally:
             win32print.ClosePrinter(h_printer)
-    except Exception as error:  # pylint: disable=W0703
-        # pylint: disable=unsubscriptable-object
-        if error[0] == 1801:  # type: ignore
-            logging.error(
-                f'The printer with the name "{printer_name}" does not exists.'
+    except OSError as error:
+        # Check for printer not found error
+        if hasattr(error, "__getitem__") and error[0] == PRINTER_NOT_FOUND_ERROR:
+            logging.exception(
+                f'The printer with the name "{printer_name}" does not exist.'
             )
         else:
-            raise error
+            raise
 
 
 def install_ghostscript():
-    """Helps to install ghostscript if it's missing on the system"""
+    """Help to install ghostscript if it's missing on the system.
+
+    This function displays a message box to the user and offers to open
+    the ghostscript download page in a web browser.
+    """
     for sys_arg in sys.argv:
         logging.error(f"Started with arguments: {sys_arg}")
     from tkinter import messagebox
@@ -131,17 +138,22 @@ def install_ghostscript():
 
 
 def check_ghostscript():
-    """Check if ghostscript is installed"""
+    """Check if ghostscript is installed.
+
+    This function attempts to import the ghostscript module.
+    If the import fails, it calls the install_ghostscript function
+    to guide the user through the installation process.
+    """
     try:
         import ghostscript  # type: ignore # noqa: F401
-    except RuntimeError as err:
-        logging.error(err)
+    except RuntimeError:
+        logging.exception("Can't import ghostscript. Installation probably not valid.")
         install_ghostscript()
 
 
 def printer_ghost_script(file_path: str, printer_name: str) -> None:
-    """
-    Prints a document with the ghostscript printer.
+    """Prints a document with the ghostscript printer.
+
     :param file_path: The path of the file that should be printed.
     :param printer_name: The name of the printer that should be used.
     :return: None
@@ -154,7 +166,7 @@ def printer_ghost_script(file_path: str, printer_name: str) -> None:
     # try to load the ghostscript software!
     check_ghostscript()
 
-    abspath = os.path.abspath(file_path)
+    abspath = str(Path(file_path).resolve())
     subprocess.call(
         "gswin32c "
         f'-sOutputFile="%printer%{printer_name}" '
@@ -169,22 +181,24 @@ def printer_ghost_script(file_path: str, printer_name: str) -> None:
 
 
 def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) -> bool:
-    """
-    Checks if a provision is fulfilled to execute a section of the Programm.
-    :param file_name:
+    """Checks if a provision is fulfilled to execute a section of the Program.
+
+    :param file_name: The name of the file to check.
     :param prefix: A prefix of the basename. Checks if the suffix is fulfilled.
     :param suffix: A suffix of the basename (file extension).
     :return: Returns true if all provisions are fulfilled.
     """
     if prefix and not file_name.startswith(prefix):
         return False
-    if suffix and not file_name.endswith(suffix):
-        return False
-    return True
+    return not (suffix and not file_name.endswith(suffix))
 
 
 def configure_logger() -> None:
-    """Configure a logger."""
+    """Configure the application logger.
+
+    Sets up a file-based logger that writes to LOG_FILE with DEBUG level.
+    The logger uses a timestamp format and appends to the existing log file.
+    """
     try:
         logging.basicConfig(
             filename=LOG_FILE,
@@ -192,16 +206,32 @@ def configure_logger() -> None:
             level=logging.DEBUG,
             filemode="a",
         )
-    except Exception as error:  # pylint: disable=broad-exception-caught
-        print(error)
+    except (PermissionError, OSError) as error:
+        print(f"Error configuring logger: {error}")
 
 
-# The main function should be started as shown above.
 def main() -> None:  # noqa: PLR0912
+    """Execute the main auto-print functionality.
+
+    This function:
+    1. Configures the logger
+    2. Processes command line arguments
+    3. Validates the file to print
+    4. Loads the printer configuration
+    5. Determines the appropriate action based on the filename
+    6. Either prints the file or opens it with the default application
+
+    Exit codes:
+    -1: No file specified
+    -2: Too many arguments
+    -3: File does not exist
+    -4: Error loading configuration
+    -5: Empty file path
+    """
     # loads the argument that where used to start this software.
     configure_logger()
     logging.info("Starting the program!")
-    logging.info(f"Start programm in: {os.path.abspath(sys.path[0])}")
+    logging.info(f"Start program in: {Path(sys.path[0]).resolve()}")
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
     args = sys.argv  # loading the arguments
@@ -209,45 +239,43 @@ def main() -> None:  # noqa: PLR0912
         logging.debug(f'Argument {index} is "{arg}".')
         del index, arg
 
-    if len(args) != 2:
+    if len(args) != EXPECTED_ARG_COUNT:
         logging.warning("No file to print specified!")
         sys.exit(-1)
 
-    if len(args) > 2:
+    if len(args) > EXPECTED_ARG_COUNT:
         logging.warning(
             "There is more then one additional Argument. Please only use the filename as an Argument!"
         )
         sys.exit(-2)
 
     # The first argument should always be the path of the file.
-    # file_to_print_arg: str = os.path.abspath(args[1])
     file_to_print_arg: str = args[1]
 
     if not file_to_print_arg:
         sys.exit(-5)
-    # file_to_print_folder: str = os.path.dirname(file_to_print_arg)
-    file_to_print_name: str = os.path.basename(file_to_print_arg)
+    file_to_print_name: str = Path(file_to_print_arg).name
 
     logging.info(f"File to print: {file_to_print_arg}")
 
-    if not os.path.exists(file_to_print_arg):  # checks if the file exists!
+    if not Path(file_to_print_arg).exists():  # checks if the file exists!
         logging.warning(
             "The file specified in the argument does not exist!\n"
             f'The specified path is: "{file_to_print_arg}".',
         )
         sys.exit(-3)
     try:
-        with open(PRINTER_CONFIG_PATH, encoding="utf-8") as printer_config_file:
+        with PRINTER_CONFIG_PATH.open(encoding="utf-8") as printer_config_file:
             printer_config = json.load(printer_config_file)
-    except Exception as main_error:  # pylint: disable=broad-exception-caught
-        logging.error(main_error)
+    except (FileNotFoundError, json.JSONDecodeError) as main_error:
+        logging.exception("Error loading printer configuration")
         print(main_error)
         sys.exit(-4)
 
     for action_key in printer_config:
         printer_action = printer_config[action_key]
         if not printer_action.get(
-            "active", "false"
+            "active", False
         ):  # skip if printer action is disabled!
             logging.debug(f"The action {action_key} is not active.")
             continue
@@ -261,9 +289,9 @@ def main() -> None:  # noqa: PLR0912
         logging.info(
             f"The action {action_key} is the valid action. This action will be executed!"
         )
-        if bool(printer_action.get("print", "false")):
+        if printer_action.get("print", False):
             printer_to_use: str = printer_action.get("printer", get_default_printer())
-            if bool(printer_action.get("show", "true")):
+            if printer_action.get("show", True):
                 printer_pdf_reader(
                     file_to_print_arg, file_to_print_name, printer_to_use
                 )
