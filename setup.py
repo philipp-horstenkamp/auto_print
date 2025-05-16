@@ -1,5 +1,4 @@
-"""
-cx_Freeze setup script for building executable files.
+"""cx_Freeze setup script for building executable files.
 
 This script configures cx_Freeze to build standalone executables for:
 1. auto_print_config_generator - Configuration tool for auto_print
@@ -11,8 +10,8 @@ import sys
 from cx_Freeze import Executable, setup
 
 import auto_print
-import auto_print.auto_print_config_generator as ag
-import auto_print.auto_print_execute as ap
+import auto_print.config_generator as ag
+import auto_print.execute as ap
 
 # Dependencies are automatically detected, but it might need fine tuning
 build_options = {

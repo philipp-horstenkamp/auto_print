@@ -1,37 +1,63 @@
-"""
-Configuration generator for the module.
-"""
+"""Configuration generator for the module."""
 
 import argparse
-import json
 import os.path
 import webbrowser
 from typing import Any
 
 from case_insensitive_dict import CaseInsensitiveDict
 
-from auto_print.auto_print_execute import (
-    PRINTER_CONFIG_PATH,
+from auto_print.utils import (
     check_ghostscript,
     configure_logger,
     get_default_printer,
     get_printer_list,
+    load_config_file,
+    save_config_file,
 )
 
 
+class EmptyInputListError(ValueError):
+    """Raised when the input list is empty."""
+
+    def __init__(self):
+        """Initialize the exception with a descriptive message."""
+        super().__init__(
+            "The list of possible inputs need to be defined and have a minimum length of one."
+        )
+
+
+class EmptyDescriptionError(ValueError):
+    """Raised when the description is empty."""
+
+    def __init__(self):
+        """Initialize the exception with a descriptive message."""
+        super().__init__("The text should be defined.")
+
+
+class DefaultNotInListError(ValueError):
+    """Raised when the default value is not in the input list."""
+
+    def __init__(self):
+        """Initialize the exception with a descriptive message."""
+        super().__init__(
+            "The default input needs to be in the list of allowed choices."
+        )
+
+
 def get_parser():
-    """
-    Create an argument parser for the auto_print_config_generator module.
+    """Create an argument parser for the auto_print_config_generator module.
+
     This function is used for documentation purposes only.
 
     Returns:
         argparse.ArgumentParser: The argument parser
+
     """
-    parser = argparse.ArgumentParser(
+    return argparse.ArgumentParser(
         description="Interactive configuration generator for auto-print. "
         "This tool helps you create and manage printer configurations."
     )
-    return parser
 
 
 def input_choice(description: str, input_list: list[str], default: str):
@@ -44,17 +70,14 @@ def input_choice(description: str, input_list: list[str], default: str):
 
     Returns:
         The choice made.
+
     """
     if not input_list:
-        raise ValueError(
-            "The list of possible inputs need to be defined and have a minimum length of one."
-        )
+        raise EmptyInputListError()
     if not description:
-        raise ValueError("The text should be defined.")
+        raise EmptyDescriptionError()
     if default not in input_list:
-        raise ValueError(
-            "The default input needs to be in the list of allowed choices."
-        )
+        raise DefaultNotInListError()
     possible_inputs = input_list[:]
     while True:
         print(description)
@@ -67,15 +90,16 @@ def input_choice(description: str, input_list: list[str], default: str):
             return text_in
 
 
-def bool_decision(description: str, default: bool) -> bool:
+def bool_decision(description: str, *, default: bool) -> bool:
     """Tooling to interpret a yes/no decision.
 
     Args:
         description: The description for the decision.
-        default: The default value.
+        default: The default value. Defaults to True.
 
     Returns:
         True or false depending on user input.
+
     """
     return (
         input_choice(description, ["yes", "y", "no", "n"], "yes" if default else "no")[
@@ -92,16 +116,14 @@ def print_element(name: str, config_element: dict[str, Any], index: int | None) 
         name: The name of the printer configuration section.
         config_element: The complete section of the printer configuration.
         index: The index of the section. Can be None if a section should not be printed with index.
+
     """
     printer = config_element.get("printer", get_default_printer())
     printing = config_element.get("print", False)
-    suffix = config_element.get("suffix", None)
-    prefix = config_element.get("prefix", None)
+    suffix = config_element.get("suffix")
+    prefix = config_element.get("prefix")
 
-    if index is None:
-        next_str = "    Config"
-    else:
-        next_str = f"{index + 1:>2}. Prio config"
+    next_str = "    Config" if index is None else f"{index + 1:>2}. Prio config"
     next_str += f' section with name "{name}" '
     if printing:
         next_str += f'prints on "{printer}"'
@@ -131,6 +153,7 @@ def print_configuration(config_object: CaseInsensitiveDict[str, dict]) -> None:
 
     Args:
         config_object: A auto-print configuration object.
+
     """
     print("The current config works as follows:\n")
     if config_object is None:
@@ -144,20 +167,97 @@ def print_configuration(config_object: CaseInsensitiveDict[str, dict]) -> None:
 
 def load_config() -> CaseInsensitiveDict[str, dict[str, Any]]:
     """Loads the configuration."""
-    if not os.path.exists(PRINTER_CONFIG_PATH):
-        return CaseInsensitiveDict[str, dict](data={})
-    with open(PRINTER_CONFIG_PATH, encoding="utf-8") as file:
-        try:
-            return CaseInsensitiveDict[str, dict](data=json.load(file))
-        except FileNotFoundError:
-            return CaseInsensitiveDict[str, dict](data={})
+    config_data = load_config_file()
+    return CaseInsensitiveDict[str, dict](data=config_data)
 
 
 def save_config(config_object: CaseInsensitiveDict[str, dict[str, Any]]) -> None:
     """Saves the configuration."""
-    with open(PRINTER_CONFIG_PATH, "w", encoding="utf-8") as file:
-        json.dump(config_object.__dict__, file, indent=2)
-    print("Config saved!")
+    save_config_file(config_object.__dict__)
+
+
+def configure_prefix(config_element: dict[str, Any]) -> None:
+    """Configure the prefix filter for a section.
+
+    Args:
+        config_element: The section configuration to update.
+
+    """
+    print(
+        "Filter by the start of a file.\n"
+        'Something like "test_str" to filter all files who start with with "test_str"\n'
+        "Can be empty if no filter of this type should be used!"
+    )
+
+    config_element["prefix"] = input("Type prefix:").strip()
+    if config_element["prefix"] == "":
+        del config_element["prefix"]
+
+
+def configure_suffix(config_element: dict[str, Any]) -> None:
+    """Configure the suffix filter for a section.
+
+    Args:
+        config_element: The section configuration to update.
+
+    """
+    print(
+        "Filter by the end of a file.\n"
+        'Something like "t_file.pdf" to filter all pdfs files who end with "t_file"\n'
+        "Can be empty if no filter of this type should be used!"
+    )
+    print("If nothing is typed in no suffix will be defined.")
+    config_element["suffix"] = input("Type suffix:").strip()
+    if config_element["suffix"] == "":
+        del config_element["suffix"]
+
+
+def configure_print_settings(config_element: dict[str, Any]) -> None:
+    """Configure the print settings for a section.
+
+    Args:
+        config_element: The section configuration to update.
+
+    """
+    config_element["print"] = bool_decision(
+        "Should the filtered file be printed automatically?",
+        default=config_element.get("print", True),
+    )
+
+    if config_element["print"]:
+        config_element["printer"] = input_choice(
+            "Please choose a printer to use:",
+            get_printer_list(),
+            get_default_printer(),
+        )
+    else:
+        config_element["printer"] = get_default_printer()
+
+
+def configure_display_settings(config_element: dict[str, Any]) -> None:
+    """Configure the display settings for a section.
+
+    Args:
+        config_element: The section configuration to update.
+
+    """
+    config_element["show"] = bool_decision(
+        "Should the file be shown by the system default?",
+        default=config_element.get("show", False),
+    )
+
+
+def configure_activation(config_element: dict[str, Any]) -> None:
+    """Configure whether the section is active.
+
+    Args:
+        config_element: The section configuration to update.
+
+    """
+    config_element["active"] = bool_decision(
+        "Should the new section be activated?",
+        default=config_element.get("active", True),
+    )
 
 
 def edit_section(
@@ -171,63 +271,22 @@ def edit_section(
 
     Returns:
         The new section of the auto-print configuration.
+
     """
     while True:
-        # prefix
-        print(
-            "Filter by the start of a file.\n"
-            'Something like "test_str" to filter all files who start with with "test_str"\n'
-            "Can be empty if no filter of this type should be used!"
-        )
+        # Configure each part of the section
+        configure_prefix(config_element)
+        configure_suffix(config_element)
+        configure_print_settings(config_element)
+        configure_display_settings(config_element)
+        configure_activation(config_element)
 
-        config_element["prefix"] = input("Type prefix:").strip()
-        if config_element["prefix"] == "":
-            del config_element["prefix"]
-
-        # suffix
-        print(
-            "Filter by the end of a file.\n"
-            'Something like "t_file.pdf" to filter all pdfs files who end with "t_file"\n'
-            "Can be empty if no filter of this type should be used!"
-        )
-        print("If nothing is typed in no suffix will be defined.")
-        config_element["suffix"] = input("Type suffix:").strip()
-        if config_element["suffix"] == "":
-            del config_element["suffix"]
-
-        # optional print
-        config_element["print"] = bool_decision(
-            "Should the filtered file be printed automatically?",
-            config_element.get("print", True),
-        )
-
-        if config_element["print"]:
-            config_element["printer"] = input_choice(
-                "Please choose a printer to use:",
-                get_printer_list(),
-                get_default_printer(),
-            )
-        else:
-            config_element["printer"] = get_default_printer()
-
-        # show
-        config_element["show"] = bool_decision(
-            "Should the file be shown by the system default?",
-            config_element.get("show", False),
-        )
-
-        # activate
-        config_element["active"] = bool_decision(
-            "Should the new section be activated?",
-            config_element.get("active", True),
-        )
-
-        # show
+        # Show the configuration
         print()
         print_element(name, config_element, None)
 
-        # check
-        if bool_decision("Is the above section correct?", True):
+        # Check if the configuration is correct
+        if bool_decision("Is the above section correct?", default=True):
             return name, config_element
         print("Please make changes as needed.")
 
@@ -242,6 +301,7 @@ def create_section(
 
     Returns:
         The new auto-printer configuration.
+
     """
     config_element: dict[str, Any] = {}
     name = ""
@@ -258,6 +318,49 @@ def create_section(
     return edit_section(name, config_element)
 
 
+def display_insert_positions(
+    config_object: CaseInsensitiveDict[str, dict[str, Any]],
+) -> int:
+    """Display all possible insert positions for a new section.
+
+    Args:
+        config_object: The current configuration object.
+
+    Returns:
+        The end position (number of sections).
+
+    """
+    for insert_pos, (name, section) in enumerate(config_object.items()):
+        print(f"Insert Position {insert_pos} ->")
+        print_element(name, section, None)
+    end_pos = len(config_object.keys())
+    print(f"Insert Position {end_pos} ->")
+    print()
+    return end_pos
+
+
+def get_insert_position(end_pos: int) -> str:
+    """Get the position where to insert the new section.
+
+    Args:
+        end_pos: The end position (number of sections).
+
+    Returns:
+        The position as a string, or "cancel" to cancel the operation.
+
+    """
+    insert_str: str = input_choice(
+        "Please choose where to add the section or choose cancel to cancel this action:",
+        ["start"] + [str(n) for n in range(end_pos + 1)] + ["end", "cancel", "c"],
+        "end",
+    )
+    if insert_str == "end":
+        return str(end_pos)
+    if insert_str == "start":
+        return "0"
+    return insert_str
+
+
 def insert_section(
     config_object: CaseInsensitiveDict[str, dict[str, Any]],
     name_to_add: str,
@@ -272,29 +375,16 @@ def insert_section(
 
     Returns:
         The new completed section.
-    """
-    for insert_pos, (name, section) in enumerate(config_object.items()):
-        print(f"Insert Position {insert_pos} ->")
-        print_element(name, section, None)
-    end_pos = len(config_object.keys())
-    print(f"Insert Position {end_pos} ->")
-    print()
 
-    insert_str: str = input_choice(
-        "Please choose where to add the section or choose cancel to cancel this action:",
-        ["start"] + [str(n) for n in range(end_pos + 1)] + ["end", "cancel", "c"],
-        "end",
-    )
-    if insert_str == "end":
-        insert_str = str(end_pos)
-    elif insert_str == "start":
-        insert_str = "0"
-    elif insert_str in ["cancel", "c"]:
+    """
+    end_pos = display_insert_positions(config_object)
+    insert_str = get_insert_position(end_pos)
+
+    if insert_str in ["cancel", "c"]:
         print_configuration(config_object)
         return config_object
 
     key_list = list(config_object.keys())
-
     key_list.insert(int(insert_str), name_to_add)
     config_object[name_to_add] = section_to_add
     config_object = CaseInsensitiveDict[str, dict[str, Any]](
@@ -314,6 +404,7 @@ def add_section(
 
     Returns:
         The new configuration.
+
     """
     print("Add a new printer configuration:")
     new_name, new_section = create_section(config_object)
@@ -330,6 +421,7 @@ def delete_section(
 
     Returns:
         The newly generated/edited config_object.
+
     """
     if not config_object:
         print("There are no section to delete.")
@@ -366,6 +458,7 @@ def change_section_position(
 
     Returns:
         The newly generated/edited config_object.
+
     """
     section_names = list(config_object.keys())
     if not section_names:
@@ -397,8 +490,8 @@ def edit_section_command(
 
     Returns:
         The newly generated/edited config_object.
-    """
 
+    """
     section_names = list(config_object.keys())
     if not section_names:
         print("There is no section to edit.")
@@ -434,6 +527,7 @@ def generate_list_of_available_commands(
 
     Returns:
         The generated list of possible commands.
+
     """
     options = ["save", "s", "close", "c", "add", "a"]
     if config_object:
@@ -457,6 +551,7 @@ def repair_config(
 
     Returns:
         The generated list of possible commands.
+
     """
     printer_list = get_printer_list()
     error_found = False
@@ -483,7 +578,51 @@ def repair_config(
     return config_object
 
 
+def handle_action(
+    action: str, config: CaseInsensitiveDict[str, dict[str, Any]]
+) -> tuple[CaseInsensitiveDict[str, dict[str, Any]], bool]:
+    """Handle a user action.
+
+    Args:
+        action: The action to handle.
+        config: The current configuration.
+
+    Returns:
+        A tuple containing the updated configuration and a boolean indicating whether to exit the program.
+
+    """
+    print(f"Action: {action}")
+    exit_program = False
+
+    if action in ["s", "save"]:
+        save_config(config)
+    elif action in ["add", "a"]:
+        config = add_section(config)
+    elif action in ["delete", "d"]:
+        config = delete_section(config)
+    elif action in ["repair", "r"]:
+        config = repair_config(config)
+    elif action in ["show"]:
+        print()
+        print_configuration(config)
+    elif action in ["change"]:
+        config = change_section_position(config)
+    elif action in ["edit", "e"]:
+        config = edit_section_command(config)
+    elif action in ["close", "c"]:
+        if load_config() == config or bool_decision(
+            "There are unsaved changes. Please confirm with y/n if you want to close anyway[n]:",
+            default=True,
+        ):
+            exit_program = True
+    elif action in ["help", "h"]:
+        show_help()
+
+    return config, exit_program
+
+
 def main() -> None:
+    """Main function for the configuration generator."""
     configure_logger()
     check_ghostscript()
 
@@ -500,33 +639,9 @@ def main() -> None:
             "close",
         )
 
-        print(f"Action: {action}")
-        if action in ["s", "save"]:
-            save_config(config)
-        elif action in ["add", "a"]:
-            config = add_section(config)
-        elif action in ["delete", "d"]:
-            config = delete_section(config)
-        elif action in ["repair", "r"]:
-            config = repair_config(config)
-        elif action in ["show"]:
-            print()
-            print_configuration(config)
-        elif action in ["change"]:
-            config = change_section_position(config)
-        elif action in ["edit", "e"]:
-            config = edit_section_command(config)
-
-        elif action in ["close", "c"]:
-            if load_config() == config:
-                break
-            if bool_decision(
-                "There are unsaved changes. Please confirm with y/n if you want to close anyway[n]:",
-                True,
-            ):
-                break
-        elif action in ["help", "h"]:
-            show_help()
+        config, exit_program = handle_action(action, config)
+        if exit_program:
+            break
 
 
 if __name__ == "__main__":

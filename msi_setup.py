@@ -1,5 +1,4 @@
-"""
-MSI Installer Setup Script for Auto Print Application with Context Menu Integration
+"""MSI Installer Setup Script for Auto Print Application with Context Menu Integration.
 
 This script configures and builds a Windows MSI installer for the Auto Print application
 using cx_Freeze. It includes:
@@ -19,13 +18,11 @@ The installer includes:
 - Component and directory configurations
 
 This script also defines:
-- File associations for PDF files using context menu only
+- File associations for PDF files using the context menu only
 - Avoids setting the application as the default handler for PDF files
 - All settings applied for all users (system-wide installation)
 
 Implementation details:
-- Uses HKEY_CLASSES_ROOT via Root=0 in registry entries, which maps to HKLM\Software\Classes
-  when `all_users=True`, ensuring all-user installation
 - Context menu added under SystemFileAssociations to not interfere with default PDF application
 - Assertions added to validate assumptions and configuration correctness
 
@@ -59,12 +56,12 @@ Define the executables to be included in the installer package.
 
 This list contains two executables:
 1. auto-print.exe - The main application executable for printing documents
-   - Uses auto_print_execute.py as the source script
+   - Uses execute.py as the source script
    - Uses printer.ico as its icon
    - There is no shortcut to the application created
 
 2. auto-print-config.exe - The configuration tool executable
-   - Uses auto_print_config_generator.py as the source script
+   - Uses config_generator.py as the source script
    - Uses printer-gear.ico as its icon
    - Creates a shortcut in the Start Menu (ProgramMenuFolder)
    - Shortcut is named "Auto Print Config"
@@ -73,13 +70,13 @@ Both executables use the previously defined base to determine their application 
 """
 executables = [
     Executable(
-        script="src/auto_print/auto_print_execute.py",
+        script="src/auto_print/execute.py",
         base=base,
         target_name=app_exe_name,
         icon="printer.ico",
     ),
     Executable(
-        script="src/auto_print/auto_print_config_generator.py",
+        script="src/auto_print/config_generator.py",
         base=None,  # Use console mode for config generator to run in cmd
         target_name="auto-print-config.exe",
         icon="printer-gear.ico",
@@ -212,6 +209,7 @@ bdist_msi_options = {
 
 
 def txt_to_rtf(input_path: str, output_path: str) -> None:
+    """Converts a text file to RTF format."""
     text = Path(input_path).read_text(encoding="utf-8")
 
     # Basic RTF header and footer
