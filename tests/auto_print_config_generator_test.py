@@ -33,19 +33,16 @@ def mock_config_object():
 
 
 @patch("auto_print.auto_print_config_generator.PRINTER_CONFIG_PATH")
-@patch(
-    "builtins.open",
-    new_callable=mock_open,
-    read_data='{"Test Section": {"printer": "Test Printer"}}',
-)
 @patch("json.load")
-def test_load_config(mock_json_load, mock_file, mock_config_path):
+def test_load_config(mock_json_load, mock_config_path):
     """Test the load_config function."""
     mock_json_load.return_value = {"Test Section": {"printer": "Test Printer"}}
+    mock_file = mock_open(read_data='{"Test Section": {"printer": "Test Printer"}}')
+    mock_config_path.open.return_value = mock_file()
 
     result = load_config()
 
-    mock_file.assert_called_once_with(mock_config_path, encoding="utf-8")
+    mock_config_path.open.assert_called_once_with(encoding="utf-8")
     mock_json_load.assert_called_once()
     assert isinstance(result, CaseInsensitiveDict)
     assert "Test Section" in result
@@ -53,13 +50,15 @@ def test_load_config(mock_json_load, mock_file, mock_config_path):
 
 
 @patch("auto_print.auto_print_config_generator.PRINTER_CONFIG_PATH")
-@patch("builtins.open", new_callable=mock_open)
 @patch("json.dump")
-def test_save_config(mock_json_dump, mock_file, mock_config_path, mock_config_object):
+def test_save_config(mock_json_dump, mock_config_path, mock_config_object):
     """Test the save_config function."""
+    mock_file = mock_open()
+    mock_config_path.open.return_value = mock_file()
+
     save_config(mock_config_object)
 
-    mock_file.assert_called_once_with(mock_config_path, "w", encoding="utf-8")
+    mock_config_path.open.assert_called_once_with("w", encoding="utf-8")
     mock_json_dump.assert_called_once()
     # Check that the first argument to json.dump is our config object's __dict__
     assert mock_json_dump.call_args[0][0] == mock_config_object.__dict__
@@ -77,7 +76,7 @@ def test_print_configuration(mock_print, mock_config_object):
 @patch("builtins.input", return_value="y")
 def test_bool_decision_yes(mock_input):
     """Test the bool_decision function with 'y' input."""
-    result = bool_decision("Test decision?", False)
+    result = bool_decision("Test decision?", default=False)
     assert result is True
     mock_input.assert_called_once()
 
@@ -85,15 +84,15 @@ def test_bool_decision_yes(mock_input):
 @patch("builtins.input", return_value="n")
 def test_bool_decision_no(mock_input):
     """Test the bool_decision function with 'n' input."""
-    result = bool_decision("Test decision?", True)
+    result = bool_decision("Test decision?", default=True)
     assert result is False
     mock_input.assert_called_once()
 
 
 @patch("builtins.input", return_value="")
 def test_bool_decision_default(mock_input):
-    """Test the bool_decision function with default input."""
-    result = bool_decision("Test decision?", True)
+    """Test the bool_decision function with the default input."""
+    result = bool_decision("Test decision?", default=True)
     assert result is True
     mock_input.assert_called_once()
 
