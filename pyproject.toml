@@ -49,8 +49,8 @@ ruff = "*"
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.5"
 pytest-cov = "^4.1.0"
-pytest-randomly = "^3.16.0"
 pytest-github-actions-annotate-failures = "^0.2.0"
+pytest-randomly = "^3.16.0"
 
 [tool.poetry.scripts]
 auto-print = "auto_print.execute:main"
