@@ -1,6 +1,4 @@
-"""
-Tests for the auto_print_config_generator module.
-"""
+"""Tests for the auto_print_config_generator module."""
 
 from unittest.mock import mock_open, patch
 

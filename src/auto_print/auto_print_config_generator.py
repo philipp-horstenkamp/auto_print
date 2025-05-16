@@ -1,6 +1,4 @@
-"""
-Configuration generator for the module.
-"""
+"""Configuration generator for the module."""
 
 import argparse
 import json
@@ -20,8 +18,7 @@ from auto_print.auto_print_execute import (
 
 
 def get_parser():
-    """
-    Create an argument parser for the auto_print_config_generator module.
+    """Create an argument parser for the auto_print_config_generator module.
     This function is used for documentation purposes only.
 
     Returns:
@@ -95,8 +92,8 @@ def print_element(name: str, config_element: dict[str, Any], index: int | None) 
     """
     printer = config_element.get("printer", get_default_printer())
     printing = config_element.get("print", False)
-    suffix = config_element.get("suffix", None)
-    prefix = config_element.get("prefix", None)
+    suffix = config_element.get("suffix")
+    prefix = config_element.get("prefix")
 
     if index is None:
         next_str = "    Config"
@@ -398,7 +395,6 @@ def edit_section_command(
     Returns:
         The newly generated/edited config_object.
     """
-
     section_names = list(config_object.keys())
     if not section_names:
         print("There is no section to edit.")
