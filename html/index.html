@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to auto-print’s documentation! &mdash; auto-print 2.0.0a5 documentation</title>
+  <title>Welcome to auto-print’s documentation! &mdash; auto-print 2.0.5 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=683eb3c5"></script>
+        <script src="_static/documentation_options.js?v=09beee0d"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -75,6 +75,25 @@
              
   <section id="welcome-to-auto-print-s-documentation">
 <h1>Welcome to auto-print’s documentation!<a class="headerlink" href="#welcome-to-auto-print-s-documentation" title="Link to this heading"></a></h1>
+<p>Auto-print is a document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns.</p>
+<section id="how-it-works">
+<h2>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>The program is started with a filepath as an argument</p></li>
+<li><p>The filename gets extracted</p></li>
+<li><p>The filename is compared to a list of configured suffixes and prefixes</p></li>
+<li><p>If suffix and prefix match, the file gets processed according to the configuration</p></li>
+<li><p>The file is then either printed directly and/or shown in the default application</p></li>
+</ol>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Route documents to specific printers based on filename patterns</p></li>
+<li><p>Configure whether to print directly or open with default application</p></li>
+<li><p>Easily integrate with browsers as the default PDF handler</p></li>
+<li><p>Simple configuration through an interactive interface</p></li>
+</ul>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -106,6 +125,7 @@
 </ul>
 </div>
 </section>
+</section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
 <ul class="simple">
@@ -125,7 +145,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Philipp Horstenkamp.</p>
+    <p>&#169; Copyright 2023, Philipp Horstenkamp.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
