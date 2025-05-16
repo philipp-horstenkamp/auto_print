@@ -3,18 +3,24 @@ Tests for the auto_print_config_generator module using pytest conventions.
 """
 
 import json
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 from case_insensitive_dict import CaseInsensitiveDict
 
 from auto_print.config_generator import (
     bool_decision,
+    edit_section,
+    edit_section_command,
+    generate_list_of_available_commands,
+    get_parser,
     input_choice,
     load_config,
     print_configuration,
+    print_element,
     repair_config,
     save_config,
+    show_help,
 )
 
 
@@ -199,3 +205,351 @@ def test_repair_config_with_valid_printer(monkeypatch, mock_config_object):
     # Verify the result
     assert result["Test Section"]["printer"] == "PDF24"
     assert input_mock.call_count == 0
+
+
+def test_get_parser():
+    """Test the get_parser function."""
+    parser = get_parser()
+    assert parser.description is not None
+    assert "auto-print" in parser.description.lower()
+
+
+def test_print_element(capsys, mock_config_object):
+    """Test the print_element function."""
+    # Call the function with index
+    print_element("Test Section", mock_config_object["Test Section"], 0)
+
+    # Capture the output
+    captured = capsys.readouterr()
+
+    # Verify the output
+    assert "1. Prio config" in captured.out
+    assert "Test Section" in captured.out
+
+    # Call the function without index
+    print_element("Test Section", mock_config_object["Test Section"], None)
+
+    # Capture the output
+    captured = capsys.readouterr()
+
+    # Verify the output
+    assert "Config section" in captured.out
+    assert "Test Section" in captured.out
+
+
+def test_generate_list_of_available_commands_empty_config():
+    """Test generate_list_of_available_commands with an empty config."""
+    empty_config = CaseInsensitiveDict({})
+    commands = generate_list_of_available_commands(empty_config)
+
+    # Basic commands should always be available
+    assert "save" in commands
+    assert "s" in commands
+    assert "close" in commands
+    assert "c" in commands
+    assert "add" in commands
+    assert "a" in commands
+    assert "show" in commands
+    assert "help" in commands
+    assert "h" in commands
+
+    # These commands should not be available for empty config
+    assert "repair" not in commands
+    assert "r" not in commands
+    assert "delete" not in commands
+    assert "d" not in commands
+    assert "change" not in commands
+    assert "edit" not in commands
+    assert "e" not in commands
+
+
+def test_generate_list_of_available_commands_with_config(mock_config_object):
+    """Test generate_list_of_available_commands with a config."""
+    commands = generate_list_of_available_commands(mock_config_object)
+
+    # All commands should be available
+    assert "save" in commands
+    assert "s" in commands
+    assert "close" in commands
+    assert "c" in commands
+    assert "add" in commands
+    assert "a" in commands
+    assert "show" in commands
+    assert "help" in commands
+    assert "h" in commands
+    assert "repair" in commands
+    assert "r" in commands
+    assert "delete" in commands
+    assert "d" in commands
+    assert "edit" in commands
+    assert "e" in commands
+
+    # "change" should not be available for a config with only one section
+    assert "change" not in commands
+
+    # Add another section to the config
+    config_with_two_sections = CaseInsensitiveDict(
+        {
+            "Test Section": mock_config_object["Test Section"],
+            "Another Section": mock_config_object["Test Section"],
+        }
+    )
+
+    # Now "change" should be available
+    commands = generate_list_of_available_commands(config_with_two_sections)
+    assert "change" in commands
+
+
+@patch("webbrowser.open")
+def test_show_help(mock_webbrowser_open, monkeypatch):
+    """Test the show_help function."""
+    # Mock os.path.realpath to return a fixed path
+    monkeypatch.setattr("os.path.realpath", lambda x: "/path/to/README.html")
+
+    # Call the function
+    show_help()
+
+    # Verify webbrowser.open was called with the correct URL
+    mock_webbrowser_open.assert_called_once_with("file:///path/to/README.html")
+
+
+@patch("builtins.input")
+def test_edit_section(mock_input, monkeypatch, mock_config_object):
+    """Test the edit_section function."""
+    # Set up the input sequence
+    mock_input.side_effect = [
+        "new_prefix_",  # prefix
+        ".pdf",  # suffix
+        "y",  # print
+        "Microsoft Print to PDF",  # printer
+        "y",  # show
+        "y",  # active
+        "y",  # is correct
+    ]
+
+    # Mock get_printer_list and get_default_printer
+    monkeypatch.setattr(
+        "auto_print.config_generator.get_printer_list",
+        lambda: ["Microsoft Print to PDF"],
+    )
+    monkeypatch.setattr(
+        "auto_print.config_generator.get_default_printer",
+        lambda: "Microsoft Print to PDF",
+    )
+
+    # Call the function
+    name, section = edit_section("Test Section", {})
+
+    # Verify the result
+    assert name == "Test Section"
+    assert section["prefix"] == "new_prefix_"
+    assert section["suffix"] == ".pdf"
+    assert section["print"] is True
+    assert section["printer"] == "Microsoft Print to PDF"
+    assert section["show"] is True
+    assert section["active"] is True
+
+
+def test_edit_section_command():
+    """Test the edit_section_command function."""
+    # Create a test config
+    config = CaseInsensitiveDict({"Test Section": {"original": True}})
+
+    # Mock the dependencies
+    with (
+        patch("auto_print.config_generator.input_choice", return_value="Test Section"),
+        patch(
+            "auto_print.config_generator.edit_section",
+            return_value=("Test Section", {"updated": True}),
+        ),
+        patch("auto_print.config_generator.print_element"),
+    ):
+        # Call the function
+        result = edit_section_command(config)
+
+    # Verify the result
+    assert "Test Section" in result
+    assert result["Test Section"]["updated"] is True
+
+
+def test_edit_section_command_empty_config():
+    """Test the edit_section_command function with an empty config."""
+    # Call the function with an empty config
+    result = edit_section_command(CaseInsensitiveDict({}))
+
+    # Verify the result is the same empty config
+    assert len(result) == 0
+
+
+@patch("builtins.input")
+@patch("auto_print.config_generator.edit_section")
+def test_create_section(mock_edit_section, mock_input, mock_config_object):
+    """Test the create_section function."""
+    from auto_print.config_generator import create_section
+
+    # Set up the mocks
+    mock_input.return_value = "New Section"
+    mock_edit_section.return_value = ("New Section", {"new": True})
+
+    # Call the function
+    name, section = create_section(mock_config_object)
+
+    # Verify the result
+    assert name == "New Section"
+    assert section["new"] is True
+    mock_edit_section.assert_called_once_with("New Section", {})
+
+
+@patch("builtins.input")
+@patch("auto_print.config_generator.print_element")
+def test_insert_section(mock_print_element, mock_input, mock_config_object):
+    """Test the insert_section function."""
+    from auto_print.config_generator import insert_section
+
+    # Set up the mocks
+    mock_input.return_value = "0"  # Insert at the beginning
+
+    # Call the function
+    result = insert_section(mock_config_object, "New Section", {"new": True})
+
+    # Verify the result
+    assert "New Section" in result
+    assert result["New Section"]["new"] is True
+    assert next(iter(result.keys())) == "New Section"  # Should be first
+
+
+@patch("builtins.input")
+@patch("auto_print.config_generator.create_section")
+@patch("auto_print.config_generator.insert_section")
+def test_add_section(
+    mock_insert_section, mock_create_section, mock_input, mock_config_object
+):
+    """Test the add_section function."""
+    from auto_print.config_generator import add_section
+
+    # Set up the mocks
+    mock_create_section.return_value = ("New Section", {"new": True})
+    mock_insert_section.return_value = CaseInsensitiveDict(
+        {"New Section": {"new": True}}
+    )
+
+    # Call the function
+    result = add_section(mock_config_object)
+
+    # Verify the result
+    assert "New Section" in result
+    assert result["New Section"]["new"] is True
+    mock_create_section.assert_called_once_with(mock_config_object)
+    mock_insert_section.assert_called_once_with(
+        mock_config_object, "New Section", {"new": True}
+    )
+
+
+@patch("builtins.input")
+def test_delete_section(mock_input, mock_config_object):
+    """Test the delete_section function."""
+    from auto_print.config_generator import delete_section
+
+    # Set up the mocks
+    mock_input.return_value = "Test Section"  # Delete the test section
+
+    # Call the function
+    result = delete_section(mock_config_object)
+
+    # Verify the result
+    assert "Test Section" not in result
+    assert len(result) == 0
+
+
+@patch("builtins.input")
+def test_delete_section_cancel(mock_input, mock_config_object):
+    """Test canceling the delete_section function."""
+    from auto_print.config_generator import delete_section
+
+    # Set up the mocks
+    mock_input.return_value = "cancel"  # Cancel the deletion
+
+    # Call the function
+    result = delete_section(mock_config_object)
+
+    # Verify the result is unchanged
+    assert "Test Section" in result
+    assert result == mock_config_object
+
+
+@patch("builtins.input")
+@patch("auto_print.config_generator.insert_section")
+def test_change_section_position(mock_insert_section, mock_input, mock_config_object):
+    """Test the change_section_position function."""
+    from auto_print.config_generator import change_section_position
+
+    # Set up the mocks
+    mock_input.return_value = "Test Section"  # Change position of test section
+    mock_insert_section.return_value = mock_config_object  # Return the same config
+
+    # Call the function
+    result = change_section_position(mock_config_object)
+
+    # Verify the result
+    assert result == mock_config_object
+    # Verify insert_section was called with the correct parameters
+    # The temp_config passed to insert_section should be empty
+    mock_insert_section.assert_called_once()
+    args, _ = mock_insert_section.call_args
+    assert len(args[0]) == 0  # First arg should be an empty config
+    assert args[1] == "Test Section"  # Second arg should be the section name
+    assert (
+        args[2] == mock_config_object["Test Section"]
+    )  # Third arg should be the section
+
+
+@patch("auto_print.config_generator.configure_logger")
+@patch("auto_print.config_generator.check_ghostscript")
+@patch("auto_print.config_generator.load_config")
+@patch("auto_print.config_generator.print_configuration")
+@patch("auto_print.config_generator.input_choice")
+@patch("auto_print.config_generator.save_config")
+@patch("auto_print.config_generator.add_section")
+@patch("auto_print.config_generator.delete_section")
+@patch("auto_print.config_generator.repair_config")
+@patch("auto_print.config_generator.change_section_position")
+@patch("auto_print.config_generator.edit_section_command")
+@patch("auto_print.config_generator.bool_decision")
+@patch("auto_print.config_generator.show_help")
+def test_main(
+    mock_show_help,
+    mock_bool_decision,
+    mock_edit_section_command,
+    mock_change_section_position,
+    mock_repair_config,
+    mock_delete_section,
+    mock_add_section,
+    mock_save_config,
+    mock_input_choice,
+    mock_print_configuration,
+    mock_load_config,
+    mock_check_ghostscript,
+    mock_configure_logger,
+):
+    """Test the main function."""
+    from auto_print.config_generator import main
+
+    # Set up the mocks
+    mock_config = CaseInsensitiveDict({"Test Section": {"printer": "Test Printer"}})
+    mock_load_config.return_value = mock_config
+
+    # Test different actions
+    # First call: save, then close
+    mock_input_choice.side_effect = ["save", "close"]
+    mock_bool_decision.return_value = True  # Confirm close
+
+    # Call the function
+    main()
+
+    # Verify the function calls
+    mock_configure_logger.assert_called_once()
+    mock_check_ghostscript.assert_called_once()
+    assert mock_load_config.call_count >= 1
+    mock_print_configuration.assert_called_with(mock_config)
+    mock_save_config.assert_called_once_with(mock_config)
+    assert mock_input_choice.call_count == 2
