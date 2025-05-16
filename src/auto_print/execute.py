@@ -18,6 +18,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from tkinter import messagebox
 from typing import Final
 
 import win32api  # type: ignore
@@ -102,7 +103,7 @@ def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None
             win32print.ClosePrinter(h_printer)
     except Exception as error:  # pylint: disable=W0703
         # pylint: disable=unsubscriptable-object
-        if error[0] == 1801:  # type: ignore
+        if hasattr(error, "args") and len(error.args) > 0 and error.args[0] == 1801:
             logging.error(
                 f'The printer with the name "{printer_name}" does not exists.'
             )
@@ -114,7 +115,6 @@ def install_ghostscript():
     """Helps to install ghostscript if it's missing on the system"""
     for sys_arg in sys.argv:
         logging.error(f"Started with arguments: {sys_arg}")
-    from tkinter import messagebox
 
     messagebox.showerror(
         "Ghostscript missing!",
@@ -204,20 +204,23 @@ def main() -> None:  # noqa: PLR0912
     logging.info(f"Start programm in: {os.path.abspath(sys.path[0])}")
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
+    # Initialize printer_config to avoid UnboundLocalError
+    printer_config = {}
+
     args = sys.argv  # loading the arguments
     for index, arg in enumerate(args):  # logging the arguments
         logging.debug(f'Argument {index} is "{arg}".')
         del index, arg
-
-    if len(args) != 2:
-        logging.warning("No file to print specified!")
-        sys.exit(-1)
 
     if len(args) > 2:
         logging.warning(
             "There is more then one additional Argument. Please only use the filename as an Argument!"
         )
         sys.exit(-2)
+
+    if len(args) != 2:
+        logging.warning("No file to print specified!")
+        sys.exit(-1)
 
     # The first argument should always be the path of the file.
     # file_to_print_arg: str = os.path.abspath(args[1])

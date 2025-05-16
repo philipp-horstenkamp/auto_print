@@ -10,7 +10,7 @@ from typing import Any
 
 from case_insensitive_dict import CaseInsensitiveDict
 
-from auto_print.auto_print_execute import (
+from auto_print.execute import (
     PRINTER_CONFIG_PATH,
     check_ghostscript,
     configure_logger,
