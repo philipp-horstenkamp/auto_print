@@ -1,4 +1,5 @@
 """Pytest configuration file for auto_print tests.
+
 Contains fixtures and configuration shared across test files.
 """
 
