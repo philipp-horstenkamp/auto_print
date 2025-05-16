@@ -21,12 +21,12 @@ from typing import Final
 import win32api  # type: ignore
 import win32print  # type: ignore
 
+import auto_print.utils
 from auto_print.utils import (
     check_ghostscript,
     configure_logger,
     get_default_printer,
     load_config_file,
-    provision_fulfilled,
 )
 
 # Constants
@@ -212,7 +212,7 @@ def process_file(
             logging.debug(f"The action {action_key} is not active.")
             continue
 
-        if not provision_fulfilled(
+        if not auto_print.utils.provision_fulfilled(
             file_to_print_name,
             str(printer_action.get("prefix", None))
             if printer_action.get("prefix") is not None

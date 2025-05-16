@@ -255,7 +255,7 @@ def test_check_ghostscript_error(mock_install_ghostscript, monkeypatch):
 @patch("auto_print.execute.logging")
 @patch("pathlib.Path.exists")
 @patch("auto_print.utils.json.load")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 @patch("auto_print.execute.printer_pdf_reader")
 @patch("auto_print.execute.sys.exit")
 def test_main_with_print_and_show(
@@ -298,7 +298,7 @@ def test_main_with_print_and_show(
 @patch("auto_print.execute.logging")
 @patch("pathlib.Path.exists")
 @patch("auto_print.utils.json.load")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 @patch("auto_print.execute.printer_ghost_script")
 @patch("auto_print.execute.sys.exit")
 def test_main_with_print_no_show(
@@ -341,7 +341,7 @@ def test_main_with_print_no_show(
 @patch("auto_print.execute.logging")
 @patch("pathlib.Path.exists")
 @patch("auto_print.utils.json.load")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 @patch("auto_print.execute.os.startfile")
 @patch("auto_print.execute.sys.exit")
 def test_main_with_no_print(
@@ -466,7 +466,7 @@ def test_main_too_many_args(
 @patch("pathlib.Path.exists")
 @patch("auto_print.execute.open", create=True)
 @patch("auto_print.utils.json.load")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 @patch("auto_print.execute.sys.exit")
 def test_main_no_valid_action(
     mock_exit,
@@ -603,7 +603,7 @@ def test_validate_arguments_file_not_exists(mock_exit, mock_exists, mock_logging
 @patch("auto_print.execute.printer_ghost_script")
 @patch("auto_print.execute.os.startfile")
 @patch("auto_print.execute.sys.exit")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 def test_process_file_print_and_show(
     mock_provision_fulfilled,
     mock_exit,
@@ -637,7 +637,7 @@ def test_process_file_print_and_show(
 @patch("auto_print.execute.printer_ghost_script")
 @patch("auto_print.execute.os.startfile")
 @patch("auto_print.execute.sys.exit")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 def test_process_file_print_no_show(
     mock_provision_fulfilled,
     mock_exit,
@@ -669,7 +669,7 @@ def test_process_file_print_no_show(
 @patch("auto_print.execute.printer_ghost_script")
 @patch("auto_print.execute.os.startfile")
 @patch("auto_print.execute.sys.exit")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 def test_process_file_no_print(
     mock_provision_fulfilled,
     mock_exit,
@@ -697,7 +697,7 @@ def test_process_file_no_print(
 
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.sys.exit")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 def test_process_file_no_valid_action(
     mock_provision_fulfilled,
     mock_exit,
