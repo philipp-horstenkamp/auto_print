@@ -4,10 +4,10 @@
 2. The filename gets extracted.
 3. The filename is compared to a list of suffixes and prefixes.
 4. If suffix and prefix are a match the file gets executed.
-If a suffix or a prefix is not given the comparison is true either way.
-5. The file is then eiter Printed and/or shown depending on the configuration.
+   If a suffix or a prefix is not given the comparison is true either way.
+5. The file is then either Printed and/or shown depending on the configuration.
 
-Everything is logged and can be locked up in the auto_print.log file!
+Everything is logged and can be looked up in the auto_print.log file!
 """
 
 import argparse
@@ -53,10 +53,7 @@ def log_print_operation(file_path: str, printer_name: str) -> None:
     Args:
         file_path: The path of the file that should be printed.
         printer_name: The name of the printer that should be used.
-
     """
-    import logging
-
     logging.info(
         f'The printer "{printer_name}" will be chosen to print the file on "{file_path}"\n'
         "While showing the file!",
@@ -69,13 +66,11 @@ def execute_print_command(file_path: str, h_printer: object) -> None:
     Args:
         file_path: The path of the file that should be printed.
         h_printer: The printer handle.
-
     """
     win32api.ShellExecute(0, "print", file_path, None, ".", 0)
     win32print.StartPagePrinter(h_printer)
-    win32print.WritePrinter(
-        h_printer, "test"
-    )  # Instead of raw text is there a way to print PDF File ?
+    # Send test data to printer
+    win32print.WritePrinter(h_printer, "test")
     win32print.EndPagePrinter(h_printer)
 
 
@@ -85,10 +80,7 @@ def handle_printer_error(error: Exception, printer_name: str) -> None:
     Args:
         error: The exception that occurred.
         printer_name: The name of the printer that was used.
-
     """
-    import logging
-
     # pylint: disable=unsubscriptable-object
     if hasattr(error, "args") and len(error.args) > 0 and error.args[0] == 1801:
         logging.error(f'The printer with the name "{printer_name}" does not exists.')
@@ -98,13 +90,12 @@ def handle_printer_error(error: Exception, printer_name: str) -> None:
 
 # noinspection PyBroadException
 def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None:
-    """Prints a document via the adobe pdf reader.
+    """Print a document via the adobe pdf reader.
 
     Args:
         filename: The name of the file that should be printed.
         file_path: The path of the file that should be printed.
         printer_name: The name of the printer that should be used.
-
     """
     log_print_operation(file_path, printer_name)
 
@@ -126,15 +117,12 @@ def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None
         handle_printer_error(error, printer_name)
 
 
-
-
 def printer_ghost_script(file_path: str, printer_name: str) -> None:
-    """Prints a document with the ghostscript printer.
+    """Print a document with the ghostscript printer.
 
     Args:
         file_path: The path of the file that should be printed.
         printer_name: The name of the printer that should be used.
-
     """
     logging.info(
         f'The printer "{printer_name}" will be chosen to print the file {file_path}'
@@ -162,11 +150,8 @@ def validate_arguments() -> str:
     """Validate command line arguments and return the file path.
 
     Returns:
-        The path to the file to print.
-
+        str: The path to the file to print.
     """
-    import logging
-
     args = sys.argv
 
     for index, arg in enumerate(args):
@@ -200,7 +185,9 @@ def validate_arguments() -> str:
 
 
 def process_file(
-    file_to_print_arg: str, file_to_print_name: str, printer_config: dict
+    file_to_print_arg: str,
+    file_to_print_name: str,
+    printer_config: dict[str, dict[str, object]],
 ) -> None:
     """Process the file according to the printer configuration.
 
@@ -208,10 +195,7 @@ def process_file(
         file_to_print_arg: The path to the file to print.
         file_to_print_name: The name of the file to print.
         printer_config: The printer configuration.
-
     """
-    import logging
-
     for action_key in printer_config:
         printer_action = printer_config[action_key]
         if not printer_action.get("active", "false"):
@@ -220,8 +204,12 @@ def process_file(
 
         if not provision_fulfilled(
             file_to_print_name,
-            printer_action.get("prefix", None),
-            printer_action.get("suffix", None),
+            str(printer_action.get("prefix", None))
+            if printer_action.get("prefix") is not None
+            else None,
+            str(printer_action.get("suffix", None))
+            if printer_action.get("suffix") is not None
+            else None,
         ):
             continue
 
@@ -230,7 +218,9 @@ def process_file(
         )
 
         if bool(printer_action.get("print", "false")):
-            printer_to_use: str = printer_action.get("printer", get_default_printer())
+            printer_to_use: str = str(
+                printer_action.get("printer", get_default_printer())
+            )
             if bool(printer_action.get("show", "true")):
                 printer_pdf_reader(
                     file_to_print_arg, file_to_print_name, printer_to_use
@@ -249,8 +239,10 @@ def process_file(
 
 # The main function should be started as shown above.
 def main() -> None:
-    import logging
+    """Main function to execute the auto-print program.
 
+    Configures logging, validates arguments, loads configuration, and processes the file.
+    """
     # Configure logging
     configure_logger()
     logging.info("Starting the program!")

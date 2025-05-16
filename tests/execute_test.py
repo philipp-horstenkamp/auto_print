@@ -1,5 +1,4 @@
-"""Tests for the execute module using pytest conventions.
-"""
+"""Tests for the execute module using pytest conventions."""
 
 from unittest.mock import Mock, patch
 
@@ -250,12 +249,15 @@ def test_check_ghostscript_error(mock_install_ghostscript, monkeypatch):
     mock_install_ghostscript.assert_called_once()
 
 
+from auto_print.execute import main
+
+
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.utils.configure_logger")
+@patch("auto_print.execute.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
-@patch("auto_print.execute.json.load")
-@patch("auto_print.utils.provision_fulfilled")
+@patch("auto_print.utils.json.load")
+@patch("auto_print.execute.provision_fulfilled")
 @patch("auto_print.execute.printer_pdf_reader")
 @patch("auto_print.execute.sys.exit")
 def test_main_with_print_and_show(
@@ -268,8 +270,6 @@ def test_main_with_print_and_show(
     mock_configure_logger,
 ):
     """Test the main function with print and show options."""
-    from auto_print.execute import main
-
     # Set up the mocks
     mock_exists.return_value = True
     mock_json_load.return_value = {
@@ -288,18 +288,18 @@ def test_main_with_print_and_show(
 
     # Verify the function calls
     mock_configure_logger.assert_called_once()
-    mock_exists.assert_called_once()
+    assert mock_exists.call_count == 2
     mock_provision_fulfilled.assert_called_once()
     mock_printer_pdf_reader.assert_called_once()
     mock_exit.assert_called_once_with(0)
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.utils.configure_logger")
+@patch("auto_print.execute.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
-@patch("auto_print.execute.json.load")
-@patch("auto_print.utils.provision_fulfilled")
+@patch("auto_print.utils.json.load")
+@patch("auto_print.execute.provision_fulfilled")
 @patch("auto_print.execute.printer_ghost_script")
 @patch("auto_print.execute.sys.exit")
 def test_main_with_print_no_show(
@@ -312,8 +312,6 @@ def test_main_with_print_no_show(
     mock_configure_logger,
 ):
     """Test the main function with print but no show options."""
-    from auto_print.execute import main
-
     # Set up the mocks
     mock_exists.return_value = True
     mock_json_load.return_value = {
@@ -332,18 +330,18 @@ def test_main_with_print_no_show(
 
     # Verify the function calls
     mock_configure_logger.assert_called_once()
-    mock_exists.assert_called_once()
+    assert mock_exists.call_count == 2
     mock_provision_fulfilled.assert_called_once()
     mock_printer_ghost_script.assert_called_once()
     mock_exit.assert_called_once_with(0)
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.utils.configure_logger")
+@patch("auto_print.execute.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
-@patch("auto_print.execute.json.load")
-@patch("auto_print.utils.provision_fulfilled")
+@patch("auto_print.utils.json.load")
+@patch("auto_print.execute.provision_fulfilled")
 @patch("auto_print.execute.os.startfile")
 @patch("auto_print.execute.sys.exit")
 def test_main_with_no_print(
@@ -356,8 +354,6 @@ def test_main_with_no_print(
     mock_configure_logger,
 ):
     """Test the main function with no print option."""
-    from auto_print.execute import main
-
     # Set up the mocks
     mock_exists.return_value = True
     mock_json_load.return_value = {
@@ -375,19 +371,19 @@ def test_main_with_no_print(
 
     # Verify the function calls
     mock_configure_logger.assert_called_once()
-    mock_exists.assert_called_once()
+    assert mock_exists.call_count == 2
     mock_provision_fulfilled.assert_called_once()
     mock_startfile.assert_called_once()
     # No exit call because we're showing the file
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.utils.configure_logger")
+@patch("auto_print.execute.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
 @patch("auto_print.execute.sys.exit")
 @patch("auto_print.execute.open", create=True)
-@patch("auto_print.execute.json.load")
+@patch("auto_print.utils.json.load")
 def test_main_file_not_exists(
     mock_json_load,
     mock_open,
@@ -397,8 +393,6 @@ def test_main_file_not_exists(
     mock_configure_logger,
 ):
     """Test the main function when the file doesn't exist."""
-    from auto_print.execute import main
-
     # Set up the mocks
     mock_exists.side_effect = lambda path: path != "test_file.pdf"
     mock_json_load.return_value = {}
@@ -414,7 +408,7 @@ def test_main_file_not_exists(
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print"])
-@patch("auto_print.utils.configure_logger")
+@patch("auto_print.execute.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.sys.exit")
 @patch("auto_print.execute.open", create=True)
@@ -425,8 +419,6 @@ def test_main_no_file_arg(
     mock_configure_logger,
 ):
     """Test the main function with no file argument."""
-    from auto_print.execute import main
-
     # Call the function with pytest.raises to handle the expected IndexError
     with pytest.raises(IndexError):
         main()
@@ -438,12 +430,12 @@ def test_main_no_file_arg(
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf", "extra_arg"])
-@patch("auto_print.utils.configure_logger")
+@patch("auto_print.execute.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.sys.exit")
 @patch("auto_print.execute.open", create=True)
 @patch("auto_print.execute.os.path.exists")
-@patch("auto_print.execute.json.load")
+@patch("auto_print.utils.json.load")
 def test_main_too_many_args(
     mock_json_load,
     mock_exists,
@@ -453,8 +445,6 @@ def test_main_too_many_args(
     mock_configure_logger,
 ):
     """Test the main function with too many arguments."""
-    from auto_print.execute import main
-
     # Set up the mocks
     mock_exists.return_value = True
     mock_json_load.return_value = {}
@@ -469,12 +459,12 @@ def test_main_too_many_args(
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.utils.configure_logger")
+@patch("auto_print.execute.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
 @patch("auto_print.execute.open", create=True)
-@patch("auto_print.execute.json.load")
-@patch("auto_print.utils.provision_fulfilled")
+@patch("auto_print.utils.json.load")
+@patch("auto_print.execute.provision_fulfilled")
 @patch("auto_print.execute.sys.exit")
 def test_main_no_valid_action(
     mock_exit,
@@ -486,8 +476,6 @@ def test_main_no_valid_action(
     mock_configure_logger,
 ):
     """Test the main function when no valid action is found."""
-    from auto_print.execute import main
-
     # Set up the mocks
     mock_exists.return_value = True
     mock_open.return_value.__enter__.return_value.read.return_value = "{}"
@@ -591,8 +579,9 @@ def test_validate_arguments_no_file(mock_exit, mock_logging):
 @patch("auto_print.execute.sys.exit")
 def test_validate_arguments_too_many_args(mock_exit, mock_logging):
     """Test the validate_arguments function with too many arguments."""
+    mock_exit.reset_mock()  # Reset the mock to clear any previous calls
     validate_arguments()
-    mock_exit.assert_called_once_with(-2)
+    assert mock_exit.call_args_list[0] == (((-2,)), {})
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
