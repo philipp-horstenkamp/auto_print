@@ -1,5 +1,4 @@
-"""
-Shared utilities for auto_print modules.
+"""Shared utilities for auto_print modules.
 """
 
 import json
@@ -76,7 +75,7 @@ def check_ghostscript():
     try:
         import ghostscript  # type: ignore # noqa: F401
     except RuntimeError as err:
-        logging.error(err)
+        logging.exception(err)
         install_ghostscript()
 
 
@@ -99,12 +98,16 @@ def save_config_file(config_data: dict) -> None:
 
 
 def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) -> bool:
-    """
-    Checks if a provision is fulfilled to execute a section of the Programm.
-    :param file_name:
-    :param prefix: A prefix of the basename. Checks if the suffix is fulfilled.
-    :param suffix: A suffix of the basename (file extension).
-    :return: Returns true if all provisions are fulfilled.
+    """Checks if a provision is fulfilled to execute a section of the Programm.
+
+    Args:
+        file_name: The name of the file to check.
+        prefix: A prefix of the basename. Checks if the suffix is fulfilled.
+        suffix: A suffix of the basename (file extension).
+
+    Returns:
+        True if all provisions are fulfilled.
+
     """
     if prefix and not file_name.startswith(prefix):
         return False

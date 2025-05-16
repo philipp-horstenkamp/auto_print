@@ -1,5 +1,4 @@
-"""
-Tests for the auto_print_config_generator module using pytest conventions.
+"""Tests for the auto_print_config_generator module using pytest conventions.
 """
 
 import json
@@ -566,8 +565,6 @@ def test_main(
 @patch("builtins.input")
 def test_configure_prefix(mock_input):
     """Test the configure_prefix function."""
-    from auto_print.config_generator import configure_prefix
-
     # Test with a non-empty prefix
     mock_input.return_value = "test_prefix"
     config_element = {}
@@ -584,8 +581,6 @@ def test_configure_prefix(mock_input):
 @patch("builtins.input")
 def test_configure_suffix(mock_input):
     """Test the configure_suffix function."""
-    from auto_print.config_generator import configure_suffix
-
     # Test with a non-empty suffix
     mock_input.return_value = ".pdf"
     config_element = {}
@@ -603,8 +598,6 @@ def test_configure_suffix(mock_input):
 @patch("auto_print.config_generator.bool_decision")
 def test_configure_print_settings(mock_bool_decision, mock_input_choice):
     """Test the configure_print_settings function."""
-    from auto_print.config_generator import configure_print_settings
-
     # Test with print enabled
     mock_bool_decision.return_value = True
     mock_input_choice.return_value = "Test Printer"
@@ -624,8 +617,6 @@ def test_configure_print_settings(mock_bool_decision, mock_input_choice):
 @patch("auto_print.config_generator.bool_decision")
 def test_configure_display_settings(mock_bool_decision):
     """Test the configure_display_settings function."""
-    from auto_print.config_generator import configure_display_settings
-
     # Test with show enabled
     mock_bool_decision.return_value = True
     config_element = {}
@@ -642,8 +633,6 @@ def test_configure_display_settings(mock_bool_decision):
 @patch("auto_print.config_generator.bool_decision")
 def test_configure_activation(mock_bool_decision):
     """Test the configure_activation function."""
-    from auto_print.config_generator import configure_activation
-
     # Test with activation enabled
     mock_bool_decision.return_value = True
     config_element = {}
@@ -660,8 +649,6 @@ def test_configure_activation(mock_bool_decision):
 @patch("auto_print.config_generator.print_element")
 def test_display_insert_positions(mock_print_element, mock_config_object):
     """Test the display_insert_positions function."""
-    from auto_print.config_generator import display_insert_positions
-
     # Call the function
     result = display_insert_positions(mock_config_object)
 
@@ -673,8 +660,6 @@ def test_display_insert_positions(mock_print_element, mock_config_object):
 @patch("auto_print.config_generator.input_choice")
 def test_get_insert_position(mock_input_choice):
     """Test the get_insert_position function."""
-    from auto_print.config_generator import get_insert_position
-
     # Test with "end"
     mock_input_choice.return_value = "end"
     result = get_insert_position(3)
@@ -719,8 +704,6 @@ def test_handle_action(
     mock_save_config,
 ):
     """Test the handle_action function."""
-    from auto_print.config_generator import handle_action
-
     config = CaseInsensitiveDict({"Test Section": {"printer": "Test Printer"}})
 
     # Test "save" action

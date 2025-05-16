@@ -1,5 +1,4 @@
-"""
-Tests for the execute module using pytest conventions.
+"""Tests for the execute module using pytest conventions.
 """
 
 from unittest.mock import Mock, patch
@@ -7,21 +6,23 @@ from unittest.mock import Mock, patch
 import pytest
 
 from auto_print.execute import (
-    LOG_FILE,
-    check_ghostscript,
-    configure_logger,
     execute_print_command,
-    get_default_printer,
     get_parser,
-    get_printer_list,
     handle_printer_error,
-    install_ghostscript,
     log_print_operation,
     printer_ghost_script,
     printer_pdf_reader,
     process_file,
-    provision_fulfilled,
     validate_arguments,
+)
+from auto_print.utils import (
+    LOG_FILE,
+    check_ghostscript,
+    configure_logger,
+    get_default_printer,
+    get_printer_list,
+    install_ghostscript,
+    provision_fulfilled,
 )
 
 
@@ -56,7 +57,7 @@ def test_configure_logger(monkeypatch):
     mock_logging.basicConfig = mock_basic_config
 
     # Patch the logging module
-    monkeypatch.setattr("auto_print.execute.logging", mock_logging)
+    monkeypatch.setattr("auto_print.utils.logging", mock_logging)
 
     # Call the function
     configure_logger()
@@ -78,7 +79,7 @@ def test_get_default_printer(monkeypatch):
     mock_win32print.GetDefaultPrinter = mock_get_default_printer
 
     # Patch the win32print module
-    monkeypatch.setattr("auto_print.execute.win32print", mock_win32print)
+    monkeypatch.setattr("auto_print.utils.win32print", mock_win32print)
 
     # Call the function
     result = get_default_printer()
@@ -101,7 +102,7 @@ def test_get_printer_list(monkeypatch):
     mock_win32print.EnumPrinters = mock_enum_printers
 
     # Patch the win32print module
-    monkeypatch.setattr("auto_print.execute.win32print", mock_win32print)
+    monkeypatch.setattr("auto_print.utils.win32print", mock_win32print)
 
     # Call the function
     result = get_printer_list()
@@ -208,11 +209,11 @@ def test_printer_ghost_script(
     assert "Test Printer" in mock_subprocess_call.call_args[0][0]
 
 
-@patch("auto_print.execute.sys.exit")
-@patch("auto_print.execute.messagebox.showerror")
-@patch("auto_print.execute.messagebox.askyesno")
+@patch("auto_print.utils.sys.exit")
+@patch("auto_print.utils.messagebox.showerror")
+@patch("auto_print.utils.messagebox.askyesno")
 @patch("webbrowser.open")
-@patch("auto_print.execute.logging.error")
+@patch("auto_print.utils.logging.error")
 def test_install_ghostscript(
     mock_logging_error, mock_webbrowser_open, mock_askyesno, mock_showerror, mock_exit
 ):
@@ -232,7 +233,7 @@ def test_install_ghostscript(
     mock_exit.assert_called_once_with(-5)
 
 
-@patch("auto_print.execute.install_ghostscript")
+@patch("auto_print.utils.install_ghostscript")
 def test_check_ghostscript_error(mock_install_ghostscript, monkeypatch):
     """Test the check_ghostscript function when ghostscript is not installed."""
 
@@ -250,11 +251,11 @@ def test_check_ghostscript_error(mock_install_ghostscript, monkeypatch):
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.execute.configure_logger")
+@patch("auto_print.utils.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
 @patch("auto_print.execute.json.load")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 @patch("auto_print.execute.printer_pdf_reader")
 @patch("auto_print.execute.sys.exit")
 def test_main_with_print_and_show(
@@ -294,11 +295,11 @@ def test_main_with_print_and_show(
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.execute.configure_logger")
+@patch("auto_print.utils.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
 @patch("auto_print.execute.json.load")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 @patch("auto_print.execute.printer_ghost_script")
 @patch("auto_print.execute.sys.exit")
 def test_main_with_print_no_show(
@@ -338,11 +339,11 @@ def test_main_with_print_no_show(
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.execute.configure_logger")
+@patch("auto_print.utils.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
 @patch("auto_print.execute.json.load")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 @patch("auto_print.execute.os.startfile")
 @patch("auto_print.execute.sys.exit")
 def test_main_with_no_print(
@@ -381,7 +382,7 @@ def test_main_with_no_print(
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.execute.configure_logger")
+@patch("auto_print.utils.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
 @patch("auto_print.execute.sys.exit")
@@ -413,7 +414,7 @@ def test_main_file_not_exists(
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print"])
-@patch("auto_print.execute.configure_logger")
+@patch("auto_print.utils.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.sys.exit")
 @patch("auto_print.execute.open", create=True)
@@ -426,13 +427,9 @@ def test_main_no_file_arg(
     """Test the main function with no file argument."""
     from auto_print.execute import main
 
-    # Call the function
-    try:
+    # Call the function with pytest.raises to handle the expected IndexError
+    with pytest.raises(IndexError):
         main()
-    except IndexError:
-        # If an IndexError occurs, it's because sys.argv doesn't have enough elements
-        # This is expected and we can just pass
-        pass
 
     # Verify the function calls
     mock_configure_logger.assert_called_once()
@@ -441,7 +438,7 @@ def test_main_no_file_arg(
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf", "extra_arg"])
-@patch("auto_print.execute.configure_logger")
+@patch("auto_print.utils.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.sys.exit")
 @patch("auto_print.execute.open", create=True)
@@ -472,12 +469,12 @@ def test_main_too_many_args(
 
 
 @patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
-@patch("auto_print.execute.configure_logger")
+@patch("auto_print.utils.configure_logger")
 @patch("auto_print.execute.logging")
 @patch("auto_print.execute.os.path.exists")
 @patch("auto_print.execute.open", create=True)
 @patch("auto_print.execute.json.load")
-@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.utils.provision_fulfilled")
 @patch("auto_print.execute.sys.exit")
 def test_main_no_valid_action(
     mock_exit,
@@ -530,13 +527,18 @@ def test_log_print_operation(mock_logging):
 @patch("auto_print.execute.win32print.WritePrinter")
 @patch("auto_print.execute.win32print.EndPagePrinter")
 def test_execute_print_command(
-    mock_end_page_printer, mock_write_printer, mock_start_page_printer, mock_shell_execute
+    mock_end_page_printer,
+    mock_write_printer,
+    mock_start_page_printer,
+    mock_shell_execute,
 ):
     """Test the execute_print_command function."""
     h_printer = Mock()
     execute_print_command("test_file.pdf", h_printer)
 
-    mock_shell_execute.assert_called_once_with(0, "print", "test_file.pdf", None, ".", 0)
+    mock_shell_execute.assert_called_once_with(
+        0, "print", "test_file.pdf", None, ".", 0
+    )
     mock_start_page_printer.assert_called_once_with(h_printer)
     mock_write_printer.assert_called_once_with(h_printer, "test")
     mock_end_page_printer.assert_called_once_with(h_printer)
@@ -665,9 +667,7 @@ def test_process_file_print_no_show(
     }
     process_file("test_file.pdf", "test_file.pdf", printer_config)
     mock_provision_fulfilled.assert_called_once()
-    mock_printer_ghost_script.assert_called_once_with(
-        "test_file.pdf", "Test Printer"
-    )
+    mock_printer_ghost_script.assert_called_once_with("test_file.pdf", "Test Printer")
     mock_exit.assert_called_once_with(0)
     mock_printer_pdf_reader.assert_not_called()
     mock_startfile.assert_not_called()

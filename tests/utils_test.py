@@ -1,33 +1,25 @@
-"""
-Tests for the utils module.
-"""
+"""Tests for the utils module."""
 
-import json
-import os
-from pathlib import Path
 from unittest.mock import Mock, patch
 
-import pytest
-
 from auto_print.utils import (
-    AUTO_PRINTER_FOLDER,
-    PRINTER_CONFIG_PATH,
     LOG_FILE,
+    PRINTER_CONFIG_PATH,
+    check_ghostscript,
     configure_logger,
     get_default_printer,
     get_printer_list,
-    check_ghostscript,
     load_config_file,
-    save_config_file,
     provision_fulfilled,
+    save_config_file,
 )
 
 
 @patch("logging.basicConfig")
-def test_configure_logger(mock_basicConfig):
+def test_configure_logger(mock_basic_config):
     """Test the configure_logger function."""
     configure_logger()
-    mock_basicConfig.assert_called_once_with(
+    mock_basic_config.assert_called_once_with(
         filename=LOG_FILE,
         format="%(asctime)-15s %(message)s",
         level=10,  # logging.DEBUG
