@@ -1,8 +1,9 @@
 """
-Tests for the auto_print_config_generator module.
+Tests for the auto_print_config_generator module using pytest conventions.
 """
 
-from unittest.mock import mock_open, patch
+import json
+from unittest.mock import Mock
 
 import pytest
 from case_insensitive_dict import CaseInsensitiveDict
@@ -34,131 +35,177 @@ def mock_config_object():
     )
 
 
-@patch("auto_print.auto_print_config_generator.PRINTER_CONFIG_PATH")
-@patch(
-    "builtins.open",
-    new_callable=mock_open,
-    read_data='{"Test Section": {"printer": "Test Printer"}}',
-)
-@patch("json.load")
-def test_load_config(mock_json_load, mock_file, mock_config_path):
-    """Test the load_config function."""
-    mock_json_load.return_value = {"Test Section": {"printer": "Test Printer"}}
+class TestLoadConfig:
+    def test_load_config(self, monkeypatch, tmp_path):
+        """Test the load_config function."""
+        # Create a temporary config file
+        config_path = tmp_path / "test_config.json"
+        config_data = {"Test Section": {"printer": "Test Printer"}}
+        config_path.write_text(json.dumps(config_data))
 
-    result = load_config()
+        # Patch the config path
+        monkeypatch.setattr(
+            "auto_print.auto_print_config_generator.PRINTER_CONFIG_PATH",
+            str(config_path),
+        )
 
-    mock_file.assert_called_once_with(mock_config_path, encoding="utf-8")
-    mock_json_load.assert_called_once()
-    assert isinstance(result, CaseInsensitiveDict)
-    assert "Test Section" in result
-    assert result["Test Section"]["printer"] == "Test Printer"
+        # Call the function
+        result = load_config()
 
-
-@patch("auto_print.auto_print_config_generator.PRINTER_CONFIG_PATH")
-@patch("builtins.open", new_callable=mock_open)
-@patch("json.dump")
-def test_save_config(mock_json_dump, mock_file, mock_config_path, mock_config_object):
-    """Test the save_config function."""
-    save_config(mock_config_object)
-
-    mock_file.assert_called_once_with(mock_config_path, "w", encoding="utf-8")
-    mock_json_dump.assert_called_once()
-    # Check that the first argument to json.dump is our config object's __dict__
-    assert mock_json_dump.call_args[0][0] == mock_config_object.__dict__
+        # Verify the result
+        assert isinstance(result, CaseInsensitiveDict)
+        assert "Test Section" in result
+        assert result["Test Section"]["printer"] == "Test Printer"
 
 
-@patch("builtins.print")
-def test_print_configuration(mock_print, mock_config_object):
-    """Test the print_configuration function."""
-    print_configuration(mock_config_object)
+class TestSaveConfig:
+    def test_save_config(self, monkeypatch, tmp_path, mock_config_object):
+        """Test the save_config function."""
+        # Create a temporary config file path
+        config_path = tmp_path / "test_config.json"
 
-    # Check that print was called at least once
-    assert mock_print.call_count > 0
+        # Patch the config path
+        monkeypatch.setattr(
+            "auto_print.auto_print_config_generator.PRINTER_CONFIG_PATH",
+            str(config_path),
+        )
 
+        # Call the function
+        save_config(mock_config_object)
 
-@patch("builtins.input", return_value="y")
-def test_bool_decision_yes(mock_input):
-    """Test the bool_decision function with 'y' input."""
-    result = bool_decision("Test decision?", False)
-    assert result is True
-    mock_input.assert_called_once()
+        # Verify the file was created
+        assert config_path.exists()
 
+        # Load the saved data
+        saved_data = json.loads(config_path.read_text())
 
-@patch("builtins.input", return_value="n")
-def test_bool_decision_no(mock_input):
-    """Test the bool_decision function with 'n' input."""
-    result = bool_decision("Test decision?", True)
-    assert result is False
-    mock_input.assert_called_once()
+        # The CaseInsensitiveDict.__dict__ structure has a _data attribute
+        assert "_data" in saved_data
 
+        # The keys in _data are lowercase
+        assert "test section" in saved_data["_data"]
 
-@patch("builtins.input", return_value="")
-def test_bool_decision_default(mock_input):
-    """Test the bool_decision function with default input."""
-    result = bool_decision("Test decision?", True)
-    assert result is True
-    mock_input.assert_called_once()
-
-
-@patch("builtins.input", return_value="option1")
-def test_input_choice(mock_input):
-    """Test the input_choice function."""
-    result = input_choice("Choose an option:", ["option1", "option2"], "option2")
-    assert result == "option1"
-    mock_input.assert_called_once()
+        # Each entry in _data is a list with [original_key, value]
+        assert saved_data["_data"]["test section"][0] == "Test Section"
+        assert (
+            saved_data["_data"]["test section"][1]["printer"]
+            == "Microsoft Print to PDF"
+        )
 
 
-@patch("builtins.input", return_value="")
-def test_input_choice_default(mock_input):
-    """Test the input_choice function with default input."""
-    result = input_choice("Choose an option:", ["option1", "option2"], "option2")
-    assert result == "option2"
-    mock_input.assert_called_once()
+class TestPrintConfiguration:
+    def test_print_configuration(self, capsys, mock_config_object):
+        """Test the print_configuration function."""
+        # Call the function
+        print_configuration(mock_config_object)
+
+        # Capture the output
+        captured = capsys.readouterr()
+
+        # Verify something was printed
+        assert captured.out
+        assert "Test Section" in captured.out
 
 
-@patch("builtins.input", return_value="PDF24")
-@patch(
-    "auto_print.auto_print_config_generator.get_default_printer", return_value="PDF24"
-)
-@patch(
-    "auto_print.auto_print_config_generator.get_printer_list", return_value=["PDF24"]
-)
-def test_repair_config(
-    mock_get_printer_list, mock_get_default_printer, mock_input, mock_config_object
-):
-    """Test the repair_config function."""
-    # Create a config with a printer that's not in the printer list
-    config_with_invalid_printer = CaseInsensitiveDict(
-        {
-            "Test Section": {
-                "printer": "Non-existent Printer",
-                "active": True,
-            }
-        }
+class TestBoolDecision:
+    @pytest.mark.parametrize(
+        "input_value, default_value, expected_result",
+        [
+            ("y", False, True),
+            ("n", True, False),
+            ("", True, True),
+            ("", False, False),
+        ],
     )
+    def test_bool_decision(
+        self, monkeypatch, input_value, default_value, expected_result
+    ):
+        """Test the bool_decision function with various inputs."""
+        # Mock the input function
+        monkeypatch.setattr("builtins.input", lambda _: input_value)
 
-    result = repair_config(config_with_invalid_printer)
+        # Call the function
+        result = bool_decision("Test decision?", default_value)
 
-    # Check that the printer was updated to the one selected via input
-    assert result["Test Section"]["printer"] == "PDF24"
+        # Verify the result
+        assert result is expected_result
 
-    # Reset mocks for the second part of the test
-    mock_input.reset_mock()
-    mock_get_printer_list.reset_mock()
 
-    # Test with a valid printer
-    config_with_valid_printer = CaseInsensitiveDict(
-        {
-            "Test Section": {
-                "printer": "PDF24",
-                "active": True,
-            }
-        }
+class TestInputChoice:
+    @pytest.mark.parametrize(
+        "input_value, options, default_value, expected_result",
+        [
+            ("option1", ["option1", "option2"], "option2", "option1"),
+            ("", ["option1", "option2"], "option2", "option2"),
+        ],
     )
+    def test_input_choice(
+        self, monkeypatch, input_value, options, default_value, expected_result
+    ):
+        """Test the input_choice function with various inputs."""
+        # Mock the input function
+        monkeypatch.setattr("builtins.input", lambda _: input_value)
 
-    result = repair_config(config_with_valid_printer)
+        # Call the function
+        result = input_choice("Choose an option:", options, default_value)
 
-    # Check that the printer wasn't changed
-    assert result["Test Section"]["printer"] == "PDF24"
-    # Input shouldn't have been called since no repair was needed
-    mock_input.assert_not_called()
+        # Verify the result
+        assert result == expected_result
+
+
+class TestRepairConfig:
+    def test_repair_config_with_invalid_printer(self, monkeypatch, mock_config_object):
+        """Test the repair_config function with an invalid printer."""
+        # Create a config with a printer that's not in the printer list
+        config_with_invalid_printer = CaseInsensitiveDict(
+            {
+                "Test Section": {
+                    "printer": "Non-existent Printer",
+                    "active": True,
+                }
+            }
+        )
+
+        # Mock the necessary functions
+        monkeypatch.setattr(
+            "auto_print.auto_print_config_generator.get_printer_list", lambda: ["PDF24"]
+        )
+        monkeypatch.setattr(
+            "auto_print.auto_print_config_generator.get_default_printer",
+            lambda: "PDF24",
+        )
+        monkeypatch.setattr("builtins.input", lambda _: "PDF24")
+
+        # Call the function
+        result = repair_config(config_with_invalid_printer)
+
+        # Verify the result
+        assert result["Test Section"]["printer"] == "PDF24"
+
+    def test_repair_config_with_valid_printer(self, monkeypatch, mock_config_object):
+        """Test the repair_config function with a valid printer."""
+        # Create a config with a valid printer
+        config_with_valid_printer = CaseInsensitiveDict(
+            {
+                "Test Section": {
+                    "printer": "PDF24",
+                    "active": True,
+                }
+            }
+        )
+
+        # Mock the necessary functions
+        monkeypatch.setattr(
+            "auto_print.auto_print_config_generator.get_printer_list", lambda: ["PDF24"]
+        )
+
+        # Create a mock for input to verify it's not called
+        input_mock = Mock(return_value="")
+        monkeypatch.setattr("builtins.input", input_mock)
+
+        # Call the function
+        result = repair_config(config_with_valid_printer)
+
+        # Verify the result
+        assert result["Test Section"]["printer"] == "PDF24"
+        assert input_mock.call_count == 0
