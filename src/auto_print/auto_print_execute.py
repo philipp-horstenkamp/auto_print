@@ -210,7 +210,28 @@ def configure_logger() -> None:
         print(f"Error configuring logger: {error}")
 
 
-def main() -> None:  # noqa: PLR0912
+def load_printer_config(config_path: Path) -> dict[str, dict[str, str | bool]]:
+    """Load printer configuration from a JSON file.
+
+    Args:
+        config_path: Path to the configuration file
+
+    Returns:
+        Dictionary containing printer configuration
+
+    Raises:
+        SystemExit: If the file is not found or contains invalid JSON (exit code 4)
+    """
+    try:
+        with config_path.open(encoding="utf-8") as printer_config_file:
+            return json.load(printer_config_file)
+    except (FileNotFoundError, json.JSONDecodeError) as main_error:
+        logging.exception("Error loading printer configuration")
+        print(main_error)
+        sys.exit(-4)
+
+
+def main() -> None:
     """Execute the main auto-print functionality.
 
     This function:
@@ -264,13 +285,7 @@ def main() -> None:  # noqa: PLR0912
             f'The specified path is: "{file_to_print_arg}".',
         )
         sys.exit(-3)
-    try:
-        with PRINTER_CONFIG_PATH.open(encoding="utf-8") as printer_config_file:
-            printer_config = json.load(printer_config_file)
-    except (FileNotFoundError, json.JSONDecodeError) as main_error:
-        logging.exception("Error loading printer configuration")
-        print(main_error)
-        sys.exit(-4)
+    printer_config = load_printer_config(PRINTER_CONFIG_PATH)
 
     for action_key in printer_config:
         printer_action = printer_config[action_key]
@@ -281,8 +296,8 @@ def main() -> None:  # noqa: PLR0912
             continue
         if not provision_fulfilled(  # check if the printer action should be performed.
             file_to_print_name,
-            printer_action.get("prefix", None),
-            printer_action.get("suffix", None),
+            printer_action.get("prefix", None),  # type: ignore
+            printer_action.get("suffix", None),  # type: ignore
         ):
             continue
 
@@ -290,7 +305,13 @@ def main() -> None:  # noqa: PLR0912
             f"The action {action_key} is the valid action. This action will be executed!"
         )
         if printer_action.get("print", False):
-            printer_to_use: str = printer_action.get("printer", get_default_printer())
+            # Get printer value, ensuring it's a string
+            printer_value = printer_action.get("printer", get_default_printer())
+            printer_to_use: str = (
+                printer_value
+                if isinstance(printer_value, str)
+                else get_default_printer()
+            )
             if printer_action.get("show", True):
                 printer_pdf_reader(
                     file_to_print_arg, file_to_print_name, printer_to_use

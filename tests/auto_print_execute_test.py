@@ -1,12 +1,16 @@
 """Tests for the auto_print_execute module."""
 
+from pathlib import Path
 from unittest.mock import patch
+
+import pytest
 
 from auto_print.auto_print_execute import (
     LOG_FILE,
     configure_logger,
     get_default_printer,
     get_printer_list,
+    load_printer_config,
     provision_fulfilled,
 )
 
@@ -78,3 +82,46 @@ def test_get_printer_list(mock_win32print):
     result = get_printer_list()
     assert result == ["Printer1", "Printer2"]
     mock_win32print.EnumPrinters.assert_called_once_with(2)
+
+
+def test_read_empty_file(temp_empty_config_file: Path) -> None:
+    """Test loading an empty configuration file.
+
+    This test verifies that attempting to load an empty configuration file
+    results in a SystemExit with the appropriate exit code.
+
+    Args:
+        temp_empty_config_file: Fixture that provides an empty config file
+    """
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
+        load_printer_config(temp_empty_config_file)
+    assert pytest_wrapped_error.value.code == -4
+
+
+def test_read_broken_file(temp_broken_config_file: Path) -> None:
+    """Test loading a broken configuration file.
+
+    This test verifies that attempting to load a malformed JSON configuration file
+    results in a SystemExit with the appropriate exit code.
+
+    Args:
+        temp_broken_config_file: Fixture that provides a broken config file
+    """
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
+        load_printer_config(temp_broken_config_file)
+    assert pytest_wrapped_error.value.code == -4
+
+
+def test_non_existing_file(tmp_path: Path) -> None:
+    """Test loading a non-existing configuration file.
+
+    This test verifies that attempting to load a configuration file that doesn't exist
+    results in a SystemExit with the appropriate exit code.
+
+    Args:
+        tmp_path: Pytest fixture that provides a temporary directory
+    """
+    non_existing_file = tmp_path / "non_existing_file.json"
+    with pytest.raises(SystemExit) as pytest_wrapped_error:
+        load_printer_config(non_existing_file)
+    assert pytest_wrapped_error.value.code == -4
