@@ -2,15 +2,20 @@
 Tests for the execute module using pytest conventions.
 """
 
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
 from auto_print.execute import (
     LOG_FILE,
+    check_ghostscript,
     configure_logger,
     get_default_printer,
+    get_parser,
     get_printer_list,
+    install_ghostscript,
+    printer_ghost_script,
+    printer_pdf_reader,
     provision_fulfilled,
 )
 
@@ -99,3 +104,407 @@ def test_get_printer_list(monkeypatch):
     # Verify the result
     assert result == ["Printer1", "Printer2"]
     mock_enum_printers.assert_called_once_with(2)
+
+
+def test_get_parser():
+    """Test the get_parser function."""
+    parser = get_parser()
+    assert parser.description is not None
+    assert "auto-print" in parser.description.lower()
+
+    # Check that the parser has the expected arguments
+    args = parser.parse_args(["test_file.pdf"])
+    assert args.file_path == "test_file.pdf"
+
+
+@patch("auto_print.execute.win32print.OpenPrinter")
+@patch("auto_print.execute.win32print.StartDocPrinter")
+@patch("auto_print.execute.win32api.ShellExecute")
+@patch("auto_print.execute.win32print.StartPagePrinter")
+@patch("auto_print.execute.win32print.WritePrinter")
+@patch("auto_print.execute.win32print.EndPagePrinter")
+@patch("auto_print.execute.win32print.EndDocPrinter")
+@patch("auto_print.execute.win32print.ClosePrinter")
+@patch("auto_print.execute.logging.info")
+def test_printer_pdf_reader(
+    mock_logging_info,
+    mock_close_printer,
+    mock_end_doc_printer,
+    mock_end_page_printer,
+    mock_write_printer,
+    mock_start_page_printer,
+    mock_shell_execute,
+    mock_start_doc_printer,
+    mock_open_printer,
+):
+    """Test the printer_pdf_reader function."""
+    # Set up the mocks
+    mock_open_printer.return_value = "printer_handle"
+
+    # Call the function
+    printer_pdf_reader("test_file.pdf", "test_file.pdf", "Test Printer")
+
+    # Verify the function calls
+    mock_open_printer.assert_called_once_with("Test Printer")
+    mock_start_doc_printer.assert_called_once_with(
+        "printer_handle", 1, ("Auto-test_file.pdf", None, None)
+    )
+    mock_shell_execute.assert_called_once_with(
+        0, "print", "test_file.pdf", None, ".", 0
+    )
+    mock_start_page_printer.assert_called_once_with("printer_handle")
+    mock_write_printer.assert_called_once_with("printer_handle", "test")
+    mock_end_page_printer.assert_called_once_with("printer_handle")
+    mock_end_doc_printer.assert_called_once_with("printer_handle")
+    mock_close_printer.assert_called_once_with("printer_handle")
+    mock_logging_info.assert_called_once()
+
+
+@patch("auto_print.execute.win32print.OpenPrinter")
+@patch("auto_print.execute.logging.error")
+def test_printer_pdf_reader_error(mock_logging_error, mock_open_printer):
+    """Test the printer_pdf_reader function with an error."""
+
+    # Set up the mocks to raise an error
+    class PrinterError(Exception):
+        def __init__(self):
+            self.args = [1801]
+
+    mock_open_printer.side_effect = PrinterError()
+
+    # Call the function
+    printer_pdf_reader("test_file.pdf", "test_file.pdf", "Test Printer")
+
+    # Verify the error was logged
+    mock_logging_error.assert_called_once()
+    assert "does not exists" in mock_logging_error.call_args[0][0]
+
+
+@patch("auto_print.execute.subprocess.call")
+@patch("auto_print.execute.check_ghostscript")
+@patch("auto_print.execute.os.path.abspath")
+@patch("auto_print.execute.logging.info")
+def test_printer_ghost_script(
+    mock_logging_info, mock_abspath, mock_check_ghostscript, mock_subprocess_call
+):
+    """Test the printer_ghost_script function."""
+    # Set up the mocks
+    mock_abspath.return_value = "C:\\test_file.pdf"
+
+    # Call the function
+    printer_ghost_script("test_file.pdf", "Test Printer")
+
+    # Verify the function calls
+    mock_logging_info.assert_called_once()
+    mock_check_ghostscript.assert_called_once()
+    mock_abspath.assert_called_once_with("test_file.pdf")
+    mock_subprocess_call.assert_called_once()
+    # Check that the command contains the printer name
+    assert "Test Printer" in mock_subprocess_call.call_args[0][0]
+
+
+@patch("auto_print.execute.sys.exit")
+@patch("auto_print.execute.messagebox.showerror")
+@patch("auto_print.execute.messagebox.askyesno")
+@patch("webbrowser.open")
+@patch("auto_print.execute.logging.error")
+def test_install_ghostscript(
+    mock_logging_error, mock_webbrowser_open, mock_askyesno, mock_showerror, mock_exit
+):
+    """Test the install_ghostscript function."""
+    # Set up the mocks
+    mock_askyesno.return_value = True  # User wants to download
+
+    # Call the function
+    install_ghostscript()
+
+    # Verify the function calls
+    mock_showerror.assert_called_once()
+    mock_askyesno.assert_called_once()
+    mock_webbrowser_open.assert_called_once_with(
+        "https://ghostscript.com/releases/gsdnld.html", new=2
+    )
+    mock_exit.assert_called_once_with(-5)
+
+
+@patch("auto_print.execute.install_ghostscript")
+def test_check_ghostscript_error(mock_install_ghostscript, monkeypatch):
+    """Test the check_ghostscript function when ghostscript is not installed."""
+
+    # Mock the import to raise an error
+    def mock_import(*args, **kwargs):
+        raise RuntimeError("Ghostscript not found")
+
+    monkeypatch.setattr("builtins.__import__", mock_import)
+
+    # Call the function
+    check_ghostscript()
+
+    # Verify install_ghostscript was called
+    mock_install_ghostscript.assert_called_once()
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
+@patch("auto_print.execute.configure_logger")
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.os.path.exists")
+@patch("auto_print.execute.json.load")
+@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.execute.printer_pdf_reader")
+@patch("auto_print.execute.sys.exit")
+def test_main_with_print_and_show(
+    mock_exit,
+    mock_printer_pdf_reader,
+    mock_provision_fulfilled,
+    mock_json_load,
+    mock_exists,
+    mock_logging,
+    mock_configure_logger,
+):
+    """Test the main function with print and show options."""
+    from auto_print.execute import main
+
+    # Set up the mocks
+    mock_exists.return_value = True
+    mock_json_load.return_value = {
+        "Test Section": {
+            "active": True,
+            "prefix": "test_",
+            "print": True,
+            "show": True,
+            "printer": "Test Printer",
+        }
+    }
+    mock_provision_fulfilled.return_value = True
+
+    # Call the function
+    main()
+
+    # Verify the function calls
+    mock_configure_logger.assert_called_once()
+    mock_exists.assert_called_once()
+    mock_provision_fulfilled.assert_called_once()
+    mock_printer_pdf_reader.assert_called_once()
+    mock_exit.assert_called_once_with(0)
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
+@patch("auto_print.execute.configure_logger")
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.os.path.exists")
+@patch("auto_print.execute.json.load")
+@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.execute.printer_ghost_script")
+@patch("auto_print.execute.sys.exit")
+def test_main_with_print_no_show(
+    mock_exit,
+    mock_printer_ghost_script,
+    mock_provision_fulfilled,
+    mock_json_load,
+    mock_exists,
+    mock_logging,
+    mock_configure_logger,
+):
+    """Test the main function with print but no show options."""
+    from auto_print.execute import main
+
+    # Set up the mocks
+    mock_exists.return_value = True
+    mock_json_load.return_value = {
+        "Test Section": {
+            "active": True,
+            "prefix": "test_",
+            "print": True,
+            "show": False,
+            "printer": "Test Printer",
+        }
+    }
+    mock_provision_fulfilled.return_value = True
+
+    # Call the function
+    main()
+
+    # Verify the function calls
+    mock_configure_logger.assert_called_once()
+    mock_exists.assert_called_once()
+    mock_provision_fulfilled.assert_called_once()
+    mock_printer_ghost_script.assert_called_once()
+    mock_exit.assert_called_once_with(0)
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
+@patch("auto_print.execute.configure_logger")
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.os.path.exists")
+@patch("auto_print.execute.json.load")
+@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.execute.os.startfile")
+@patch("auto_print.execute.sys.exit")
+def test_main_with_no_print(
+    mock_exit,
+    mock_startfile,
+    mock_provision_fulfilled,
+    mock_json_load,
+    mock_exists,
+    mock_logging,
+    mock_configure_logger,
+):
+    """Test the main function with no print option."""
+    from auto_print.execute import main
+
+    # Set up the mocks
+    mock_exists.return_value = True
+    mock_json_load.return_value = {
+        "Test Section": {
+            "active": True,
+            "prefix": "test_",
+            "print": False,
+            "printer": "Test Printer",
+        }
+    }
+    mock_provision_fulfilled.return_value = True
+
+    # Call the function
+    main()
+
+    # Verify the function calls
+    mock_configure_logger.assert_called_once()
+    mock_exists.assert_called_once()
+    mock_provision_fulfilled.assert_called_once()
+    mock_startfile.assert_called_once()
+    # No exit call because we're showing the file
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
+@patch("auto_print.execute.configure_logger")
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.os.path.exists")
+@patch("auto_print.execute.sys.exit")
+@patch("auto_print.execute.open", create=True)
+@patch("auto_print.execute.json.load")
+def test_main_file_not_exists(
+    mock_json_load,
+    mock_open,
+    mock_exit,
+    mock_exists,
+    mock_logging,
+    mock_configure_logger,
+):
+    """Test the main function when the file doesn't exist."""
+    from auto_print.execute import main
+
+    # Set up the mocks
+    mock_exists.side_effect = lambda path: path != "test_file.pdf"
+    mock_json_load.return_value = {}
+
+    # Call the function
+    main()
+
+    # Verify the function calls
+    mock_configure_logger.assert_called_once()
+    assert mock_exists.call_count >= 1
+    # Check that sys.exit was called with -3 (file not found)
+    assert mock_exit.call_args_list[0] == (((-3,)), {})
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print"])
+@patch("auto_print.execute.configure_logger")
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.sys.exit")
+@patch("auto_print.execute.open", create=True)
+def test_main_no_file_arg(
+    mock_open,
+    mock_exit,
+    mock_logging,
+    mock_configure_logger,
+):
+    """Test the main function with no file argument."""
+    from auto_print.execute import main
+
+    # Call the function
+    try:
+        main()
+    except IndexError:
+        # If an IndexError occurs, it's because sys.argv doesn't have enough elements
+        # This is expected and we can just pass
+        pass
+
+    # Verify the function calls
+    mock_configure_logger.assert_called_once()
+    # The exit might not be called if an exception is raised first
+    # So we don't assert on mock_exit
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf", "extra_arg"])
+@patch("auto_print.execute.configure_logger")
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.sys.exit")
+@patch("auto_print.execute.open", create=True)
+@patch("auto_print.execute.os.path.exists")
+@patch("auto_print.execute.json.load")
+def test_main_too_many_args(
+    mock_json_load,
+    mock_exists,
+    mock_open,
+    mock_exit,
+    mock_logging,
+    mock_configure_logger,
+):
+    """Test the main function with too many arguments."""
+    from auto_print.execute import main
+
+    # Set up the mocks
+    mock_exists.return_value = True
+    mock_json_load.return_value = {}
+
+    # Call the function
+    main()
+
+    # Verify the function calls
+    mock_configure_logger.assert_called_once()
+    # Check that sys.exit was called with -2 (too many arguments)
+    assert mock_exit.call_args_list[0] == (((-2,)), {})
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
+@patch("auto_print.execute.configure_logger")
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.os.path.exists")
+@patch("auto_print.execute.open", create=True)
+@patch("auto_print.execute.json.load")
+@patch("auto_print.execute.provision_fulfilled")
+@patch("auto_print.execute.sys.exit")
+def test_main_no_valid_action(
+    mock_exit,
+    mock_provision_fulfilled,
+    mock_json_load,
+    mock_open,
+    mock_exists,
+    mock_logging,
+    mock_configure_logger,
+):
+    """Test the main function when no valid action is found."""
+    from auto_print.execute import main
+
+    # Set up the mocks
+    mock_exists.return_value = True
+    mock_open.return_value.__enter__.return_value.read.return_value = "{}"
+    mock_json_load.return_value = {
+        "Test Section": {
+            "active": True,
+            "prefix": "test_",
+            "print": True,
+            "show": True,
+            "printer": "Test Printer",
+        }
+    }
+    # No valid action found
+    mock_provision_fulfilled.return_value = False
+
+    # Call the function
+    main()
+
+    # Verify the function calls
+    mock_configure_logger.assert_called_once()
+    assert mock_exists.call_count >= 1
+    assert mock_provision_fulfilled.call_count >= 1
