@@ -8,7 +8,7 @@ from unittest.mock import Mock
 import pytest
 from case_insensitive_dict import CaseInsensitiveDict
 
-from auto_print.auto_print_config_generator import (
+from auto_print.config_generator import (
     bool_decision,
     input_choice,
     load_config,
@@ -44,7 +44,7 @@ def test_load_config(monkeypatch, tmp_path):
 
     # Patch the config path
     monkeypatch.setattr(
-        "auto_print.auto_print_config_generator.PRINTER_CONFIG_PATH",
+        "auto_print.config_generator.PRINTER_CONFIG_PATH",
         str(config_path),
     )
 
@@ -64,7 +64,7 @@ def test_save_config(monkeypatch, tmp_path, mock_config_object):
 
     # Patch the config path
     monkeypatch.setattr(
-        "auto_print.auto_print_config_generator.PRINTER_CONFIG_PATH",
+        "auto_print.config_generator.PRINTER_CONFIG_PATH",
         str(config_path),
     )
 
@@ -157,10 +157,10 @@ def test_repair_config_with_invalid_printer(monkeypatch, mock_config_object):
 
     # Mock the necessary functions
     monkeypatch.setattr(
-        "auto_print.auto_print_config_generator.get_printer_list", lambda: ["PDF24"]
+        "auto_print.config_generator.get_printer_list", lambda: ["PDF24"]
     )
     monkeypatch.setattr(
-        "auto_print.auto_print_config_generator.get_default_printer",
+        "auto_print.config_generator.get_default_printer",
         lambda: "PDF24",
     )
     monkeypatch.setattr("builtins.input", lambda _: "PDF24")
@@ -186,7 +186,7 @@ def test_repair_config_with_valid_printer(monkeypatch, mock_config_object):
 
     # Mock the necessary functions
     monkeypatch.setattr(
-        "auto_print.auto_print_config_generator.get_printer_list", lambda: ["PDF24"]
+        "auto_print.config_generator.get_printer_list", lambda: ["PDF24"]
     )
 
     # Create a mock for input to verify it's not called

@@ -59,12 +59,12 @@ Define the executables to be included in the installer package.
 
 This list contains two executables:
 1. auto-print.exe - The main application executable for printing documents
-   - Uses auto_print_execute.py as the source script
+   - Uses execute.py as the source script
    - Uses printer.ico as its icon
    - There is no shortcut to the application created
 
 2. auto-print-config.exe - The configuration tool executable
-   - Uses auto_print_config_generator.py as the source script
+   - Uses config_generator.py as the source script
    - Uses printer-gear.ico as its icon
    - Creates a shortcut in the Start Menu (ProgramMenuFolder)
    - Shortcut is named "Auto Print Config"
@@ -73,13 +73,13 @@ Both executables use the previously defined base to determine their application 
 """
 executables = [
     Executable(
-        script="src/auto_print/auto_print_execute.py",
+        script="src/auto_print/execute.py",
         base=base,
         target_name=app_exe_name,
         icon="printer.ico",
     ),
     Executable(
-        script="src/auto_print/auto_print_config_generator.py",
+        script="src/auto_print/config_generator.py",
         base=None,  # Use console mode for config generator to run in cmd
         target_name="auto-print-config.exe",
         icon="printer-gear.ico",
