@@ -3,19 +3,20 @@ Configuration generator for the module.
 """
 
 import argparse
-import json
 import os.path
 import webbrowser
 from typing import Any
 
 from case_insensitive_dict import CaseInsensitiveDict
 
-from auto_print.execute import (
+from auto_print.utils import (
     PRINTER_CONFIG_PATH,
     check_ghostscript,
     configure_logger,
     get_default_printer,
     get_printer_list,
+    load_config_file,
+    save_config_file,
 )
 
 
@@ -144,20 +145,92 @@ def print_configuration(config_object: CaseInsensitiveDict[str, dict]) -> None:
 
 def load_config() -> CaseInsensitiveDict[str, dict[str, Any]]:
     """Loads the configuration."""
-    if not os.path.exists(PRINTER_CONFIG_PATH):
-        return CaseInsensitiveDict[str, dict](data={})
-    with open(PRINTER_CONFIG_PATH, encoding="utf-8") as file:
-        try:
-            return CaseInsensitiveDict[str, dict](data=json.load(file))
-        except FileNotFoundError:
-            return CaseInsensitiveDict[str, dict](data={})
+    config_data = load_config_file()
+    return CaseInsensitiveDict[str, dict](data=config_data)
 
 
 def save_config(config_object: CaseInsensitiveDict[str, dict[str, Any]]) -> None:
     """Saves the configuration."""
-    with open(PRINTER_CONFIG_PATH, "w", encoding="utf-8") as file:
-        json.dump(config_object.__dict__, file, indent=2)
-    print("Config saved!")
+    save_config_file(config_object.__dict__)
+
+
+def configure_prefix(config_element: dict[str, Any]) -> None:
+    """Configure the prefix filter for a section.
+
+    Args:
+        config_element: The section configuration to update.
+    """
+    print(
+        "Filter by the start of a file.\n"
+        'Something like "test_str" to filter all files who start with with "test_str"\n'
+        "Can be empty if no filter of this type should be used!"
+    )
+
+    config_element["prefix"] = input("Type prefix:").strip()
+    if config_element["prefix"] == "":
+        del config_element["prefix"]
+
+
+def configure_suffix(config_element: dict[str, Any]) -> None:
+    """Configure the suffix filter for a section.
+
+    Args:
+        config_element: The section configuration to update.
+    """
+    print(
+        "Filter by the end of a file.\n"
+        'Something like "t_file.pdf" to filter all pdfs files who end with "t_file"\n'
+        "Can be empty if no filter of this type should be used!"
+    )
+    print("If nothing is typed in no suffix will be defined.")
+    config_element["suffix"] = input("Type suffix:").strip()
+    if config_element["suffix"] == "":
+        del config_element["suffix"]
+
+
+def configure_print_settings(config_element: dict[str, Any]) -> None:
+    """Configure the print settings for a section.
+
+    Args:
+        config_element: The section configuration to update.
+    """
+    config_element["print"] = bool_decision(
+        "Should the filtered file be printed automatically?",
+        config_element.get("print", True),
+    )
+
+    if config_element["print"]:
+        config_element["printer"] = input_choice(
+            "Please choose a printer to use:",
+            get_printer_list(),
+            get_default_printer(),
+        )
+    else:
+        config_element["printer"] = get_default_printer()
+
+
+def configure_display_settings(config_element: dict[str, Any]) -> None:
+    """Configure the display settings for a section.
+
+    Args:
+        config_element: The section configuration to update.
+    """
+    config_element["show"] = bool_decision(
+        "Should the file be shown by the system default?",
+        config_element.get("show", False),
+    )
+
+
+def configure_activation(config_element: dict[str, Any]) -> None:
+    """Configure whether the section is active.
+
+    Args:
+        config_element: The section configuration to update.
+    """
+    config_element["active"] = bool_decision(
+        "Should the new section be activated?",
+        config_element.get("active", True),
+    )
 
 
 def edit_section(
@@ -173,60 +246,18 @@ def edit_section(
         The new section of the auto-print configuration.
     """
     while True:
-        # prefix
-        print(
-            "Filter by the start of a file.\n"
-            'Something like "test_str" to filter all files who start with with "test_str"\n'
-            "Can be empty if no filter of this type should be used!"
-        )
+        # Configure each part of the section
+        configure_prefix(config_element)
+        configure_suffix(config_element)
+        configure_print_settings(config_element)
+        configure_display_settings(config_element)
+        configure_activation(config_element)
 
-        config_element["prefix"] = input("Type prefix:").strip()
-        if config_element["prefix"] == "":
-            del config_element["prefix"]
-
-        # suffix
-        print(
-            "Filter by the end of a file.\n"
-            'Something like "t_file.pdf" to filter all pdfs files who end with "t_file"\n'
-            "Can be empty if no filter of this type should be used!"
-        )
-        print("If nothing is typed in no suffix will be defined.")
-        config_element["suffix"] = input("Type suffix:").strip()
-        if config_element["suffix"] == "":
-            del config_element["suffix"]
-
-        # optional print
-        config_element["print"] = bool_decision(
-            "Should the filtered file be printed automatically?",
-            config_element.get("print", True),
-        )
-
-        if config_element["print"]:
-            config_element["printer"] = input_choice(
-                "Please choose a printer to use:",
-                get_printer_list(),
-                get_default_printer(),
-            )
-        else:
-            config_element["printer"] = get_default_printer()
-
-        # show
-        config_element["show"] = bool_decision(
-            "Should the file be shown by the system default?",
-            config_element.get("show", False),
-        )
-
-        # activate
-        config_element["active"] = bool_decision(
-            "Should the new section be activated?",
-            config_element.get("active", True),
-        )
-
-        # show
+        # Show the configuration
         print()
         print_element(name, config_element, None)
 
-        # check
+        # Check if the configuration is correct
         if bool_decision("Is the above section correct?", True):
             return name, config_element
         print("Please make changes as needed.")
@@ -258,6 +289,45 @@ def create_section(
     return edit_section(name, config_element)
 
 
+def display_insert_positions(config_object: CaseInsensitiveDict[str, dict[str, Any]]) -> int:
+    """Display all possible insert positions for a new section.
+
+    Args:
+        config_object: The current configuration object.
+
+    Returns:
+        The end position (number of sections).
+    """
+    for insert_pos, (name, section) in enumerate(config_object.items()):
+        print(f"Insert Position {insert_pos} ->")
+        print_element(name, section, None)
+    end_pos = len(config_object.keys())
+    print(f"Insert Position {end_pos} ->")
+    print()
+    return end_pos
+
+
+def get_insert_position(end_pos: int) -> str:
+    """Get the position where to insert the new section.
+
+    Args:
+        end_pos: The end position (number of sections).
+
+    Returns:
+        The position as a string, or "cancel" to cancel the operation.
+    """
+    insert_str: str = input_choice(
+        "Please choose where to add the section or choose cancel to cancel this action:",
+        ["start"] + [str(n) for n in range(end_pos + 1)] + ["end", "cancel", "c"],
+        "end",
+    )
+    if insert_str == "end":
+        return str(end_pos)
+    elif insert_str == "start":
+        return "0"
+    return insert_str
+
+
 def insert_section(
     config_object: CaseInsensitiveDict[str, dict[str, Any]],
     name_to_add: str,
@@ -273,28 +343,14 @@ def insert_section(
     Returns:
         The new completed section.
     """
-    for insert_pos, (name, section) in enumerate(config_object.items()):
-        print(f"Insert Position {insert_pos} ->")
-        print_element(name, section, None)
-    end_pos = len(config_object.keys())
-    print(f"Insert Position {end_pos} ->")
-    print()
+    end_pos = display_insert_positions(config_object)
+    insert_str = get_insert_position(end_pos)
 
-    insert_str: str = input_choice(
-        "Please choose where to add the section or choose cancel to cancel this action:",
-        ["start"] + [str(n) for n in range(end_pos + 1)] + ["end", "cancel", "c"],
-        "end",
-    )
-    if insert_str == "end":
-        insert_str = str(end_pos)
-    elif insert_str == "start":
-        insert_str = "0"
-    elif insert_str in ["cancel", "c"]:
+    if insert_str in ["cancel", "c"]:
         print_configuration(config_object)
         return config_object
 
     key_list = list(config_object.keys())
-
     key_list.insert(int(insert_str), name_to_add)
     config_object[name_to_add] = section_to_add
     config_object = CaseInsensitiveDict[str, dict[str, Any]](
@@ -483,7 +539,50 @@ def repair_config(
     return config_object
 
 
+def handle_action(action: str, config: CaseInsensitiveDict[str, dict[str, Any]]) -> tuple[CaseInsensitiveDict[str, dict[str, Any]], bool]:
+    """Handle a user action.
+
+    Args:
+        action: The action to handle.
+        config: The current configuration.
+
+    Returns:
+        A tuple containing the updated configuration and a boolean indicating whether to exit the program.
+    """
+    print(f"Action: {action}")
+    exit_program = False
+
+    if action in ["s", "save"]:
+        save_config(config)
+    elif action in ["add", "a"]:
+        config = add_section(config)
+    elif action in ["delete", "d"]:
+        config = delete_section(config)
+    elif action in ["repair", "r"]:
+        config = repair_config(config)
+    elif action in ["show"]:
+        print()
+        print_configuration(config)
+    elif action in ["change"]:
+        config = change_section_position(config)
+    elif action in ["edit", "e"]:
+        config = edit_section_command(config)
+    elif action in ["close", "c"]:
+        if load_config() == config:
+            exit_program = True
+        elif bool_decision(
+            "There are unsaved changes. Please confirm with y/n if you want to close anyway[n]:",
+            True,
+        ):
+            exit_program = True
+    elif action in ["help", "h"]:
+        show_help()
+
+    return config, exit_program
+
+
 def main() -> None:
+    """Main function for the configuration generator."""
     configure_logger()
     check_ghostscript()
 
@@ -500,33 +599,9 @@ def main() -> None:
             "close",
         )
 
-        print(f"Action: {action}")
-        if action in ["s", "save"]:
-            save_config(config)
-        elif action in ["add", "a"]:
-            config = add_section(config)
-        elif action in ["delete", "d"]:
-            config = delete_section(config)
-        elif action in ["repair", "r"]:
-            config = repair_config(config)
-        elif action in ["show"]:
-            print()
-            print_configuration(config)
-        elif action in ["change"]:
-            config = change_section_position(config)
-        elif action in ["edit", "e"]:
-            config = edit_section_command(config)
-
-        elif action in ["close", "c"]:
-            if load_config() == config:
-                break
-            if bool_decision(
-                "There are unsaved changes. Please confirm with y/n if you want to close anyway[n]:",
-                True,
-            ):
-                break
-        elif action in ["help", "h"]:
-            show_help()
+        config, exit_program = handle_action(action, config)
+        if exit_program:
+            break
 
 
 if __name__ == "__main__":

@@ -12,17 +12,24 @@ Everything is logged and can be locked up in the auto_print.log file!
 """
 
 import argparse
-import json
-import logging
 import os
 import subprocess
 import sys
-from pathlib import Path
 from tkinter import messagebox
-from typing import Final
 
 import win32api  # type: ignore
 import win32print  # type: ignore
+
+from auto_print.utils import (
+    PRINTER_CONFIG_PATH,
+    LOG_FILE,
+    check_ghostscript,
+    configure_logger,
+    get_default_printer,
+    get_printer_list,
+    load_config_file,
+    provision_fulfilled,
+)
 
 
 def get_parser():
@@ -69,30 +76,71 @@ def get_printer_list() -> list[str]:
     return [section[1].split(",")[0] for section in win32print.EnumPrinters(2)]
 
 
+def log_print_operation(file_path: str, printer_name: str) -> None:
+    """
+    Log information about the print operation.
+
+    Args:
+        file_path: The path of the file that should be printed.
+        printer_name: The name of the printer that should be used.
+    """
+    import logging
+    logging.info(
+        f'The printer "{printer_name}" will be chosen to print the file on "{file_path}"\n'
+        "While showing the file!",
+    )
+
+
+def execute_print_command(file_path: str, h_printer: object) -> None:
+    """
+    Execute the print command using ShellExecute.
+
+    Args:
+        file_path: The path of the file that should be printed.
+        h_printer: The printer handle.
+    """
+    win32api.ShellExecute(0, "print", file_path, None, ".", 0)
+    win32print.StartPagePrinter(h_printer)
+    win32print.WritePrinter(h_printer, "test")  # Instead of raw text is there a way to print PDF File ?
+    win32print.EndPagePrinter(h_printer)
+
+
+def handle_printer_error(error: Exception, printer_name: str) -> None:
+    """
+    Handle printer-related errors.
+
+    Args:
+        error: The exception that occurred.
+        printer_name: The name of the printer that was used.
+    """
+    import logging
+    # pylint: disable=unsubscriptable-object
+    if hasattr(error, "args") and len(error.args) > 0 and error.args[0] == 1801:
+        logging.error(
+            f'The printer with the name "{printer_name}" does not exists.'
+        )
+    else:
+        raise error
+
+
 # noinspection PyBroadException
 def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None:
     """
     Prints a document via the adobe pdf reader.
-    :param filename: The name of the file that should be printed.
-    :param file_path: The path of the file that should be printed.
-    :param printer_name: The name of the printer that should be used.
-    :return: None
+
+    Args:
+        filename: The name of the file that should be printed.
+        file_path: The path of the file that should be printed.
+        printer_name: The name of the printer that should be used.
     """
-    logging.info(
-        f'The printer "{printer_name}" will be chosen to print the file "{printer_name}" on "{file_path}"\n'
-        "While showing the file!",
-    )
+    log_print_operation(file_path, printer_name)
+
     try:
         h_printer = win32print.OpenPrinter(printer_name)
         try:
             win32print.StartDocPrinter(h_printer, 1, (f"Auto-{filename}", None, None))
             try:
-                win32api.ShellExecute(0, "print", file_path, None, ".", 0)
-                win32print.StartPagePrinter(h_printer)
-                win32print.WritePrinter(
-                    h_printer, "test"
-                )  # Instead of raw text is there a way to print PDF File ?
-                win32print.EndPagePrinter(h_printer)
+                execute_print_command(file_path, h_printer)
             except Exception:  # pylint: disable=W0703
                 pass
             finally:
@@ -102,13 +150,7 @@ def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None
         finally:
             win32print.ClosePrinter(h_printer)
     except Exception as error:  # pylint: disable=W0703
-        # pylint: disable=unsubscriptable-object
-        if hasattr(error, "args") and len(error.args) > 0 and error.args[0] == 1801:
-            logging.error(
-                f'The printer with the name "{printer_name}" does not exists.'
-            )
-        else:
-            raise error
+        handle_printer_error(error, printer_name)
 
 
 def install_ghostscript():
@@ -196,21 +238,18 @@ def configure_logger() -> None:
         print(error)
 
 
-# The main function should be started as shown above.
-def main() -> None:  # noqa: PLR0912
-    # loads the argument that where used to start this software.
-    configure_logger()
-    logging.info("Starting the program!")
-    logging.info(f"Start programm in: {os.path.abspath(sys.path[0])}")
-    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+def validate_arguments() -> str:
+    """
+    Validate command line arguments and return the file path.
 
-    # Initialize printer_config to avoid UnboundLocalError
-    printer_config = {}
+    Returns:
+        The path to the file to print.
+    """
+    import logging
+    args = sys.argv
 
-    args = sys.argv  # loading the arguments
-    for index, arg in enumerate(args):  # logging the arguments
+    for index, arg in enumerate(args):
         logging.debug(f'Argument {index} is "{arg}".')
-        del index, arg
 
     if len(args) > 2:
         logging.warning(
@@ -222,39 +261,41 @@ def main() -> None:  # noqa: PLR0912
         logging.warning("No file to print specified!")
         sys.exit(-1)
 
-    # The first argument should always be the path of the file.
-    # file_to_print_arg: str = os.path.abspath(args[1])
     file_to_print_arg: str = args[1]
 
     if not file_to_print_arg:
         sys.exit(-5)
-    # file_to_print_folder: str = os.path.dirname(file_to_print_arg)
-    file_to_print_name: str = os.path.basename(file_to_print_arg)
 
     logging.info(f"File to print: {file_to_print_arg}")
 
-    if not os.path.exists(file_to_print_arg):  # checks if the file exists!
+    if not os.path.exists(file_to_print_arg):
         logging.warning(
             "The file specified in the argument does not exist!\n"
             f'The specified path is: "{file_to_print_arg}".',
         )
         sys.exit(-3)
-    try:
-        with open(PRINTER_CONFIG_PATH, encoding="utf-8") as printer_config_file:
-            printer_config = json.load(printer_config_file)
-    except Exception as main_error:  # pylint: disable=broad-exception-caught
-        logging.error(main_error)
-        print(main_error)
-        sys.exit(-4)
+
+    return file_to_print_arg
+
+
+def process_file(file_to_print_arg: str, file_to_print_name: str, printer_config: dict) -> None:
+    """
+    Process the file according to the printer configuration.
+
+    Args:
+        file_to_print_arg: The path to the file to print.
+        file_to_print_name: The name of the file to print.
+        printer_config: The printer configuration.
+    """
+    import logging
 
     for action_key in printer_config:
         printer_action = printer_config[action_key]
-        if not printer_action.get(
-            "active", "false"
-        ):  # skip if printer action is disabled!
+        if not printer_action.get("active", "false"):
             logging.debug(f"The action {action_key} is not active.")
             continue
-        if not provision_fulfilled(  # check if the printer action should be performed.
+
+        if not provision_fulfilled(
             file_to_print_name,
             printer_action.get("prefix", None),
             printer_action.get("suffix", None),
@@ -264,6 +305,7 @@ def main() -> None:  # noqa: PLR0912
         logging.info(
             f"The action {action_key} is the valid action. This action will be executed!"
         )
+
         if bool(printer_action.get("print", "false")):
             printer_to_use: str = printer_action.get("printer", get_default_printer())
             if bool(printer_action.get("show", "true")):
@@ -277,7 +319,35 @@ def main() -> None:  # noqa: PLR0912
         else:
             logging.info("Showing the file! No printing!")
             os.startfile(file_to_print_arg)  # type: ignore
+            sys.exit(0)
+
     logging.error("No valid action found.")
+
+
+# The main function should be started as shown above.
+def main() -> None:  # noqa: PLR0912
+    import logging
+
+    # Configure logging
+    configure_logger()
+    logging.info("Starting the program!")
+    logging.info(f"Start programm in: {os.path.abspath(sys.path[0])}")
+    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+
+    # Validate arguments and get file path
+    file_to_print_arg = validate_arguments()
+    file_to_print_name = os.path.basename(file_to_print_arg)
+
+    # Load printer configuration
+    try:
+        printer_config = load_config_file()
+    except Exception as main_error:  # pylint: disable=broad-exception-caught
+        logging.error(main_error)
+        print(main_error)
+        sys.exit(-4)
+
+    # Process the file
+    process_file(file_to_print_arg, file_to_print_name, printer_config)
 
 
 if __name__ == "__main__":

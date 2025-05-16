@@ -10,13 +10,18 @@ from auto_print.execute import (
     LOG_FILE,
     check_ghostscript,
     configure_logger,
+    execute_print_command,
     get_default_printer,
     get_parser,
     get_printer_list,
+    handle_printer_error,
     install_ghostscript,
+    log_print_operation,
     printer_ghost_script,
     printer_pdf_reader,
+    process_file,
     provision_fulfilled,
+    validate_arguments,
 )
 
 
@@ -508,3 +513,215 @@ def test_main_no_valid_action(
     mock_configure_logger.assert_called_once()
     assert mock_exists.call_count >= 1
     assert mock_provision_fulfilled.call_count >= 1
+
+
+@patch("auto_print.execute.logging")
+def test_log_print_operation(mock_logging):
+    """Test the log_print_operation function."""
+    log_print_operation("test_file.pdf", "Test Printer")
+    mock_logging.info.assert_called_once_with(
+        'The printer "Test Printer" will be chosen to print the file on "test_file.pdf"\n'
+        "While showing the file!",
+    )
+
+
+@patch("auto_print.execute.win32api.ShellExecute")
+@patch("auto_print.execute.win32print.StartPagePrinter")
+@patch("auto_print.execute.win32print.WritePrinter")
+@patch("auto_print.execute.win32print.EndPagePrinter")
+def test_execute_print_command(
+    mock_end_page_printer, mock_write_printer, mock_start_page_printer, mock_shell_execute
+):
+    """Test the execute_print_command function."""
+    h_printer = Mock()
+    execute_print_command("test_file.pdf", h_printer)
+
+    mock_shell_execute.assert_called_once_with(0, "print", "test_file.pdf", None, ".", 0)
+    mock_start_page_printer.assert_called_once_with(h_printer)
+    mock_write_printer.assert_called_once_with(h_printer, "test")
+    mock_end_page_printer.assert_called_once_with(h_printer)
+
+
+@patch("auto_print.execute.logging")
+def test_handle_printer_error_known_error(mock_logging):
+    """Test the handle_printer_error function with a known error."""
+    error = Exception()
+    error.args = [1801]
+    handle_printer_error(error, "Test Printer")
+    mock_logging.error.assert_called_once_with(
+        'The printer with the name "Test Printer" does not exists.'
+    )
+
+
+@patch("auto_print.execute.logging")
+def test_handle_printer_error_unknown_error(mock_logging):
+    """Test the handle_printer_error function with an unknown error."""
+    error = Exception("Unknown error")
+    with pytest.raises(Exception) as excinfo:
+        handle_printer_error(error, "Test Printer")
+    assert str(excinfo.value) == "Unknown error"
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.os.path.exists")
+@patch("auto_print.execute.sys.exit")
+def test_validate_arguments_valid(mock_exit, mock_exists, mock_logging):
+    """Test the validate_arguments function with valid arguments."""
+    mock_exists.return_value = True
+    result = validate_arguments()
+    assert result == "test_file.pdf"
+    mock_exists.assert_called_once_with("test_file.pdf")
+    mock_exit.assert_not_called()
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print"])
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.sys.exit")
+def test_validate_arguments_no_file(mock_exit, mock_logging):
+    """Test the validate_arguments function with no file argument."""
+    with pytest.raises(IndexError):
+        validate_arguments()
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf", "extra_arg"])
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.sys.exit")
+def test_validate_arguments_too_many_args(mock_exit, mock_logging):
+    """Test the validate_arguments function with too many arguments."""
+    validate_arguments()
+    mock_exit.assert_called_once_with(-2)
+
+
+@patch("auto_print.execute.sys.argv", ["auto_print", "test_file.pdf"])
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.os.path.exists")
+@patch("auto_print.execute.sys.exit")
+def test_validate_arguments_file_not_exists(mock_exit, mock_exists, mock_logging):
+    """Test the validate_arguments function when the file doesn't exist."""
+    mock_exists.return_value = False
+    validate_arguments()
+    mock_exists.assert_called_once_with("test_file.pdf")
+    mock_exit.assert_called_once_with(-3)
+
+
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.printer_pdf_reader")
+@patch("auto_print.execute.printer_ghost_script")
+@patch("auto_print.execute.os.startfile")
+@patch("auto_print.execute.sys.exit")
+@patch("auto_print.execute.provision_fulfilled")
+def test_process_file_print_and_show(
+    mock_provision_fulfilled,
+    mock_exit,
+    mock_startfile,
+    mock_printer_ghost_script,
+    mock_printer_pdf_reader,
+    mock_logging,
+):
+    """Test the process_file function with print and show."""
+    mock_provision_fulfilled.return_value = True
+    printer_config = {
+        "Test Section": {
+            "active": True,
+            "print": True,
+            "show": True,
+            "printer": "Test Printer",
+        }
+    }
+    process_file("test_file.pdf", "test_file.pdf", printer_config)
+    mock_provision_fulfilled.assert_called_once()
+    mock_printer_pdf_reader.assert_called_once_with(
+        "test_file.pdf", "test_file.pdf", "Test Printer"
+    )
+    mock_exit.assert_called_once_with(0)
+    mock_printer_ghost_script.assert_not_called()
+    mock_startfile.assert_not_called()
+
+
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.printer_pdf_reader")
+@patch("auto_print.execute.printer_ghost_script")
+@patch("auto_print.execute.os.startfile")
+@patch("auto_print.execute.sys.exit")
+@patch("auto_print.execute.provision_fulfilled")
+def test_process_file_print_no_show(
+    mock_provision_fulfilled,
+    mock_exit,
+    mock_startfile,
+    mock_printer_ghost_script,
+    mock_printer_pdf_reader,
+    mock_logging,
+):
+    """Test the process_file function with print but no show."""
+    mock_provision_fulfilled.return_value = True
+    printer_config = {
+        "Test Section": {
+            "active": True,
+            "print": True,
+            "show": False,
+            "printer": "Test Printer",
+        }
+    }
+    process_file("test_file.pdf", "test_file.pdf", printer_config)
+    mock_provision_fulfilled.assert_called_once()
+    mock_printer_ghost_script.assert_called_once_with(
+        "test_file.pdf", "Test Printer"
+    )
+    mock_exit.assert_called_once_with(0)
+    mock_printer_pdf_reader.assert_not_called()
+    mock_startfile.assert_not_called()
+
+
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.printer_pdf_reader")
+@patch("auto_print.execute.printer_ghost_script")
+@patch("auto_print.execute.os.startfile")
+@patch("auto_print.execute.sys.exit")
+@patch("auto_print.execute.provision_fulfilled")
+def test_process_file_no_print(
+    mock_provision_fulfilled,
+    mock_exit,
+    mock_startfile,
+    mock_printer_ghost_script,
+    mock_printer_pdf_reader,
+    mock_logging,
+):
+    """Test the process_file function with no print."""
+    mock_provision_fulfilled.return_value = True
+    printer_config = {
+        "Test Section": {
+            "active": True,
+            "print": False,
+            "show": True,
+        }
+    }
+    process_file("test_file.pdf", "test_file.pdf", printer_config)
+    mock_provision_fulfilled.assert_called_once()
+    mock_startfile.assert_called_once_with("test_file.pdf")
+    mock_exit.assert_called_once_with(0)
+    mock_printer_pdf_reader.assert_not_called()
+    mock_printer_ghost_script.assert_not_called()
+
+
+@patch("auto_print.execute.logging")
+@patch("auto_print.execute.sys.exit")
+@patch("auto_print.execute.provision_fulfilled")
+def test_process_file_no_valid_action(
+    mock_provision_fulfilled,
+    mock_exit,
+    mock_logging,
+):
+    """Test the process_file function with no valid action."""
+    mock_provision_fulfilled.return_value = False
+    printer_config = {
+        "Test Section": {
+            "active": True,
+            "print": True,
+            "show": True,
+            "printer": "Test Printer",
+        }
+    }
+    process_file("test_file.pdf", "test_file.pdf", printer_config)
+    mock_provision_fulfilled.assert_called_once()
+    mock_logging.error.assert_called_once_with("No valid action found.")
