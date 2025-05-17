@@ -148,9 +148,7 @@ jobs:
     - name: Move HTML to root (optional, but recommended if nested)
       run: |
         ls -lah
-        mkdir -p public
-        mv docs/_build/html/* public/
-        ls -lah
+        ls -lah docs
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
