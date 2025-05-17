@@ -104,12 +104,15 @@ def test_execute_with_matching_file(
         assert pytest_wrapped_e.value.code == 0
 
 
-@pytest.mark.working_on
 def test_execute_with_non_matching_file(multi_section_config_file, tmp_path):
     """Test the execute function with a file that doesn't match any configuration."""
     # Create a test file that doesn't match any configuration
     test_file = tmp_path / "non_matching_file.pdf"
     test_file.write_text("Test content")
+
+    # Mock logging to verify error message
+    mock_logging = patch("auto_print.auto_print_execute.logging")
+    mock_log = mock_logging.start()
 
     # Mock sys.argv to simulate command line arguments
     with (
@@ -119,11 +122,11 @@ def test_execute_with_non_matching_file(multi_section_config_file, tmp_path):
             multi_section_config_file,
         ),
     ):
-        # The function should complete without raising SystemExit
-        # since no matching section was found
+        # The function logs an error when no matching section is found
         execute_main()
 
-    # If we reach this point, the test passes because no SystemExit was raised
+    # Verify that the error was logged
+    mock_log.error.assert_called_with("No valid action found.")
 
 
 def test_execute_with_show_only_config(
@@ -142,11 +145,11 @@ def test_execute_with_show_only_config(
             multi_section_config_file,
         ),
     ):
-        # The function should complete without raising SystemExit
-        # since it's just showing the file
-        execute_main()
+        # The function should exit with code 0 after showing the file
+        with pytest.raises(SystemExit) as pytest_wrapped_e:
+            execute_main()
+        assert pytest_wrapped_e.value.code == 0
 
     mock_os_startfile.assert_called_once()
     # Check that startfile was called to show the file
     mock_os_startfile.assert_called_with(str(test_file))
-    # If we reach this point, the test passes because no SystemExit was raised
