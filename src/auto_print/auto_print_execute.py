@@ -75,10 +75,10 @@ def get_printer_list() -> list[str]:
 def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None:
     """Prints a document via the adobe PDF reader.
 
-    :param filename: The name of the file that should be printed.
-    :param file_path: The path of the file that should be printed.
-    :param printer_name: The name of the printer that should be used.
-    :return: None
+    Args:
+        filename: The name of the file that should be printed.
+        file_path: The path of the file that should be printed.
+        printer_name: The name of the printer that should be used.
     """
     logging.info(
         f'The printer "{printer_name}" will be chosen to print the file "{printer_name}" on "{file_path}"\n'
@@ -154,9 +154,9 @@ def check_ghostscript():
 def printer_ghost_script(file_path: str, printer_name: str) -> None:
     """Prints a document with the ghostscript printer.
 
-    :param file_path: The path of the file that should be printed.
-    :param printer_name: The name of the printer that should be used.
-    :return: None
+    Args:
+        file_path: The path of the file that should be printed.
+        printer_name: The name of the printer that should be used.
     """
     logging.info(
         f'The printer "{printer_name}" will be chosen to print the file {file_path}'
@@ -183,10 +183,13 @@ def printer_ghost_script(file_path: str, printer_name: str) -> None:
 def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) -> bool:
     """Checks if a provision is fulfilled to execute a section of the Program.
 
-    :param file_name: The name of the file to check.
-    :param prefix: A prefix of the basename. Checks if the suffix is fulfilled.
-    :param suffix: A suffix of the basename (file extension).
-    :return: Returns true if all provisions are fulfilled.
+    Args:
+        file_name: The name of the file to check.
+        prefix: A prefix of the basename. Checks if the suffix is fulfilled.
+        suffix: A suffix of the basename (file extension).
+
+    Returns:
+        bool: True if all provisions are fulfilled.
     """
     if prefix and not file_name.startswith(prefix):
         return False
