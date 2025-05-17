@@ -40,12 +40,17 @@ release = _DISTRIBUTION_METADATA["Version"]
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "sphinx.ext.autodoc",
-    # "sphinx.ext.viewcode",
-    "sphinx.ext.napoleon",
-    "sphinx.ext.intersphinx",
-    "sphinxarg.ext",
-    "sphinx_copybutton",
+    "sphinx.ext.autodoc",  # Automatically generate API documentation from docstrings
+    # "sphinx.ext.viewcode",   # Add links to highlighted source code
+    "sphinx.ext.napoleon",  # Support for Google and NumPy style docstrings
+    "sphinx.ext.intersphinx",  # Link to other project's documentation
+    "sphinxarg.ext",  # Document command-line arguments
+    "sphinx_copybutton",  # Add copy buttons to code blocks
+    "sphinx_autodoc_typehints",  # Better type hint documentation
+    "sphinx_markdown_tables",  # Better rendering of markdown tables
+    "sphinx_notfound_page",  # Custom 404 page
+    "sphinx_rtd_dark_mode",  # Dark mode toggle for Read the Docs theme
+    "sphinxcontrib.mermaid",  # Mermaid diagrams support
 ]
 
 templates_path = ["_templates"]
