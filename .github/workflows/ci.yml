@@ -135,9 +135,10 @@ jobs:
     name: Deploy Documentation
     needs: [docs]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     permissions:
       contents: write
+      pages: write
     steps:
     - uses: actions/checkout@v4
     - name: Download documentation artifact
@@ -145,8 +146,15 @@ jobs:
       with:
         name: documentation
         path: documentation
+
+    - name: Move HTML to root (optional, but recommended if nested)
+      run: |
+        mkdir -p public
+        mv documentation/docs/_build/html/* public/
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./documentation
+        publish_dir: ./public
+        publish_branch: gh-pages
