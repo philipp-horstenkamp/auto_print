@@ -139,7 +139,6 @@ jobs:
       contents: write
       pages: write
     steps:
-    - uses: actions/checkout@v4
     - name: Download documentation artifact
       uses: actions/download-artifact@v4
       with:
@@ -150,7 +149,7 @@ jobs:
       run: |
         ls -lah
         mkdir -p public
-        mv documentation/docs/_build/html/* public/
+        mv docs/_build/html/* public/
         ls -lah
 
     - name: Deploy to GitHub Pages
