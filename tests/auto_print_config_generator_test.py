@@ -60,8 +60,8 @@ def test_save_config(mock_json_dump, mock_config_path, mock_config_object):
 
     mock_config_path.open.assert_called_once_with("w", encoding="utf-8")
     mock_json_dump.assert_called_once()
-    # Check that the first argument to json.dump is our config object's __dict__
-    assert mock_json_dump.call_args[0][0] == mock_config_object.__dict__
+    # Check that the first argument to json.dump is our config object converted to a dict
+    assert mock_json_dump.call_args[0][0] == dict(mock_config_object)
 
 
 @patch("builtins.print")
