@@ -5,7 +5,7 @@ Installation
 
 You can install the auto-print package using pip:
 
-.. code-block:: bash
+.. prompt:: bash
 
     pip install auto-print
 
