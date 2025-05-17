@@ -72,7 +72,6 @@ jobs:
         name: documentation
         path: |
           docs/_build/html
-          docs/_build/de/html
 
   wheel-build:
     name: Wheel Build
@@ -145,16 +144,18 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: documentation
-        path: documentation
+        path: docs
 
     - name: Move HTML to root (optional, but recommended if nested)
       run: |
+        ls -lah
         mkdir -p public
         mv documentation/docs/_build/html/* public/
+        ls -lah
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./public
+        publish_dir: ./docs
         publish_branch: gh-pages
