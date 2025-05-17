@@ -40,8 +40,8 @@ def get_parser():
     )
 
 
-def input_choice(description: str, input_list: list[str], default: str):
-    """Checks an input against a list of possible inputs and norms the input.
+def input_choice(description: str, input_list: list[str], default: str) -> str:
+    """Checks an input against a list of possible inputs and normalizes the input.
 
     Args:
         description: The description that should be made with the input.
@@ -50,41 +50,49 @@ def input_choice(description: str, input_list: list[str], default: str):
 
     Returns:
         The choice made.
+
+    Raises:
+        InputValidationError: If validation fails for inputs.
     """
+    # Validate inputs
     if not input_list:
         raise InputValidationError(InputValidationError.INVALID_INPUT_LIST)
     if not description:
         raise InputValidationError(InputValidationError.MISSING_DESCRIPTION)
     if default not in input_list:
         raise InputValidationError(InputValidationError.DEFAULT_NOT_IN_CHOICES)
-    possible_inputs = input_list[:]
+
+    # Display options and get user input
     while True:
         print(description)
-        print(f"Options: {', '.join(possible_inputs)}")
+        print(f"Options: {', '.join(input_list)}")
         text_in = input(f"Choose [{default}]:").strip()
+
+        # Use default if no input provided
         if not text_in:
-            text_in = default
-        text_in = next((e for e in input_list if e.lower() == text_in.lower()), "")
-        if text_in:
-            return text_in
+            return default
+
+        # Find case-insensitive match
+        for option in input_list:
+            if option.lower() == text_in.lower():
+                return option
+
+        # No match found, loop will continue
 
 
 def bool_decision(description: str, *, default: bool = False) -> bool:
-    """Tooling to interpret a yes/no decision.
+    """Get a yes/no decision from the user.
 
     Args:
         description: The description for the decision.
-        default: The default value.
+        default: The default value (True for yes, False for no).
 
     Returns:
-        True or false depending on user input.
+        True for yes/y responses, False for no/n responses.
     """
-    return (
-        input_choice(description, ["yes", "y", "no", "n"], "yes" if default else "no")[
-            0
-        ]
-        == "y"
-    )
+    default_option = "yes" if default else "no"
+    response = input_choice(description, ["yes", "y", "no", "n"], default_option)
+    return response.startswith("y")
 
 
 def print_element(name: str, config_element: dict[str, Any], index: int | None) -> None:
@@ -95,34 +103,45 @@ def print_element(name: str, config_element: dict[str, Any], index: int | None) 
         config_element: The complete section of the printer configuration.
         index: The index of the section. Can be None if a section should not be printed with index.
     """
+    # Extract configuration values
     printer = config_element.get("printer", get_default_printer())
     printing = config_element.get("print", False)
+    showing = config_element.get("show", True)
+    active = config_element.get("active", False)
     suffix = config_element.get("suffix")
     prefix = config_element.get("prefix")
 
-    next_str = "    Config" if index is None else f"{index + 1:>2}. Prio config"
-    next_str += f' section with name "{name}" '
-    if printing:
-        next_str += f'prints on "{printer}"'
+    # Print section header
+    if index is None:
+        header = f'    Config section with name "{name}" '
     else:
-        next_str += "does not print."
-    print(next_str)
+        header = f'{index + 1:>2}. Prio config section with name "{name}" '
+
+    header += f'prints on "{printer}"' if printing else "does not print."
+    print(header)
+
+    # Print file matching criteria
     if suffix or prefix:
-        next_str = "    Action is taken on all files "
+        filter_msg = "    Action is taken on all files "
+        filter_parts = []
+
         if prefix:
-            next_str += f'starting with "{prefix}"'
-            if suffix:
-                next_str += " and "
+            filter_parts.append(f'starting with "{prefix}"')
         if suffix:
-            next_str += f'ending with "{suffix}"'
-        print(next_str)
+            filter_parts.append(f'ending with "{suffix}"')
+
+        filter_msg += " and ".join(filter_parts)
+        print(filter_msg)
     else:
         print("    This is executed for every file.")
-    print(
-        f"    The file should {'not ' if not config_element.get('show', True) else ''}be shown"
-        f" and {'not be ' if not config_element.get('print', False) else ''}printed.\n"
-        f"    The section is {'active' if config_element['active'] else 'inactive'}. "
-    )
+
+    # Print action and status
+    show_status = "not " if not showing else ""
+    print_status = "not be " if not printing else ""
+    active_status = "active" if active else "inactive"
+
+    print(f"    The file should {show_status}be shown and {print_status}printed.")
+    print(f"    The section is {active_status}.")
 
 
 def print_configuration(config_object: CaseInsensitiveDict[str, dict]) -> None:
@@ -175,35 +194,39 @@ def edit_section(
         The new section of the auto-print configuration.
     """
     while True:
-        # prefix
+        # Configure prefix filter
         print(
             "Filter by the start of a file.\n"
-            'Something like "test_str" to filter all files who start with with "test_str"\n'
+            'Something like "test_str" to filter all files who start with "test_str"\n'
             "Can be empty if no filter of this type should be used!"
         )
-
-        config_element["prefix"] = input("Type prefix:").strip()
-        if config_element["prefix"] == "":
+        prefix = input("Type prefix:").strip()
+        if prefix:
+            config_element["prefix"] = prefix
+        elif "prefix" in config_element:
             del config_element["prefix"]
 
-        # suffix
+        # Configure suffix filter
         print(
             "Filter by the end of a file.\n"
             'Something like "t_file.pdf" to filter all pdfs files who end with "t_file"\n'
             "Can be empty if no filter of this type should be used!"
         )
-        print("If nothing is typed in no suffix will be defined.")
-        config_element["suffix"] = input("Type suffix:").strip()
-        if config_element["suffix"] == "":
+        suffix = input("Type suffix:").strip()
+        if suffix:
+            config_element["suffix"] = suffix
+        elif "suffix" in config_element:
             del config_element["suffix"]
 
-        # optional print
-        config_element["print"] = bool_decision(
+        # Configure printing options
+        should_print = bool_decision(
             "Should the filtered file be printed automatically?",
             default=config_element.get("print", True),
         )
+        config_element["print"] = should_print
 
-        if config_element["print"]:
+        # Configure printer selection if printing is enabled
+        if should_print:
             config_element["printer"] = input_choice(
                 "Please choose a printer to use:",
                 get_printer_list(),
@@ -212,23 +235,23 @@ def edit_section(
         else:
             config_element["printer"] = get_default_printer()
 
-        # show
+        # Configure display options
         config_element["show"] = bool_decision(
             "Should the file be shown by the system default?",
             default=config_element.get("show", False),
         )
 
-        # activate
+        # Configure section activation
         config_element["active"] = bool_decision(
             "Should the new section be activated?",
             default=config_element.get("active", True),
         )
 
-        # show
+        # Show the configuration summary
         print()
         print_element(name, config_element, None)
 
-        # check
+        # Confirm or edit again
         if bool_decision("Is the above section correct?", default=True):
             return name, config_element
         print("Please make changes as needed.")

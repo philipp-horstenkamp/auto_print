@@ -71,7 +71,6 @@ def get_printer_list() -> list[str]:
     return [section[1].split(",")[0] for section in win32print.EnumPrinters(2)]
 
 
-# noinspection PyBroadException
 def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None:
     """Prints a document via the adobe PDF reader.
 
@@ -81,36 +80,40 @@ def printer_pdf_reader(file_path: str, filename: str, printer_name: str) -> None
     :return: None
     """
     logging.info(
-        f'The printer "{printer_name}" will be chosen to print the file "{printer_name}" on "{file_path}"\n'
+        f'The printer "{printer_name}" will be chosen to print the file "{file_path}"\n'
         "While showing the file!",
     )
+
+    # Try to open the printer
     try:
         h_printer = win32print.OpenPrinter(printer_name)
-        try:
-            win32print.StartDocPrinter(h_printer, 1, (f"Auto-{filename}", None, None))
-            try:
-                win32api.ShellExecute(0, "print", file_path, None, ".", 0)
-                win32print.StartPagePrinter(h_printer)
-                win32print.WritePrinter(
-                    h_printer, "test"
-                )  # Instead of raw text, is there a way to print PDF File?
-                win32print.EndPagePrinter(h_printer)
-            except (OSError, RuntimeError):
-                logging.exception("Error during printing")
-            finally:
-                win32print.EndDocPrinter(h_printer)
-        except (OSError, RuntimeError):
-            logging.exception("Error during document printing")
-        finally:
-            win32print.ClosePrinter(h_printer)
     except OSError as error:
         # Check for printer not found error
         if hasattr(error, "__getitem__") and error[0] == PRINTER_NOT_FOUND_ERROR:
             logging.exception(
                 f'The printer with the name "{printer_name}" does not exist.'
             )
-        else:
-            raise
+            return
+        raise
+
+    # Process with opened printer
+    try:
+        win32print.StartDocPrinter(h_printer, 1, (f"Auto-{filename}", None, None))
+        try:
+            win32api.ShellExecute(0, "print", file_path, None, ".", 0)
+            win32print.StartPagePrinter(h_printer)
+            win32print.WritePrinter(
+                h_printer, "test"
+            )  # Instead of raw text, is there a way to print PDF File?
+            win32print.EndPagePrinter(h_printer)
+        except (OSError, RuntimeError):
+            logging.exception("Error during printing")
+        finally:
+            win32print.EndDocPrinter(h_printer)
+    except (OSError, RuntimeError):
+        logging.exception("Error during document printing")
+    finally:
+        win32print.ClosePrinter(h_printer)
 
 
 def install_ghostscript():
@@ -188,6 +191,7 @@ def provision_fulfilled(file_name: str, prefix: str | None, suffix: str | None) 
     :param suffix: A suffix of the basename (file extension).
     :return: Returns true if all provisions are fulfilled.
     """
+    # If prefix is specified, file must start with it
     if prefix and not file_name.startswith(prefix):
         return False
     return not (suffix and not file_name.endswith(suffix))
@@ -249,80 +253,91 @@ def main() -> None:
     -4: Error loading configuration
     -5: Empty file path
     """
-    # loads the argument that where used to start this software.
+    # Configure logging
     configure_logger()
     logging.info("Starting the program!")
     logging.info(f"Start program in: {Path(sys.path[0]).resolve()}")
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
-    args = sys.argv  # loading the arguments
-    for index, arg in enumerate(args):  # logging the arguments
+    # Process command line arguments
+    args = sys.argv
+    for index, arg in enumerate(args):
         logging.debug(f'Argument {index} is "{arg}".')
-        del index, arg
 
-    if len(args) != EXPECTED_ARG_COUNT:
+    # Validate argument count
+    if len(args) < EXPECTED_ARG_COUNT:
         logging.warning("No file to print specified!")
         sys.exit(-1)
-
-    if len(args) > EXPECTED_ARG_COUNT:
+    elif len(args) > EXPECTED_ARG_COUNT:
         logging.warning(
-            "There is more then one additional Argument. Please only use the filename as an Argument!"
+            "There is more than one additional Argument. Please only use the filename as an Argument!"
         )
         sys.exit(-2)
 
-    # The first argument should always be the path of the file.
+    # Get the file path from arguments
     file_to_print_arg: str = args[1]
-
     if not file_to_print_arg:
+        logging.warning("Empty file path provided!")
         sys.exit(-5)
-    file_to_print_name: str = Path(file_to_print_arg).name
 
+    # Extract the filename from a path
+    file_to_print_name: str = Path(file_to_print_arg).name
     logging.info(f"File to print: {file_to_print_arg}")
 
-    if not Path(file_to_print_arg).exists():  # checks if the file exists!
+    # Validate file existence
+    if not Path(file_to_print_arg).exists():
         logging.warning(
-            "The file specified in the argument does not exist!\n"
-            f'The specified path is: "{file_to_print_arg}".',
+            f'The file specified in the argument does not exist: "{file_to_print_arg}".'
         )
         sys.exit(-3)
+    # Load printer configuration
     printer_config = load_printer_config(PRINTER_CONFIG_PATH)
 
-    for action_key in printer_config:
-        printer_action = printer_config[action_key]
-        if not printer_action.get(
-            "active", False
-        ):  # skip if printer action is disabled!
+    # Process each configuration section
+    for action_key, printer_action in printer_config.items():
+        # Skip inactive configurations
+        if not printer_action.get("active", False):
             logging.debug(f"The action {action_key} is not active.")
             continue
-        if not provision_fulfilled(  # check if the printer action should be performed.
-            file_to_print_name,
-            printer_action.get("prefix", None),  # type: ignore
-            printer_action.get("suffix", None),  # type: ignore
-        ):
+
+        # Check if filename matches the configuration patterns
+        prefix = printer_action.get("prefix")
+        suffix = printer_action.get("suffix")
+        if not provision_fulfilled(file_to_print_name, prefix, suffix):  # type: ignore
             continue
 
+        # Found a matching configuration
         logging.info(
             f"The action {action_key} is the valid action. This action will be executed!"
         )
-        if printer_action.get("print", False):
-            # Get printer value, ensuring it's a string
+
+        # Determine if printing is required
+        should_print = printer_action.get("print", False)
+        should_show = printer_action.get("show", True)
+
+        if should_print:
+            # Get printer name, defaulting if necessary
             printer_value = printer_action.get("printer", get_default_printer())
-            printer_to_use: str = (
+            printer_to_use = (
                 printer_value
                 if isinstance(printer_value, str)
                 else get_default_printer()
             )
-            if printer_action.get("show", True):
+
+            # Print using appropriate method based on show setting
+            if should_show:
                 printer_pdf_reader(
                     file_to_print_arg, file_to_print_name, printer_to_use
                 )
-                sys.exit(0)
             else:
                 printer_ghost_script(file_to_print_arg, printer_to_use)
-                sys.exit(0)
         else:
+            # Just show the file without printing
             logging.info("Showing the file! No printing!")
             os.startfile(file_to_print_arg)  # type: ignore
+        sys.exit(0)
+
+    # No matching configuration found
     logging.error("No valid action found.")
 
 
