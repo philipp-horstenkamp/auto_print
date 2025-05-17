@@ -4,6 +4,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 import sys
+from importlib.metadata import metadata
 from pathlib import Path
 
 sys.path.insert(0, Path("..").resolve())  # type: ignore
@@ -26,12 +27,14 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "auto-print"
-copyright = "2023, Philipp Horstenkamp"  # noqa: A001
-author = "Philipp Horstenkamp"
+# Read metadata from package
+_DISTRIBUTION_METADATA = metadata("auto-print")
 
-# The full version, including alpha/beta/rc tags
-release = "2.0.5"
+# Extract metadata
+project = _DISTRIBUTION_METADATA["Name"]
+author = _DISTRIBUTION_METADATA["Author"].split("<")[0].strip()
+copyright = f"2025, {author}"  # noqa: A001
+release = _DISTRIBUTION_METADATA["Version"]
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
