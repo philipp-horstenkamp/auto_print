@@ -52,6 +52,7 @@ extensions = [
     "sphinxcontrib.mermaid",  # Mermaid diagrams support
     "sphinx_prompt",  # Better command prompt examples
     "sphinx_tabs.tabs",  # Tabbed content for code examples
+    "notfound.extension",
 ]
 
 templates_path = ["_templates"]
