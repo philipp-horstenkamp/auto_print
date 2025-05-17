@@ -43,12 +43,11 @@ extensions = [
     "sphinx.ext.autodoc",  # Automatically generate API documentation from docstrings
     # "sphinx.ext.viewcode",   # Add links to highlighted source code
     "sphinx.ext.napoleon",  # Support for Google and NumPy style docstrings
-    "sphinx.ext.intersphinx",  # Link to other project's documentation
+    "sphinx.ext.intersphinx",  # Link to another project's documentation
     "sphinxarg.ext",  # Document command-line arguments
     "sphinx_copybutton",  # Add copy buttons to code blocks
     "sphinx_autodoc_typehints",  # Better type hint documentation
     "sphinx_markdown_tables",  # Better rendering of markdown tables
-    "notfound.extension",  # Custom 404 page
     "sphinx_rtd_dark_mode",  # Dark mode toggle for Read the Docs theme
     "sphinxcontrib.mermaid",  # Mermaid diagrams support
     "sphinx_prompt",  # Better command prompt examples
