@@ -48,7 +48,7 @@ extensions = [
     "sphinx_copybutton",  # Add copy buttons to code blocks
     "sphinx_autodoc_typehints",  # Better type hint documentation
     "sphinx_markdown_tables",  # Better rendering of markdown tables
-    "sphinx_notfound_page",  # Custom 404 page
+    "notfound.extension",  # Custom 404 page
     "sphinx_rtd_dark_mode",  # Dark mode toggle for Read the Docs theme
     "sphinxcontrib.mermaid",  # Mermaid diagrams support
     "sphinx_prompt",  # Better command prompt examples
