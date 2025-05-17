@@ -83,7 +83,10 @@ def test_load_config_with_edge_case_file(edge_case_config_file):
 
 # Example test for auto_print_execute
 @patch("auto_print.auto_print_execute.win32api.ShellExecute")
-def test_execute_with_matching_file(mock_shell_execute, basic_config_file, tmp_path):
+@patch("auto_print.auto_print_execute.check_ghostscript")
+def test_execute_with_matching_file(
+    mock_shell_execute, mock_check_ghostscript, basic_config_file, tmp_path
+):
     """Test the execute function with a file that matches configuration."""
     # Create a test PDF file that matches the configuration
     test_file = tmp_path / "invoice_test.pdf"
