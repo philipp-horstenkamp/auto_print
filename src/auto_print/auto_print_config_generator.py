@@ -142,11 +142,16 @@ def print_configuration(config_object: CaseInsensitiveDict[str, dict]) -> None:
 
 
 def load_config() -> CaseInsensitiveDict[str, dict[str, Any]]:
-    """Loads the configuration."""
+    """Loads the configuration.
+
+    Returns:
+        A CaseInsensitiveDict containing the configuration data.
+        Returns an empty dictionary if the file is not found, empty, or contains invalid JSON.
+    """
     try:
         with PRINTER_CONFIG_PATH.open(encoding="utf-8") as file:
             return CaseInsensitiveDict[str, dict](data=json.load(file))
-    except FileNotFoundError:
+    except (FileNotFoundError, json.JSONDecodeError):
         return CaseInsensitiveDict[str, dict](data={})
 
 
