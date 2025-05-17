@@ -51,6 +51,8 @@ extensions = [
     "sphinx_notfound_page",  # Custom 404 page
     "sphinx_rtd_dark_mode",  # Dark mode toggle for Read the Docs theme
     "sphinxcontrib.mermaid",  # Mermaid diagrams support
+    "sphinx_prompt",  # Better command prompt examples
+    "sphinx_tabs.tabs",  # Tabbed content for code examples
 ]
 
 templates_path = ["_templates"]
