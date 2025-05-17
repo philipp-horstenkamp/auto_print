@@ -1,11 +1,9 @@
-"""
-Configuration generator for the module.
-"""
+"""Configuration generator for the auto-print module."""
 
 import argparse
 import json
-import os.path
 import webbrowser
+from pathlib import Path
 from typing import Any
 
 from case_insensitive_dict import CaseInsensitiveDict
@@ -19,19 +17,27 @@ from auto_print.auto_print_execute import (
 )
 
 
+class InputValidationError(ValueError):
+    """Error raised when input validation fails."""
+
+    EMPTY_INPUT_LIST = "Empty input list"
+    MISSING_DESCRIPTION = "Missing description"
+    DEFAULT_NOT_IN_CHOICES = "Default not in choices"
+    INVALID_INPUT_LIST = "The list of possible inputs need to be defined and have a minimum length of one."
+
+
 def get_parser():
-    """
-    Create an argument parser for the auto_print_config_generator module.
+    """Create an argument parser for the auto_print_config_generator module.
+
     This function is used for documentation purposes only.
 
     Returns:
         argparse.ArgumentParser: The argument parser
     """
-    parser = argparse.ArgumentParser(
+    return argparse.ArgumentParser(
         description="Interactive configuration generator for auto-print. "
         "This tool helps you create and manage printer configurations."
     )
-    return parser
 
 
 def input_choice(description: str, input_list: list[str], default: str):
@@ -46,15 +52,11 @@ def input_choice(description: str, input_list: list[str], default: str):
         The choice made.
     """
     if not input_list:
-        raise ValueError(
-            "The list of possible inputs need to be defined and have a minimum length of one."
-        )
+        raise InputValidationError(InputValidationError.INVALID_INPUT_LIST)
     if not description:
-        raise ValueError("The text should be defined.")
+        raise InputValidationError(InputValidationError.MISSING_DESCRIPTION)
     if default not in input_list:
-        raise ValueError(
-            "The default input needs to be in the list of allowed choices."
-        )
+        raise InputValidationError(InputValidationError.DEFAULT_NOT_IN_CHOICES)
     possible_inputs = input_list[:]
     while True:
         print(description)
@@ -67,7 +69,7 @@ def input_choice(description: str, input_list: list[str], default: str):
             return text_in
 
 
-def bool_decision(description: str, default: bool) -> bool:
+def bool_decision(description: str, *, default: bool = False) -> bool:
     """Tooling to interpret a yes/no decision.
 
     Args:
@@ -95,13 +97,10 @@ def print_element(name: str, config_element: dict[str, Any], index: int | None) 
     """
     printer = config_element.get("printer", get_default_printer())
     printing = config_element.get("print", False)
-    suffix = config_element.get("suffix", None)
-    prefix = config_element.get("prefix", None)
+    suffix = config_element.get("suffix")
+    prefix = config_element.get("prefix")
 
-    if index is None:
-        next_str = "    Config"
-    else:
-        next_str = f"{index + 1:>2}. Prio config"
+    next_str = "    Config" if index is None else f"{index + 1:>2}. Prio config"
     next_str += f' section with name "{name}" '
     if printing:
         next_str += f'prints on "{printer}"'
@@ -143,20 +142,23 @@ def print_configuration(config_object: CaseInsensitiveDict[str, dict]) -> None:
 
 
 def load_config() -> CaseInsensitiveDict[str, dict[str, Any]]:
-    """Loads the configuration."""
-    if not os.path.exists(PRINTER_CONFIG_PATH):
-        return CaseInsensitiveDict[str, dict](data={})
-    with open(PRINTER_CONFIG_PATH, encoding="utf-8") as file:
-        try:
+    """Loads the configuration.
+
+    Returns:
+        A CaseInsensitiveDict containing the configuration data.
+        Returns an empty dictionary if the file is not found, empty, or contains invalid JSON.
+    """
+    try:
+        with PRINTER_CONFIG_PATH.open(encoding="utf-8") as file:
             return CaseInsensitiveDict[str, dict](data=json.load(file))
-        except FileNotFoundError:
-            return CaseInsensitiveDict[str, dict](data={})
+    except (FileNotFoundError, json.JSONDecodeError):
+        return CaseInsensitiveDict[str, dict](data={})
 
 
 def save_config(config_object: CaseInsensitiveDict[str, dict[str, Any]]) -> None:
     """Saves the configuration."""
-    with open(PRINTER_CONFIG_PATH, "w", encoding="utf-8") as file:
-        json.dump(config_object.__dict__, file, indent=2)
+    with PRINTER_CONFIG_PATH.open("w", encoding="utf-8") as file:
+        json.dump(dict(config_object), file, indent=2)
     print("Config saved!")
 
 
@@ -198,7 +200,7 @@ def edit_section(
         # optional print
         config_element["print"] = bool_decision(
             "Should the filtered file be printed automatically?",
-            config_element.get("print", True),
+            default=config_element.get("print", True),
         )
 
         if config_element["print"]:
@@ -213,13 +215,13 @@ def edit_section(
         # show
         config_element["show"] = bool_decision(
             "Should the file be shown by the system default?",
-            config_element.get("show", False),
+            default=config_element.get("show", False),
         )
 
         # activate
         config_element["active"] = bool_decision(
             "Should the new section be activated?",
-            config_element.get("active", True),
+            default=config_element.get("active", True),
         )
 
         # show
@@ -227,7 +229,7 @@ def edit_section(
         print_element(name, config_element, None)
 
         # check
-        if bool_decision("Is the above section correct?", True):
+        if bool_decision("Is the above section correct?", default=True):
             return name, config_element
         print("Please make changes as needed.")
 
@@ -398,7 +400,6 @@ def edit_section_command(
     Returns:
         The newly generated/edited config_object.
     """
-
     section_names = list(config_object.keys())
     if not section_names:
         print("There is no section to edit.")
@@ -420,7 +421,7 @@ def edit_section_command(
 
 def show_help():
     """Displays the help file in the browser."""
-    webbrowser.open("file://" + os.path.realpath("README.html"))
+    webbrowser.open("file://" + str(Path("README.html").resolve()))
     print("Opening the browser to show the help files!")
 
 
@@ -484,6 +485,11 @@ def repair_config(
 
 
 def main() -> None:
+    """Run the auto-print configuration generator.
+
+    This function initializes the logger, checks for ghostscript,
+    and starts the interactive configuration process.
+    """
     configure_logger()
     check_ghostscript()
 
@@ -522,7 +528,7 @@ def main() -> None:
                 break
             if bool_decision(
                 "There are unsaved changes. Please confirm with y/n if you want to close anyway[n]:",
-                True,
+                default=True,
             ):
                 break
         elif action in ["help", "h"]:

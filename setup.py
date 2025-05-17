@@ -1,5 +1,4 @@
-"""
-cx_Freeze setup script for building executable files.
+"""cx_Freeze setup script for building executable files.
 
 This script configures cx_Freeze to build standalone executables for:
 1. auto_print_config_generator - Configuration tool for auto_print

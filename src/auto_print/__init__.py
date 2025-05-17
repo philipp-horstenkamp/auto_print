@@ -1,3 +1,9 @@
+"""Auto Print package for automatic document printing and routing.
+
+This package provides functionality to automatically route documents to printers
+or default applications based on filename patterns and configurations.
+"""
+
 from importlib.metadata import metadata
 from typing import Final
 
