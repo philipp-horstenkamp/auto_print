@@ -13,6 +13,32 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 
+@pytest.fixture(autouse=True)
+def mock_os_startfile(mocker):
+    """Mock os.startfile globally for all tests.
+
+    This fixture automatically applies to all tests and prevents actual
+    file execution while allowing verification that startfile was called.
+
+    Returns:
+        MagicMock: The mock object that can be used to verify calls
+    """
+    return mocker.patch("os.startfile")
+
+
+@pytest.fixture(autouse=True)
+def mock_subprocess_call(mocker):
+    """Mock subprocess.call globally for all tests.
+
+    This fixture automatically applies to all tests and prevents actual
+    subprocess calls while allowing verification that call was invoked.
+
+    Returns:
+        MagicMock: The mock object that can be used to verify calls
+    """
+    return mocker.patch("subprocess.call")
+
+
 @pytest.fixture
 def sample_config_dict():
     """Returns a sample configuration dictionary for testing."""
@@ -109,21 +135,22 @@ def multi_section_config_file(tmp_path):
             "show": False,
             "active": True,
         },
-        "Word Documents": {
+        "Long PDF Documents": {
             "printer": "Microsoft Print to PDF",
-            "suffix": ".pdf",
+            "prefix": "Long",
             "print": False,
             "show": True,
             "active": True,
         },
-        "Excel Files": {
+        "Short PDF Files": {
             "printer": "Microsoft Print to PDF",
-            "suffix": ".xlsx",
+            "suffix": ".pdf",
+            "prefix": "Sort",
             "print": True,
             "show": True,
-            "active": True,
+            "active": False,
         },
-        "All": {"active": True, "show": True, "print": False},
+        "All": {"active": False, "show": True, "print": False},
     }
     config_path.write_text(json.dumps(config_content, indent=2), encoding="utf-8")
     return config_path
