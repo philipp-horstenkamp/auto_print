@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command Line Interface &mdash; auto-print 2.0.5 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=09beee0d"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="Usage" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            auto-print
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-generator">Configuration Generator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#interactive-commands">Interactive Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#print-executor">Print Executor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#process-flow">Process Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exit-codes">Exit Codes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">auto-print</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Command Line Interface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cli.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="command-line-interface">
+<span id="cli"></span><h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h1>
+<p>auto-print provides two command-line interfaces:</p>
+<ol class="arabic simple">
+<li><p>Configuration Generator: For setting up printer configurations</p></li>
+<li><p>Print Executor: For printing files based on the configuration</p></li>
+</ol>
+<section id="configuration-generator">
+<span id="config-generator"></span><h2>Configuration Generator<a class="headerlink" href="#configuration-generator" title="Link to this heading"></a></h2>
+<p><p>Interactive configuration generator for auto-print. This tool helps you create and manage printer configurations.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">auto_print_config_generator</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The configuration generator provides an interactive interface to create and manage printer configurations.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_config_generator
+</pre></div>
+</div>
+<section id="interactive-commands">
+<h3>Interactive Commands<a class="headerlink" href="#interactive-commands" title="Link to this heading"></a></h3>
+<p>Once the configuration generator is running, you can use the following interactive commands:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">save</span></code> or <code class="docutils literal notranslate"><span class="pre">s</span></code>: Save the current configuration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add</span></code> or <code class="docutils literal notranslate"><span class="pre">a</span></code>: Add a new printer section</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span></code> or <code class="docutils literal notranslate"><span class="pre">d</span></code>: Delete a printer section</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repair</span></code> or <code class="docutils literal notranslate"><span class="pre">r</span></code>: Repair the configuration (fix invalid printer references)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span></code>: Display the current configuration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">change</span></code>: Change the position of a section</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edit</span></code> or <code class="docutils literal notranslate"><span class="pre">e</span></code>: Edit a section</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">close</span></code> or <code class="docutils literal notranslate"><span class="pre">c</span></code>: Close the application</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">help</span></code> or <code class="docutils literal notranslate"><span class="pre">h</span></code>: Show help</p></li>
+</ul>
+</section>
+</section>
+<section id="print-executor">
+<span id="id1"></span><h2>Print Executor<a class="headerlink" href="#print-executor" title="Link to this heading"></a></h2>
+<p><p>Auto-print: A document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns.</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">auto_print_execute</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">file_path</span>
+</pre></div>
+</div>
+<section id="positional-arguments">
+<h3>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h3>
+<dl class="option-list">
+<dt><kbd>file_path</kbd></dt>
+<dd><p>Path to the file to be processed</p>
+</dd>
+</dl>
+</section>
+<p>The print executor is used to print files based on the configuration.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_execute<span class="w"> </span>&lt;file_path&gt;
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Arguments:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">file_path</span></code>: Path to the file to be printed</p></li>
+</ul>
+</dd>
+</dl>
+<section id="process-flow">
+<h3>Process Flow<a class="headerlink" href="#process-flow" title="Link to this heading"></a></h3>
+<p>When you run the print executor with a file path, it follows this process:</p>
+<ol class="arabic simple">
+<li><p>Checks if the file exists</p></li>
+<li><p>Loads the printer configuration from <code class="docutils literal notranslate"><span class="pre">%USERPROFILE%\auto-printer\auto-printer-config.json</span></code></p></li>
+<li><p>Extracts the filename from the path</p></li>
+<li><p>Compares the filename against each configuration section:
+- If both prefix and suffix match, the file is processed according to that section
+- If a prefix or suffix is not specified in a section, that part of the check is always considered a match</p></li>
+<li><p>For the first matching section, the file is:
+- Printed directly to the specified printer if “print” is true
+- Opened with the default application if “show” is true
+- Both printed and shown if both are true</p></li>
+<li><p>If no matching section is found, an error is logged</p></li>
+</ol>
+<p>Example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_execute<span class="w"> </span>invoice_123.pdf
+</pre></div>
+</div>
+<p>This will print the file “invoice_123.pdf” to the appropriate printer based on your configuration.</p>
+</section>
+<section id="exit-codes">
+<h3>Exit Codes<a class="headerlink" href="#exit-codes" title="Link to this heading"></a></h3>
+<p>The print executor returns the following exit codes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: Success</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code>: No file to print specified</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-2</span></code>: Too many arguments</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-3</span></code>: File does not exist</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-4</span></code>: Error loading configuration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-5</span></code>: Ghostscript not installed or other error</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Philipp Horstenkamp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
