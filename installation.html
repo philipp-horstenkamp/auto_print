@@ -52,7 +52,12 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#development-installation">Development Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#windows-msi-installation">Windows MSI Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#uninstallation">Uninstallation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#uninstalling-msi-installation">Uninstalling MSI Installation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
@@ -86,24 +91,45 @@
              
   <section id="installation">
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
-<p>You can install the auto-print package using pip:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
-span.prompt1:before {
-  content: "$ ";
-}
-</style><span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>auto-print</span>
-</pre></div></div><p>Or using Poetry:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>add<span class="w"> </span>auto-print
-</pre></div>
-</div>
-<section id="development-installation">
-<h2>Development Installation<a class="headerlink" href="#development-installation" title="Link to this heading"></a></h2>
-<p>For development, you can clone the repository and install the package with development dependencies:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/philipp-horstenkamp/auto_print.git
-<span class="nb">cd</span><span class="w"> </span>auto-print
-poetry<span class="w"> </span>install
-</pre></div>
-</div>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<p>Auto Print requires Ghostscript to be installed on your system for PDF processing and printing:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://ghostscript.com/releases/gsdnld.html">Download Ghostscript for Windows</a></p></li>
+</ul>
+<p>It is also beneficial to have Adobe Acrobat or another PDF reader installed on your system.</p>
+<p>Please install Ghostscript before using Auto Print.</p>
+</section>
+<section id="windows-msi-installation">
+<h2>Windows MSI Installation<a class="headerlink" href="#windows-msi-installation" title="Link to this heading"></a></h2>
+<p>The recommended installation method for Windows users is to use the MSI installer:</p>
+<ol class="arabic simple">
+<li><p>Download the latest MSI installer from the <a class="reference external" href="https://github.com/username/auto-print/releases">releases page</a>.</p></li>
+<li><p>Double-click the downloaded .msi file to start the installation wizard.</p></li>
+<li><p>Follow the on-screen instructions to complete the installation.</p></li>
+</ol>
+<p>The MSI installer will:</p>
+<ul class="simple">
+<li><p>Install the auto-print application for all users</p></li>
+<li><p>Add the installation directory to the system PATH</p></li>
+<li><p>Create a shortcut for the configuration tool in the Start Menu</p></li>
+<li><p>Add a context menu entry for PDF files (right-click on PDF files to see the “Auto Print with Auto Print” option)</p></li>
+</ul>
+</section>
+</section>
+<section id="uninstallation">
+<h1>Uninstallation<a class="headerlink" href="#uninstallation" title="Link to this heading"></a></h1>
+<section id="uninstalling-msi-installation">
+<h2>Uninstalling MSI Installation<a class="headerlink" href="#uninstalling-msi-installation" title="Link to this heading"></a></h2>
+<p>To uninstall the auto-print application that was installed using the MSI installer:</p>
+<ol class="arabic simple">
+<li><p>Open the Windows Control Panel</p></li>
+<li><p>Go to “Programs and Features” or “Apps &amp; features” (depending on your Windows version)</p></li>
+<li><p>Find “auto-print” in the list of installed programs</p></li>
+<li><p>Select it and click “Uninstall” or “Remove”</p></li>
+<li><p>Follow the on-screen instructions to complete the uninstallation</p></li>
+</ol>
+<p>The uninstaller will automatically remove all files, shortcuts, and registry entries created during installation.</p>
 </section>
 </section>
 
