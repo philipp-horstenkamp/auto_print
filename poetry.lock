@@ -1664,6 +1664,22 @@ docs = ["sphinx", "sphinx-autobuild", "sphinx-rtd-theme"]
 test = ["pytest", "pytest-cov", "pytest-tldr"]
 
 [[package]]
+name = "markdown"
+version = "3.8"
+description = "Python implementation of John Gruber's Markdown."
+optional = false
+python-versions = ">=3.9"
+groups = ["docs"]
+files = [
+    {file = "markdown-3.8-py3-none-any.whl", hash = "sha256:794a929b79c5af141ef5ab0f2f642d0f7b1872981250230e72682346f7cc90dc"},
+    {file = "markdown-3.8.tar.gz", hash = "sha256:7df81e63f0df5c4b24b7d156eb81e4690595239b7d70937d0409f1b0de319c6f"},
+]
+
+[package.extras]
+docs = ["mdx_gh_links (>=0.2)", "mkdocs (>=1.6)", "mkdocs-gen-files", "mkdocs-literate-nav", "mkdocs-nature (>=0.6)", "mkdocs-section-index", "mkdocstrings[python]"]
+testing = ["coverage", "pyyaml"]
+
+[[package]]
 name = "markdown-it-py"
 version = "3.0.0"
 description = "Python port of markdown-it. Markdown parsing, done right!"
@@ -3197,6 +3213,45 @@ sphinx = ">=1.2.0"
 markdown = ["CommonMark (>=0.5.6)"]
 
 [[package]]
+name = "sphinx-autodoc-typehints"
+version = "1.25.3"
+description = "Type hints (PEP 484) support for the Sphinx autodoc extension"
+optional = false
+python-versions = ">=3.8"
+groups = ["docs"]
+files = [
+    {file = "sphinx_autodoc_typehints-1.25.3-py3-none-any.whl", hash = "sha256:d3da7fa9a9761eff6ff09f8b1956ae3090a2d4f4ad54aebcade8e458d6340835"},
+    {file = "sphinx_autodoc_typehints-1.25.3.tar.gz", hash = "sha256:70db10b391acf4e772019765991d2de0ff30ec0899b9ba137706dc0b3c4835e0"},
+]
+
+[package.dependencies]
+sphinx = ">=7.1.2"
+
+[package.extras]
+docs = ["furo (>=2023.9.10)"]
+numpy = ["nptyping (>=2.5)"]
+testing = ["covdefaults (>=2.3)", "coverage (>=7.3.2)", "diff-cover (>=8.0.1)", "pytest (>=7.4.3)", "pytest-cov (>=4.1)", "sphobjinv (>=2.3.1)", "typing-extensions (>=4.8)"]
+
+[[package]]
+name = "sphinx-copybutton"
+version = "0.5.2"
+description = "Add a copy button to each of your code cells."
+optional = false
+python-versions = ">=3.7"
+groups = ["docs"]
+files = [
+    {file = "sphinx-copybutton-0.5.2.tar.gz", hash = "sha256:4cf17c82fb9646d1bc9ca92ac280813a3b605d8c421225fd9913154103ee1fbd"},
+    {file = "sphinx_copybutton-0.5.2-py3-none-any.whl", hash = "sha256:fb543fd386d917746c9a2c50360c7905b605726b9355cd26e9974857afeae06e"},
+]
+
+[package.dependencies]
+sphinx = ">=1.8"
+
+[package.extras]
+code-style = ["pre-commit (==2.12.1)"]
+rtd = ["ipython", "myst-nb", "sphinx", "sphinx-book-theme", "sphinx-examples"]
+
+[[package]]
 name = "sphinx-intl"
 version = "2.3.1"
 description = "Sphinx utility that make it easy to translate and to apply translation."
@@ -3218,6 +3273,72 @@ sphinx = "*"
 test = ["pytest"]
 
 [[package]]
+name = "sphinx-markdown-tables"
+version = "0.0.17"
+description = "A Sphinx extension for rendering tables written in markdown"
+optional = false
+python-versions = "*"
+groups = ["docs"]
+files = [
+    {file = "sphinx-markdown-tables-0.0.17.tar.gz", hash = "sha256:6bc6d3d400eaccfeebd288446bc08dd83083367c58b85d40fe6c12d77ef592f1"},
+    {file = "sphinx_markdown_tables-0.0.17-py3-none-any.whl", hash = "sha256:2bd0c30779653e4dd120300cbd9ca412c480738cc2241f6dea477a883f299e04"},
+]
+
+[package.dependencies]
+markdown = ">=3.4"
+
+[[package]]
+name = "sphinx-notfound-page"
+version = "1.1.0"
+description = "Sphinx extension to build a 404 page with absolute URLs"
+optional = false
+python-versions = ">=3.8"
+groups = ["docs"]
+files = [
+    {file = "sphinx_notfound_page-1.1.0-py3-none-any.whl", hash = "sha256:835dc76ff7914577a1f58d80a2c8418fb6138c0932c8da8adce4d9096fbcd389"},
+    {file = "sphinx_notfound_page-1.1.0.tar.gz", hash = "sha256:913e1754370bb3db201d9300d458a8b8b5fb22e9246a816643a819a9ea2b8067"},
+]
+
+[package.dependencies]
+sphinx = ">=5"
+
+[package.extras]
+doc = ["sphinx-autoapi", "sphinx-rtd-theme", "sphinx-tabs", "sphinxemoji"]
+test = ["tox"]
+
+[[package]]
+name = "sphinx-prompt"
+version = "1.8.0"
+description = "Sphinx directive to add unselectable prompt"
+optional = false
+python-versions = ">=3.9,<4.0"
+groups = ["docs"]
+files = [
+    {file = "sphinx_prompt-1.8.0-py3-none-any.whl", hash = "sha256:369ecc633f0711886f9b3a078c83264245be1adf46abeeb9b88b5519e4b51007"},
+    {file = "sphinx_prompt-1.8.0.tar.gz", hash = "sha256:47482f86fcec29662fdfd23e7c04ef03582714195d01f5d565403320084372ed"},
+]
+
+[package.dependencies]
+docutils = "*"
+pygments = "*"
+Sphinx = ">=7.0.0,<8.0.0"
+
+[[package]]
+name = "sphinx-rtd-dark-mode"
+version = "1.3.0"
+description = "Dark mode for the Sphinx Read the Docs theme."
+optional = false
+python-versions = ">=3.4"
+groups = ["docs"]
+files = [
+    {file = "sphinx_rtd_dark_mode-1.3.0-py3-none-any.whl", hash = "sha256:478da69c72a2a2ed7665c1f633cc612039f5801df416fd5f7c4820c2fe08c9c5"},
+    {file = "sphinx_rtd_dark_mode-1.3.0.tar.gz", hash = "sha256:0272bf3d9ef620921adc67e5634a66969419e744da84ea18830adacfdb160ea8"},
+]
+
+[package.dependencies]
+sphinx-rtd-theme = "*"
+
+[[package]]
 name = "sphinx-rtd-theme"
 version = "1.3.0"
 description = "Read the Docs theme for Sphinx"
@@ -3236,6 +3357,27 @@ sphinxcontrib-jquery = ">=4,<5"
 
 [package.extras]
 dev = ["bump2version", "sphinxcontrib-httpdomain", "transifex-client", "wheel"]
+
+[[package]]
+name = "sphinx-tabs"
+version = "3.4.7"
+description = "Tabbed views for Sphinx"
+optional = false
+python-versions = ">=3.7"
+groups = ["docs"]
+files = [
+    {file = "sphinx-tabs-3.4.7.tar.gz", hash = "sha256:991ad4a424ff54119799ba1491701aa8130dd43509474aef45a81c42d889784d"},
+    {file = "sphinx_tabs-3.4.7-py3-none-any.whl", hash = "sha256:c12d7a36fd413b369e9e9967a0a4015781b71a9c393575419834f19204bd1915"},
+]
+
+[package.dependencies]
+docutils = "*"
+pygments = "*"
+sphinx = ">=1.8"
+
+[package.extras]
+code-style = ["pre-commit (==2.13.0)"]
+testing = ["bs4", "coverage", "pygments", "pytest (>=7.1,<8)", "pytest-cov", "pytest-regressions", "rinohtype"]
 
 [[package]]
 name = "sphinxcontrib-applehelp"
@@ -3317,6 +3459,18 @@ files = [
 
 [package.extras]
 test = ["flake8", "mypy", "pytest"]
+
+[[package]]
+name = "sphinxcontrib-mermaid"
+version = "0.9.2"
+description = "Mermaid diagrams in yours Sphinx powered docs"
+optional = false
+python-versions = ">=3.7"
+groups = ["docs"]
+files = [
+    {file = "sphinxcontrib-mermaid-0.9.2.tar.gz", hash = "sha256:252ef13dd23164b28f16d8b0205cf184b9d8e2b714a302274d9f59eb708e77af"},
+    {file = "sphinxcontrib_mermaid-0.9.2-py3-none-any.whl", hash = "sha256:6795a72037ca55e65663d2a2c1a043d636dc3d30d418e56dd6087d1459d98a5d"},
+]
 
 [[package]]
 name = "sphinxcontrib-qthelp"
@@ -3625,4 +3779,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "f71112304e79f155301d4448e1cd20c9fdd213958af70f9691878e2f277330df"
+content-hash = "ccf45d62bee7046a590b3d590bd4735c9d5e2ab565b387f78c16abd301c8e897"
