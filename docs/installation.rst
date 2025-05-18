@@ -5,7 +5,7 @@ Installation
 
 You can install the auto-print package using pip:
 
-.. code-block:: bash
+.. prompt:: bash
 
     pip install auto-print
 
@@ -22,6 +22,6 @@ For development, you can clone the repository and install the package with devel
 
 .. code-block:: bash
 
-    git clone https://github.com/username/auto-print.git
+    git clone https://github.com/philipp-horstenkamp/auto_print.git
     cd auto-print
-    poetry install --with dev,docs
+    poetry install
