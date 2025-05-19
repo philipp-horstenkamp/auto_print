@@ -3,7 +3,7 @@ default_language_version:
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v5.0.0
   hooks:
   - id: end-of-file-fixer
     exclude: (.txt$|.ipynb$)
@@ -29,7 +29,7 @@ repos:
     exclude: (^config.json$|\.ipynb$)
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.11.9
+  rev: v0.11.10
   hooks:
   - id: ruff
     args: [--fix]
