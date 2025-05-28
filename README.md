@@ -24,18 +24,44 @@ The MSI installer will:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/auto_print.git
+   git clone https://github.com/philipp-horstenkamp/auto_print.git
    cd auto_print
    ```
 
-2. Build the application:
+2. Install Poetry (dependency management tool):
    ```
-   cargo build --release
+   pip install pipx
+   pipx install poetry
    ```
 
-3. The executables will be available in the `target/release` directory:
-   - `auto_print_execute.exe`: The main document processing application
-   - `auto_print_config_generator.exe`: The configuration tool
+3. Install dependencies and build the package:
+   ```
+   poetry install
+   ```
+
+4. Run the application directly with Poetry:
+   ```
+   poetry run python -m auto_print.auto_print_execute <file_path>
+   poetry run python -m auto_print.auto_print_config_generator
+   ```
+
+5. Alternatively, build a wheel package:
+   ```
+   poetry build
+   ```
+
+   The wheel file will be available in the `dist` directory and can be installed with pip:
+   ```
+   pip install dist/*.whl
+   ```
+
+6. For creating an MSI installer:
+   ```
+   poetry install --only main,build
+   poetry run python msi_setup.py bdist_msi
+   ```
+
+   The MSI installer will be available in the `dist` directory.
 
 ### Uninstallation
 
@@ -58,7 +84,11 @@ The uninstaller will automatically remove all files, shortcuts, and registry ent
 Run the configuration generator:
 
 ```
-cargo run --bin auto_print_config_generator
+# If installed with pip or from wheel
+auto-print-config
+
+# If using Poetry
+poetry run python -m auto_print.auto_print_config_generator
 ```
 
 #### Processing Documents
@@ -66,7 +96,11 @@ cargo run --bin auto_print_config_generator
 To process a document:
 
 ```
-cargo run --bin auto_print_execute -- path/to/your/document.pdf
+# If installed with pip or from wheel
+auto-print <file_path>
+
+# If using Poetry
+poetry run python -m auto_print.auto_print_execute <file_path>
 ```
 
 ## Integrate in the browser workflow
@@ -93,12 +127,6 @@ Or if you're running from the source code:
 python -m auto_print.auto_print_config_generator
 ```
 
-### Rust Implementation
-To run the configuration generator:
-
-```
-cargo run --bin auto_print_config_generator
-```
 
 ## Main commands
 
@@ -162,7 +190,6 @@ To use the software effectively, the following programs are needed:
 
 - [Ghostscript](https://www.ghostscript.com/releases/gsdnld.html)
 - [Adobe PDF Reader](https://www.adobe.com/de/acrobat/pdf-reader.html)
-- [Rust](https://www.rust-lang.org/tools/install) (for building from source)
 
 ## How it works 
 
@@ -171,9 +198,9 @@ The goal of this project is to simplify the tedious task or printing similar for
 1. The program is started with a filepath as an argument.
 2. The filename gets extracted.
 3. The filename is compared to a list of suffixes and prefixes.
-4. If suffix and prefix are a match the file gets executed.
-If a suffix or a prefix is not given the comparison is true either way.
-5. The file is then eiter Printed and/or shown depending on the configuration.
+4. If suffix and prefix are a match, the file gets executed.
+If a suffix or a prefix is not given, the comparison is true either way.
+5. The file is then either Printed and/or shown depending on the configuration.
 
 Everything is logged and can be locked up in the auto_print.log file!
 
@@ -181,9 +208,6 @@ Everything is logged and can be locked up in the auto_print.log file!
 
 This project was originally written in Python by Philipp Horstenkamp in the hope 
 that it will make some office processes a bit smoother.
-
-The Rust implementation maintains the same functionality while providing improved 
-performance and memory safety.
 
 ## License
 
