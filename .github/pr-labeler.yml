@@ -1,18 +1,17 @@
 # Branch name patterns to automatically label PRs
-feature:
+enhancement:
 - feature/*
 - feat/*
-fix:
-- fix/*
-chore:
-- chore/*
-docs:
-- docs/*
-- documentation/*
-enhancement:
 - enhancement/*
 - improve/*
 - improvement/*
+bug:
+- fix/*
+chore:
+- chore/*
+documentation:
+- docs/*
+- documentation/*
 # Auto dependency update branches from Dependabot or Renovate
 dependencies:
 - dependabot/**
