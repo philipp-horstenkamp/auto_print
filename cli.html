@@ -55,14 +55,14 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html#uninstallation">Uninstallation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#configuration-generator">Configuration Generator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#interactive-commands">Interactive Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-options">Configuration Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#entry-points">Entry Points</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-generator">Configuration Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#print-executor">Print Executor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#print-executor">Print Executor</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#process-flow">Process Flow</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#exit-codes">Exit Codes</a></li>
 </ul>
 </li>
 </ul>
@@ -96,25 +96,92 @@
              
   <section id="command-line-interface">
 <span id="cli"></span><h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h1>
-<p>auto-print provides two command-line interfaces:</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>auto-print is a utility that automates the printing of files based on their filenames. It provides two main entry points:</p>
 <ol class="arabic simple">
-<li><p>Configuration Generator: For setting up printer configurations</p></li>
-<li><p>Print Executor: For printing files based on the configuration</p></li>
+<li><p><strong>Configuration Generator</strong>: An interactive tool for setting up printer configurations</p></li>
+<li><p><strong>Print Executor</strong>: A command-line tool for printing files based on the configuration</p></li>
 </ol>
+</section>
+<section id="configuration-options">
+<h2>Configuration Options<a class="headerlink" href="#configuration-options" title="Link to this heading"></a></h2>
+<p>The auto-print configuration consists of multiple sections, each defining how specific types of documents are handled. Sections are the core of auto-print’s functionality, allowing you to create rules for different document types based on their filenames.</p>
+<p>Each section represents a specific document handling rule that includes:</p>
+<ul class="simple">
+<li><p><strong>Name</strong>: A unique identifier for the section (e.g., “Invoices”, “Shipping Labels”, “Reports”)</p></li>
+<li><p><strong>Prefix</strong>: (Optional) Files must start with this string to match this section (e.g., “<a href="#id2"><span class="problematic" id="id3">INV_</span></a>” for invoices)</p></li>
+<li><p><strong>Suffix</strong>: (Optional) Files must end with this string to match this section (e.g., “.pdf”, “_report.pdf”)</p></li>
+<li><p><strong>Print</strong>: Whether to print the file automatically (true/false)</p></li>
+<li><p><strong>Printer</strong>: Which printer to use (only relevant if Print is true)</p></li>
+<li><p><strong>Show</strong>: Whether to open the file with the system default application such as Adobe Reader (true/false)</p></li>
+<li><p><strong>Active</strong>: Whether this section is currently active (true/false)</p></li>
+</ul>
+<p><strong>How Sections Work</strong></p>
+<p>When a file is processed by auto-print, it checks each active section in order until it finds a match. A section matches when:</p>
+<ol class="arabic simple">
+<li><p>The filename starts with the section’s prefix (if a prefix is defined)</p></li>
+<li><p>The filename ends with the section’s suffix (if a suffix is defined)</p></li>
+</ol>
+<p>Once a matching section is found, the file is handled according to that section’s settings (print and/or show), and no other rules are executed.</p>
+<p>The configuration is stored in <code class="docutils literal notranslate"><span class="pre">%USERPROFILE%\auto-printer\auto-printer-config.json</span></code>.</p>
+<p><strong>Example Sections</strong></p>
+<p>Here are examples of different section configurations for various document types:</p>
+<ol class="arabic">
+<li><p><strong>Invoice Section</strong>:
+- Name: “Invoices”
+- Prefix: “<a href="#id4"><span class="problematic" id="id5">INV_</span></a>”
+- Suffix: “.pdf”
+- Print: true
+- Printer: “Accounting Printer”
+- Show: false
+- Active: true</p>
+<p><em>This section automatically prints all PDF files that start with “INV_” to the “Accounting Printer” without opening them.</em></p>
+</li>
+<li><p><strong>Shipping Label Section</strong>:
+- Name: “Shipping Labels”
+- Prefix: “<a href="#id6"><span class="problematic" id="id7">SHIP_</span></a>”
+- Suffix: “.pdf”
+- Print: true
+- Printer: “Label Printer”
+- Show: false
+- Active: true</p>
+<p><em>This section automatically prints all PDF files that start with “SHIP_” to the “Label Printer” without opening them.</em></p>
+</li>
+<li><p><strong>Report Section</strong>:
+- Name: “Reports”
+- Suffix: “_report.pdf”
+- Print: false
+- Show: true
+- Active: true</p>
+<p><em>This section automatically opens all PDF files that end with “_report.pdf” without printing them.</em></p>
+</li>
+<li><p><strong>Default PDF Handler</strong>:
+- Name: “All PDFs”
+- Suffix: “.pdf”
+- Print: true
+- Printer: “Default Printer”
+- Show: true
+- Active: true</p>
+<p><em>This section handles any PDF file that didn’t match previous sections, printing it to the default printer and opening it.</em></p>
+</li>
+</ol>
+</section>
+<section id="entry-points">
+<h2>Entry Points<a class="headerlink" href="#entry-points" title="Link to this heading"></a></h2>
 <section id="configuration-generator">
-<span id="config-generator"></span><h2>Configuration Generator<a class="headerlink" href="#configuration-generator" title="Link to this heading"></a></h2>
+<span id="config-generator"></span><h3>Configuration Generator<a class="headerlink" href="#configuration-generator" title="Link to this heading"></a></h3>
 <p><p>Interactive configuration generator for auto-print. This tool helps you create and manage printer configurations.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">auto_print_config_generator</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>The configuration generator provides an interactive interface to create and manage printer configurations.</p>
+<p><strong>Usage:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_config_generator
 </pre></div>
 </div>
-<section id="interactive-commands">
-<h3>Interactive Commands<a class="headerlink" href="#interactive-commands" title="Link to this heading"></a></h3>
-<p>Once the configuration generator is running, you can use the following interactive commands:</p>
+<p><strong>Interactive Commands:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">save</span></code> or <code class="docutils literal notranslate"><span class="pre">s</span></code>: Save the current configuration</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">add</span></code> or <code class="docutils literal notranslate"><span class="pre">a</span></code>: Add a new printer section</p></li>
@@ -126,17 +193,29 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">close</span></code> or <code class="docutils literal notranslate"><span class="pre">c</span></code>: Close the application</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">help</span></code> or <code class="docutils literal notranslate"><span class="pre">h</span></code>: Show help</p></li>
 </ul>
-</section>
+<p><strong>Configuration Workflow:</strong></p>
+<ol class="arabic simple">
+<li><p>Run the configuration generator</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">add</span></code> to create new sections or <code class="docutils literal notranslate"><span class="pre">edit</span></code> to modify existing ones</p></li>
+<li><p>For each section, specify:
+- Prefix and/or suffix for filename matching
+- Whether to print automatically
+- Which printer to use (if printing)
+- Whether to show the file
+- Whether the section should be active</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">save</span></code> to store your configuration</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">close</span></code> to exit the application</p></li>
+</ol>
 </section>
 <section id="print-executor">
-<span id="id1"></span><h2>Print Executor<a class="headerlink" href="#print-executor" title="Link to this heading"></a></h2>
+<span id="id1"></span><h3>Print Executor<a class="headerlink" href="#print-executor" title="Link to this heading"></a></h3>
 <p><p>Auto-print: A document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">auto_print_execute</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">file_path</span>
 </pre></div>
 </div>
 <section id="positional-arguments">
-<h3>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h3>
+<h4>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Link to this heading"></a></h4>
 <dl class="option-list">
 <dt><kbd>file_path</kbd></dt>
 <dd><p>Path to the file to be processed</p>
@@ -144,23 +223,20 @@
 </dl>
 </section>
 <p>The print executor is used to print files based on the configuration.</p>
+<p><strong>Usage:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_execute<span class="w"> </span>&lt;file_path&gt;
 </pre></div>
 </div>
-<dl class="simple">
-<dt>Arguments:</dt><dd><ul class="simple">
+<p><strong>Arguments:</strong></p>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">file_path</span></code>: Path to the file to be printed</p></li>
 </ul>
-</dd>
-</dl>
-<section id="process-flow">
-<h3>Process Flow<a class="headerlink" href="#process-flow" title="Link to this heading"></a></h3>
-<p>When you run the print executor with a file path, it follows this process:</p>
+<p><strong>Execution Workflow:</strong></p>
 <ol class="arabic simple">
-<li><p>Checks if the file exists</p></li>
-<li><p>Loads the printer configuration from <code class="docutils literal notranslate"><span class="pre">%USERPROFILE%\auto-printer\auto-printer-config.json</span></code></p></li>
-<li><p>Extracts the filename from the path</p></li>
-<li><p>Compares the filename against each configuration section:
+<li><p>The print executor checks if the specified file exists</p></li>
+<li><p>It loads the printer configuration from <code class="docutils literal notranslate"><span class="pre">%USERPROFILE%\auto-printer\auto-printer-config.json</span></code></p></li>
+<li><p>It extracts the filename from the path</p></li>
+<li><p>It compares the filename against each active configuration section:
 - If both prefix and suffix match, the file is processed according to that section
 - If a prefix or suffix is not specified in a section, that part of the check is always considered a match</p></li>
 <li><p>For the first matching section, the file is:
@@ -169,15 +245,12 @@
 - Both printed and shown if both are true</p></li>
 <li><p>If no matching section is found, an error is logged</p></li>
 </ol>
-<p>Example:</p>
+<p><strong>Example:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_execute<span class="w"> </span>invoice_123.pdf
 </pre></div>
 </div>
 <p>This will print the file “invoice_123.pdf” to the appropriate printer based on your configuration.</p>
-</section>
-<section id="exit-codes">
-<h3>Exit Codes<a class="headerlink" href="#exit-codes" title="Link to this heading"></a></h3>
-<p>The print executor returns the following exit codes:</p>
+<p><strong>Exit Codes:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: Success</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code>: No file to print specified</p></li>
