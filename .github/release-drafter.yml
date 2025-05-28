@@ -1,10 +1,14 @@
 name-template: v$RESOLVED_VERSION
 tag-template: v$RESOLVED_VERSION
+exclude-contributors:
+- dependabot
+- dependabot[bot]
+- pre-commit-ci
+- pre-commit-ci[bot]
+- GitHub Action
 categories:
 - title: 🚀 Features
-  labels:
-  - feature
-  - enhancement
+  label: feature
 - title: 🐛 Bug Fixes
   labels:
   - fix
