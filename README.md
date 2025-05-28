@@ -37,7 +37,7 @@ auto-print-config
 poetry run python -m auto_print.auto_print_config_generator
 ```
 
-### Browser Integration
+### Browser Integration (Firefox)
 
 Use Auto Print as the default handler for PDFs in your browser:
 
