@@ -8,8 +8,8 @@ Overview
 
 It includes:
 
-1. **Configuration Generator** – Interactive tool for setting up printing rules
-2. **Print Executor** – Command-line tool to apply those rules to files
+#. **Configuration Generator** – Interactive tool for setting up printing rules
+#. **Print Executor** – Command-line tool to apply those rules to files
 
 .. note::
 
@@ -148,12 +148,9 @@ Execution Workflow
 ~~~~~~~~~~~~~~~~~~
 
 1. Confirm the file exists
-2. Load configuration from:
-
-::
+2. Load configuration from::
 
     %USERPROFILE%\auto-printer\auto-printer-config.json
-
 3. Extract filename from path
 4. Match it against active sections
 5. For the first matching section:
