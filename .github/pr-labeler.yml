@@ -1,0 +1,20 @@
+# Branch name patterns to automatically label PRs
+feature:
+- feature/*
+- feat/*
+fix:
+- fix/*
+chore:
+- chore/*
+docs:
+- docs/*
+- documentation/*
+enhancement:
+- enhancement/*
+- improve/*
+- improvement/*
+# Auto dependency update branches from Dependabot or Renovate
+dependencies:
+- dependabot/**
+- renovate/**
+- pre-commit-ci-update-config

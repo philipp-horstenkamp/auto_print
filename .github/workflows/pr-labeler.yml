@@ -1,0 +1,19 @@
+name: PR Labeler (Branch Based Only)
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-labeler:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: TimonVS/pr-labeler-action@v5
+      with:
+        configuration-path: .github/pr-labeler.yml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
