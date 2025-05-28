@@ -52,7 +52,7 @@ sphinxcontrib-mermaid = "^0.9.2"  # Mermaid diagrams support in documentation
 [tool.poetry.group.lint.dependencies]
 mypy = "^1.0.0"  # Static type checker for Python
 pip-audit = "*"  # Tool for scanning Python dependencies for known vulnerabilities
-rstcheck = "^6.2.0"  # RST syntax checker for documentation
+rstcheck = {extras = ["toml"], version = "^6.2.0"}  # RST syntax checker for documentation with TOML config support
 ruff = "*"  # Fast Python linter, written in Rust
 
 [tool.poetry.group.test.dependencies]
@@ -70,6 +70,15 @@ auto-print-config = "auto_print.config_generator:main"
 [tool.pytest.ini_options]
 addopts = "--cov=auto_print --cov-report=xml --cov-report=term"
 testpaths = ["tests"]
+
+[tool.rstcheck]
+ignore_directives = ["argparse", "prompt", "tabs"]
+ignore_messages = [
+  "Enumerated list start value not ordinal-1",
+  "Title underline too short",
+  "Hyperlink target .* is not referenced"
+]
+ignore_roles = ["ref"]
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.

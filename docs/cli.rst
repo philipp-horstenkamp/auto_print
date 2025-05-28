@@ -1,5 +1,3 @@
-.. _cli:
-
 Command Line Interface
 ======================
 
@@ -102,8 +100,6 @@ PDFs that should be shown as normal.
     Show: true
     Active: true
 
-.. _config-generator:
-
 Configuration Generator
 -----------------------
 
@@ -124,8 +120,6 @@ Configuration Workflow
    - Active status
 4. Use ``save`` to persist changes
 5. Exit with ``close``
-
-.. _print-executor:
 
 Print Executor
 --------------
