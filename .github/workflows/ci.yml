@@ -80,6 +80,8 @@ jobs:
     # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
     permissions:
       contents: read
+      id-token: write
+      attestations: write
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
@@ -94,6 +96,10 @@ jobs:
     - name: wheel-build
       run: |
         poetry build
+    - name: Generate provenance for wheel
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: dist/*.whl
     - name: Upload wheel artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -108,6 +114,8 @@ jobs:
     # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
     permissions:
       contents: read
+      id-token: write
+      attestations: write
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
@@ -123,6 +131,10 @@ jobs:
     - name: MSI-build
       run: |
         poetry run python msi_setup.py bdist_msi
+    - name: Generate provenance for MSI
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: dist/*.msi
     - name: Upload MSI artifacts
       uses: actions/upload-artifact@v4
       with:
