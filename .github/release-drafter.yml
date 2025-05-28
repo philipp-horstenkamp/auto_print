@@ -5,6 +5,9 @@ exclude-contributors:
 - dependabot[bot]
 - pre-commit-ci
 - pre-commit-ci[bot]
+- '@pre-commit-ci[bot]'
+- Renovate Bot
+- renovate[bot]
 - GitHub Action
 categories:
 - title: 🚀 Features
