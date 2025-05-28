@@ -66,16 +66,6 @@ To build the documentation:
     cd docs
     make html
 
-For the German translation:
-
-.. code-block:: bash
-
-    cd docs
-    make gettext
-    sphinx-intl update -p _build/gettext -l de
-    # Edit the .po files in locale/de/LC_MESSAGES/
-    make -e SPHINXOPTS="-D language='de'" html
-
 Pull Request Process
 --------------------
 
