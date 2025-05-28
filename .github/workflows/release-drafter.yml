@@ -11,15 +11,17 @@ on:
 
 jobs:
   update_release_draft:
-    # if: github.event.pull_request.merged == true || github.event_name != 'pull_request'
+    if: github.event.pull_request.merged == true || github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Draft Release
       uses: release-drafter/release-drafter@v6
       with:
-        config-name: release-drafter.yml
+        config-name: .github/release-drafter.yml
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
