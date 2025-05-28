@@ -52,6 +52,7 @@ sphinxcontrib-mermaid = "^0.9.2"  # Mermaid diagrams support in documentation
 [tool.poetry.group.lint.dependencies]
 mypy = "^1.0.0"  # Static type checker for Python
 pip-audit = "*"  # Tool for scanning Python dependencies for known vulnerabilities
+rstcheck = "^6.2.0"  # RST syntax checker for documentation
 ruff = "*"  # Fast Python linter, written in Rust
 
 [tool.poetry.group.test.dependencies]
