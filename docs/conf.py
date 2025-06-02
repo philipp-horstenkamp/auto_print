@@ -31,7 +31,7 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 _DISTRIBUTION_METADATA = metadata("auto-print")
 
 # Extract metadata
-project = _DISTRIBUTION_METADATA["Name"]
+project = str(_DISTRIBUTION_METADATA["Name"]).replace("-", " ")
 author = _DISTRIBUTION_METADATA["Author"].split("<")[0].strip()
 copyright = f"2025, {author}"  # noqa: A001
 release = _DISTRIBUTION_METADATA["Version"]
@@ -78,9 +78,13 @@ gettext_compact = False
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
+html_logo = "auto-printer-img.png"
+html_favicon = "../printer.ico"
 
 # -- Options for autodoc -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#configuration
 
 autodoc_member_order = "bysource"
 autoclass_content = "both"
+
+notfound_urls_prefix = "/"
