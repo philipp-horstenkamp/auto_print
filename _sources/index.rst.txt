@@ -1,7 +1,7 @@
 .. auto-print documentation master file
 
 Welcome to auto-print's documentation!
-=====================================
+=========================================
 
 Auto-print is a document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns.
 
