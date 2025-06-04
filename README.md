@@ -3,162 +3,161 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![mypy](https://img.shields.io/badge/mypy-checked-blue)](https://mypy-lang.org/)
 [![codecov](https://codecov.io/gh/philipp-horstenkamp/auto_print/graph/badge.svg?token=BHJWD7F0TH)](https://codecov.io/gh/philipp-horstenkamp/auto_print)
 [![CI](https://github.com/philipp-horstenkamp/auto_print/actions/workflows/ci.yml/badge.svg)](https://github.com/philipp-horstenkamp/auto_print/actions/workflows/ci.yml)
 
-### Installation
+---
 
-#### From Source
+## 📌 What is Auto Print?
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/auto_print.git
-   cd auto_print
-   ```
+**Auto Print** is a simple automation tool for printing or opening documents (e.g., PDFs) based on filename patterns using a configuration file.  
+It helps streamline office workflows by associating document types with specific printers or applications.
 
-2. Build the application:
-   ```
-   cargo build --release
-   ```
+---
 
-3. The executables will be available in the `target/release` directory:
-   - `auto_print_execute.exe`: The main document processing application
-   - `auto_print_config_generator.exe`: The configuration tool
+## 🚀 How to Use
 
-### Usage
+### Print a Document
 
-#### Configuration
+```bash
+# If installed globally
+auto-print <file_path>
 
-Run the configuration generator:
-
-```
-cargo run --bin auto_print_config_generator
+# From source
+poetry run python -m auto_print.auto_print_execute <file_path>
 ```
 
-#### Processing Documents
+### Run the Configuration Generator
 
-To process a document:
-
-```
-cargo run --bin auto_print_execute -- path/to/your/document.pdf
-```
-
-## Integrate in the browser workflow
-One of the use cases is to use this software as a default PDF executable from Firefox or Chrome:
-Here some images on how to configure that:
-
-1. Open the Settings Tab in your Browser as shown by the firefox browser:
-![go to settings](docs/Settings.PNG)
-2. Choose the auto-printer.exe as your default executable for pdf and all pdf like formats.
-![Choose auto-printer.exe as your default software](docs/ChoosePrinter.PNG)
-
-## Running the Configuration Generator
-
-### Python Implementation
-To run the configuration generator from the command line:
-
-```
+```bash
+# If installed globally
 auto-print-config
+
+# From source
+poetry run python -m auto_print.auto_print_config_generator
 ```
 
-Or if you're running from the source code:
+### Browser Integration (Firefox)
 
+Use Auto Print as the default handler for PDFs in your browser:
+
+1. Open browser settings  
+   ![Settings](docs/Settings.PNG)
+2. Set `auto-printer.exe` as the default PDF handler  
+   ![Choose App](docs/ChoosePrinter.PNG)
+
+---
+
+## 📦 Installation
+
+### ▶️ Recommended: MSI Installer (Windows)
+
+1. Download the latest `.msi` from [releases](https://github.com/philipp-horstenkamp/auto_print/releases).
+2. Follow the installation steps.
+
+**Features**:
+- Adds to `PATH`
+- Start Menu shortcut
+- Right-click PDF context menu integration
+
+### ⚙️ From Source
+
+```bash
+git clone https://github.com/philipp-horstenkamp/auto_print.git
+cd auto_print
+
+pip install pipx
+pipx install poetry
+poetry install
 ```
-python -m auto_print.auto_print_config_generator
+
+### Build Wheel or MSI
+
+```bash
+# Build wheel
+poetry build
+pip install dist/*.whl
+
+# Build MSI
+poetry install --only main,build
+poetry run python msi_setup.py bdist_msi
 ```
 
-### Rust Implementation
-To run the configuration generator:
+### Uninstall (MSI)
 
-```
-cargo run --bin auto_print_config_generator
-```
+1. Open Control Panel
+2. Locate **auto-print**
+3. Click **Uninstall**
 
-## Main commands
+---
 
-| Command | Short | Result                                                    |
-|:-------:|-------|:----------------------------------------------------------|
-|  save   | s     | Save the configuration.                                   |
-|  close  | c     | Closes the configuration generator.                       |
-|   add   | a     | Add a new section to the configuration.                   | 
-| delete  | d     | Delete a section from the configuration.                  |
-|  show   | s     | Show the configuration in text form.                      |
-| change  |       | Changes the section order.                                |
-|  edit   | e     | Edits a section.                                          |
-|  help   | h     | Show the help information.                                |
-| repair  | r     | Repair the config file by checking if all printers exist. |
+## ⚙️ Configuration
 
+### Configuration Format (JSON)
 
-
-## Configuration example
-
-The below file is an example with comments.
-The file `TEST_something.pdf` would be printed with the first printer.
-The file `Something_to_print.pdf` would be used by the second printer.
-The file `ABC.docx` would be shown with MS Word (if installed).
 ```json
 {
   "Marke": {
-    "active": true,                 // Section active. Should be used.
+    "active": true,
     "printer": "MyPreciousPrinter",
-    "prefix": "TEST_",              // How the file should start.
-    "suffix": ".pdf",               // How the file should end.
-    "print": true,                  // Prints the file.
-    "show": false                   // Does not show the file.
-  },
-  "SomeOtherCategory": {
-    "active": false,                // Section not active. Can't be used.
-    "printer": "AnotherPrinter",
-    "prefix": "Something",
+    "prefix": "TEST_",
     "suffix": ".pdf",
-    "show": true,                   // Printing via default windows application
-    "print": true
+    "print": true,
+    "show": false
   },
   "UseDefaultPrinter": {
     "active": true,
-                                    //no printer is given therefore the default printer is used."
     "prefix": "DefPrintFile",
     "suffix": ".pdf",
     "show": false,
     "print": true
   },
-  "All": {                          // Default action (No requirements)
-    "active": true,               
-    "show": true,                   // Show without printing (Windows Default action)
+  "All": {
+    "active": true,
+    "show": true,
     "print": false
   }
 }
 ```
 
+### Main CLI Commands
 
-## Software dependencies
-To use the software effectively, the following programs are needed:
+| Command | Short | Description                                            |
+|:--------|-------|:-------------------------------------------------------|
+| save    | s     | Save the configuration                                |
+| close   | c     | Close the config tool                                 |
+| add     | a     | Add a config section                                  |
+| delete  | d     | Remove a section                                      |
+| show    | s     | Display the config                                    |
+| change  |       | Reorder sections                                      |
+| edit    | e     | Edit section content                                  |
+| help    | h     | Display help                                          |
+| repair  | r     | Validate printer availability                         |
+
+---
+
+## 🔧 Dependencies
+
+To use Auto Print, install:
 
 - [Ghostscript](https://www.ghostscript.com/releases/gsdnld.html)
 - [Adobe PDF Reader](https://www.adobe.com/de/acrobat/pdf-reader.html)
-- [Rust](https://www.rust-lang.org/tools/install) (for building from source)
 
-## How it works 
+---
 
-The goal of this project is to simplify the tedious task or printing similar forms.
+## 🔍 How It Works
 
-1. The program is started with a filepath as an argument.
-2. The filename gets extracted.
-3. The filename is compared to a list of suffixes and prefixes.
-4. If suffix and prefix are a match the file gets executed.
-If a suffix or a prefix is not given the comparison is true either way.
-5. The file is then eiter Printed and/or shown depending on the configuration.
+1. Input file name is matched to config prefixes/suffixes.
+2. Config defines printer/show actions.
+3. Logs stored in `auto_print.log`.
 
-Everything is logged and can be locked up in the auto_print.log file!
+---
 
-## About
+## 👤 Author
 
-This project was originally written in Python by Philipp Horstenkamp in the hope 
-that it will make some office processes a bit smoother.
+Created by **Philipp Horstenkamp** to simplify repetitive document handling in office environments.
 
-The Rust implementation maintains the same functionality while providing improved 
-performance and memory safety.
+## 📄 License
 
-## License
-
-This project is licensed under the MIT License.
+This project is licensed under the MIT License – see [LICENSE](LICENSE).
