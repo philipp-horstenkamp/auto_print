@@ -16,141 +16,41 @@ It helps streamline office workflows by associating document types with specific
 
 ---
 
-## 🚀 How to Use
+## 🚀 Quick Start
 
-### Print a Document
+### Installation
+
+Download and use the MSI form the [GitHub Release Page](https://github.com/philipp-horstenkamp/auto_print/releases).
+Additional prerequiremnts such as Ghostscript and Adobe Reader should be Instaled.
+
+### Basic Usage
 
 ```bash
-# If installed globally
+# Print a document
 auto-print <file_path>
 
-# From source
-poetry run python -m auto_print.auto_print_execute <file_path>
-```
-
-### Run the Configuration Generator
-
-```bash
-# If installed globally
+# Configure printing rules
 auto-print-config
-
-# From source
-poetry run python -m auto_print.auto_print_config_generator
 ```
+Alternativly Auto Print registers in the Context Menu under the `Open with` section.
 
-### Browser Integration (Firefox)
-
-Use Auto Print as the default handler for PDFs in your browser:
-
-1. Open browser settings  
-   ![Settings](docs/Settings.PNG)
-2. Set `auto-printer.exe` as the default PDF handler  
-   ![Choose App](docs/ChoosePrinter.PNG)
+For detailed installation and usage instructions, see the [full documentation](docs/index.rst).
 
 ---
 
-## 📦 Installation
+## 📚 Documentation
 
-### ▶️ Recommended: MSI Installer (Windows)
-
-1. Download the latest `.msi` from [releases](https://github.com/philipp-horstenkamp/auto_print/releases).
-2. Follow the installation steps.
-
-**Features**:
-- Adds to `PATH`
-- Start Menu shortcut
-- Right-click PDF context menu integration
-
-### ⚙️ From Source
-
-```bash
-git clone https://github.com/philipp-horstenkamp/auto_print.git
-cd auto_print
-
-pip install pipx
-pipx install poetry
-poetry install
-```
-
-### Build Wheel or MSI
-
-```bash
-# Build wheel
-poetry build
-pip install dist/*.whl
-
-# Build MSI
-poetry install --only main,build
-poetry run python msi_setup.py bdist_msi
-```
-
-### Uninstall (MSI)
-
-1. Open Control Panel
-2. Locate **auto-print**
-3. Click **Uninstall**
-
----
-
-## ⚙️ Configuration
-
-### Configuration Format (JSON)
-
-```json
-{
-  "Marke": {
-    "active": true,
-    "printer": "MyPreciousPrinter",
-    "prefix": "TEST_",
-    "suffix": ".pdf",
-    "print": true,
-    "show": false
-  },
-  "UseDefaultPrinter": {
-    "active": true,
-    "prefix": "DefPrintFile",
-    "suffix": ".pdf",
-    "show": false,
-    "print": true
-  },
-  "All": {
-    "active": true,
-    "show": true,
-    "print": false
-  }
-}
-```
-
-### Main CLI Commands
-
-| Command | Short | Description                                            |
-|:--------|-------|:-------------------------------------------------------|
-| save    | s     | Save the configuration                                |
-| close   | c     | Close the config tool                                 |
-| add     | a     | Add a config section                                  |
-| delete  | d     | Remove a section                                      |
-| show    | s     | Display the config                                    |
-| change  |       | Reorder sections                                      |
-| edit    | e     | Edit section content                                  |
-| help    | h     | Display help                                          |
-| repair  | r     | Validate printer availability                         |
+- [Installation Guide](docs/installation.rst)
+- [Usage Guide](docs/usage.rst)
+- [CLI Reference](docs/cli.rst)
+- [Contributing](docs/contributing.rst)
 
 ---
 
 ## 🔧 Dependencies
 
-To use Auto Print, install:
-
 - [Ghostscript](https://www.ghostscript.com/releases/gsdnld.html)
-- [Adobe PDF Reader](https://www.adobe.com/de/acrobat/pdf-reader.html)
-
----
-
-## 🔍 How It Works
-
-1. Input file name is matched to config prefixes/suffixes.
-2. Config defines printer/show actions.
-3. Logs stored in `auto_print.log`.
+- [Adobe PDF Reader](https://www.adobe.com/de/acrobat/pdf-reader.html) (recommended)
 
 ---
 
