@@ -1,4 +1,4 @@
-"""The goal of this project is to simplify the tedious task or printing similar forms.
+"""The goal of this project is to simplify the tedious task of printing similar forms.
 
 1. The program is started with a filepath as an argument.
 2. The filename gets extracted.
@@ -7,7 +7,7 @@
    If a suffix or a prefix is not given, the comparison is true either way.
 5. The file is then either Printed and/or shown depending on the configuration.
 
-Everything is logged and can be locked up in the auto_print.log file!
+Everything is logged and can be looked up in the auto_print.log file!
 """
 
 import argparse
@@ -131,7 +131,7 @@ def install_ghostscript():
         "Ghostscript is not installed.\nPlease install ghostscript!",
     )
     action = messagebox.askyesno(
-        "Install Ghostscript!", "Would you likte to download Ghostscript 64 bit?"
+        "Install Ghostscript!", "Would you like to download Ghostscript 64 bit?"
     )
     if action:
         import webbrowser
