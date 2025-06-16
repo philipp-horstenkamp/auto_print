@@ -20,8 +20,8 @@ It helps streamline office workflows by associating document types with specific
 
 ### Installation
 
-Download and use the MSI form the [GitHub Release Page](https://github.com/philipp-horstenkamp/auto_print/releases).
-Additional prerequiremnts such as Ghostscript and Adobe Reader should be Instaled.
+Download and use the MSI from the [GitHub Release Page](https://github.com/philipp-horstenkamp/auto_print/releases).
+Additional prerequisites such as Ghostscript and Adobe Reader should be installed.
 
 ### Basic Usage
 
@@ -32,7 +32,7 @@ auto-print <file_path>
 # Configure printing rules
 auto-print-config
 ```
-Alternativly Auto Print registers in the Context Menu under the `Open with` section.
+Alternatively Auto Print registers in the Context Menu under the `Open with` section.
 
 For detailed installation and usage instructions, see the [full documentation](docs/index.rst).
 
@@ -52,11 +52,21 @@ For detailed installation and usage instructions, see the [full documentation](d
 - [Ghostscript](https://www.ghostscript.com/releases/gsdnld.html)
 - [Adobe PDF Reader](https://www.adobe.com/de/acrobat/pdf-reader.html) (recommended)
 
+## 📝 Logging
+
+Auto Print logs all actions to a log file for troubleshooting and auditing. The log file is located at:
+
+```
+%USERPROFILE%\auto-printer\auto_print.log
+```
+
+This is typically `C:\Users\<username>\auto-printer\auto_print.log` on Windows systems.
+
 ---
 
 ## 👤 Author
 
-Created by **Philipp Horstenkamp** to simplify repetitive document handling in office environments.
+Created by **Philipp Horstenkamp** to simplify repetitive document printing in office environments.
 
 ## 📄 License
 
