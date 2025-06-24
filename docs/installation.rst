@@ -12,8 +12,8 @@ Auto Print requires the following dependencies:
 
 Please install these prerequisites before using Auto Print.
 
-Windows MSI Installation (Recommended)
---------------------------------------
+Windows MSI Installation
+------------------------
 
 The recommended installation method for Windows users is to use the MSI installer:
 
