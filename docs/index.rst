@@ -1,26 +1,17 @@
 .. auto-print documentation master file
 
-Welcome to auto-print's documentation!
-=========================================
+Welcome to Auto Print's documentation!
+======================================
 
-Auto-print is a document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns.
+**Auto Print** is a simple automation tool for printing or opening documents (e.g., PDFs) based on filename patterns using a configuration file.
+It helps streamline office workflows by associating document types with specific printers or applications.
 
-How it works
-------------
+.. image:: auto-printer-img.png
+   :width: 600
+   :alt: Auto Print Logo
 
-1. The program is started with a filepath as an argument
-2. The filename gets extracted
-3. The filename is compared to a list of configured suffixes and prefixes
-4. If suffix and prefix match, the file gets processed according to the configuration
-5. The file is then either printed directly and/or shown in the default application
-
-Key Features
-------------
-
-* Route documents to specific printers based on filename patterns
-* Configure whether to print directly or open with default application
-* Easily integrate with browsers as the default PDF handler
-* Simple configuration through an interactive interface
+Documentation Contents
+----------------------
 
 .. toctree::
    :maxdepth: 2
