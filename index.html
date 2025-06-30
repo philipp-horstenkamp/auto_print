@@ -4,13 +4,12 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to Auto Print’s documentation! &mdash; auto print 2.0.0 documentation</title>
+  <title>Welcome to auto-print’s documentation! &mdash; auto-print 2.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="_static/dark_mode_css/general.css" type="text/css" />
       <link rel="stylesheet" href="_static/dark_mode_css/dark.css" type="text/css" />
-    <link rel="shortcut icon" href="_static/printer.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -39,8 +38,7 @@
           
           
           <a href="#" class="icon icon-home">
-            auto print
-              <img src="_static/auto-printer-img.png" class="logo" alt="Logo"/>
+            auto-print
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -65,7 +63,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">auto print</a>
+          <a href="#">auto-print</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -73,7 +71,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Welcome to Auto Print’s documentation!</li>
+      <li class="breadcrumb-item active">Welcome to auto-print’s documentation!</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -84,12 +82,26 @@
            <div itemprop="articleBody">
              
   <section id="welcome-to-auto-print-s-documentation">
-<h1>Welcome to Auto Print’s documentation!<a class="headerlink" href="#welcome-to-auto-print-s-documentation" title="Link to this heading"></a></h1>
-<p><strong>Auto Print</strong> is a simple automation tool for printing or opening documents (e.g., PDFs) based on filename patterns using a configuration file.
-It helps streamline office workflows by associating document types with specific printers or applications.</p>
-<a class="reference internal image-reference" href="_images/auto-printer-img.png"><img alt="Auto Print Logo" src="_images/auto-printer-img.png" style="width: 600px;" /></a>
-<section id="documentation-contents">
-<h2>Documentation Contents<a class="headerlink" href="#documentation-contents" title="Link to this heading"></a></h2>
+<h1>Welcome to auto-print’s documentation!<a class="headerlink" href="#welcome-to-auto-print-s-documentation" title="Link to this heading"></a></h1>
+<p>Auto-print is a document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns.</p>
+<section id="how-it-works">
+<h2>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>The program is started with a filepath as an argument</p></li>
+<li><p>The filename gets extracted</p></li>
+<li><p>The filename is compared to a list of configured suffixes and prefixes</p></li>
+<li><p>If suffix and prefix match, the file gets processed according to the configuration</p></li>
+<li><p>The file is then either printed directly and/or shown in the default application</p></li>
+</ol>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Route documents to specific printers based on filename patterns</p></li>
+<li><p>Configure whether to print directly or open with default application</p></li>
+<li><p>Easily integrate with browsers as the default PDF handler</p></li>
+<li><p>Simple configuration through an interactive interface</p></li>
+</ul>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -111,8 +123,6 @@ It helps streamline office workflows by associating document types with specific
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#configuration">Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html#configuration-generator">Configuration Generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cli.html#print-executor">Print Executor</a></li>
 </ul>
