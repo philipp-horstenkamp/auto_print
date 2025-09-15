@@ -3,7 +3,7 @@ default_language_version:
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v5.0.0
+  rev: v6.0.0
   hooks:
   - id: end-of-file-fixer
     exclude: (.txt$|.ipynb$)
@@ -29,14 +29,14 @@ repos:
     exclude: (^config.json$|\.ipynb$)
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.11.12
+  rev: v0.13.0
   hooks:
   - id: ruff
     args: [--fix]
   - id: ruff-format
 
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.14.0
+  rev: v2.15.0
   hooks:
   - id: pretty-format-ini
     args: [--autofix]
@@ -48,12 +48,12 @@ repos:
     exclude: (^poetry.lock$)
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.16.0
+  rev: v1.18.1
   hooks:
   - id: mypy
 
 - repo: https://github.com/python-poetry/poetry
-  rev: 2.1.3
+  rev: 2.2.0
   hooks:
   - id: poetry-check
 
