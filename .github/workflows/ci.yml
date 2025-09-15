@@ -44,6 +44,8 @@ jobs:
       contents: read
     steps:
     - uses: actions/checkout@v4
+      with:
+        lfs: true
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -155,16 +157,17 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: documentation
-        path: docs
+        path: docs_html
 
     - name: Move HTML to root (optional, but recommended if nested)
       run: |
         ls -lah
-        ls -lah docs
+        ls -lah docs_html
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
+        publish_dir: ./docs_html
         publish_branch: gh-pages
+        enable_jekyll: false

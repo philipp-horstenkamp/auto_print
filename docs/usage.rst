@@ -18,8 +18,7 @@ Auto Print can be used from the command line. For detailed information about com
 Browser Integration
 ~~~~~~~~~~~~~~~~~~~
 
-Auto Print proides you the ability to integrate with web browsers, allowing you to automatically route downloaded PDF documents to printers or your default application.
--co
+Auto Print provides you the ability to integrate with web browsers, allowing you to automatically route downloaded PDF documents to printers or your default application.
 To set up browser integration:
 
 1. Open the settings tab in your browser
@@ -27,11 +26,11 @@ To set up browser integration:
 3. Set auto-print as the default application for PDF files
 4. Now when you download or open documents from the browser, they will be automatically processed
 
-.. image:: assets/Settings.PNG
+.. image:: _static/assets/Settings.PNG
    :width: 400
    :alt: Browser Settings
 
-.. image:: assets/ChoosePrinter.PNG
+.. image:: _static/assets/ChoosePrinter.PNG
    :width: 400
    :alt: Choose Auto Print
 
@@ -47,6 +46,8 @@ Before using Auto Print, configure it with your printer settings using the inter
 
     # If running from source
     python -m auto_print.auto_print_config_generator
+
+.. _configuration-file-structure:
 
 Configuration File Structure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,6 +90,8 @@ Configuration Options:
 * **show**: Whether to open the document with the default application (true/false)
 
 For detailed CLI commands to manage configuration, see the :ref:`cli` section.
+
+.. _document-routing-logic:
 
 Document Routing Logic
 ----------------------
