@@ -139,8 +139,9 @@ select = [
 max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]
+"auto_print_execute.py" = ["PLC0415"]
 "docs/*" = ["D"]
-"tests/*" = ["PLR2004", "ARG", "PLR0913", "TRY003"]
+"tests/*" = ["PLR2004", "ARG", "PLR0913", "TRY003", "PLC0415"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
