@@ -1,14 +1,104 @@
-.. _cli:
-
 Command Line Interface
 ======================
 
-auto-print provides two command-line interfaces:
+Overview
+--------
 
-1. Configuration Generator: For setting up printer configurations
-2. Print Executor: For printing files based on the configuration
+**auto-print** automates printing and viewing of files based on filename rules.
 
-.. _config-generator:
+It includes:
+
+#. **Configuration Generator** – Interactive tool for setting up printing rules
+#. **Print Executor** – Command-line tool to apply those rules to files
+
+.. note::
+
+   If installed via the MSI installer:
+
+   - Use ``auto-print.exe`` to print files the executable should now also be associated directly with PDF files in the context menu
+   - Use ``auto-print-config.exe`` or launch **Auto Print Config** from the Start Menu to configure rules
+
+Configuration
+-------------
+
+The configuration file is stored at:
+
+::
+
+    %USERPROFILE%\auto-printer\auto-printer-config.json
+
+Sections define how specific file types should be handled.
+
+Section Properties
+~~~~~~~~~~~~~~~~~~
+
+Each section includes the following fields:
+
+- **Name**: Unique identifier (e.g., ``Invoices``)
+- **Prefix** *(optional)*: File must start with this string
+- **Suffix** *(optional)*: File must end with this string
+- **Print**: ``true`` to print the file
+- **Printer**: *(optional)* Printer name to use if `Print` is set to true and something other than the default printer should be used.
+- **Show**: ``true`` to open with the default application
+- **Active**: Whether this section is enabled
+
+Matching Logic
+~~~~~~~~~~~~~~
+
+Each file is matched against active sections in order.
+
+A section matches if:
+
+1. The filename starts with the ``Prefix`` (if defined)
+2. The filename ends with the ``Suffix`` (if defined)
+
+Only the **first matching** section is used to determine how the file is handled.
+
+Example Sections
+~~~~~~~~~~~~~~~~
+
+**Invoices**
+
+::
+
+    Name: "Invoices"
+    Prefix: "INV_"
+    Suffix: ".pdf"
+    Print: true
+    Printer: "Accounting Printer"
+    Show: false
+    Active: true
+
+**Shipping Labels**
+
+::
+
+    Name: "Shipping Labels"
+    Prefix: "SHIP_"
+    Suffix: ".pdf"
+    Print: true
+    Printer: "Label Printer"
+    Show: false
+    Active: true
+
+**Reports**
+
+::
+
+    Name: "Reports"
+    Suffix: "_report.pdf"
+    Print: false
+    Show: true
+    Active: true
+
+**Default PDFs**
+PDFs that should be shown as normal.
+::
+
+    Name: "All PDFs"
+    Print: false
+    Show: true
+    Active: true
 
 Configuration Generator
 -----------------------
@@ -18,28 +108,18 @@ Configuration Generator
    :func: get_parser
    :prog: auto_print_config_generator
 
-The configuration generator provides an interactive interface to create and manage printer configurations.
+Configuration Workflow
+~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: bash
-
-    python -m auto_print.auto_print_config_generator
-
-Interactive Commands
-~~~~~~~~~~~~~~~~~~~~
-
-Once the configuration generator is running, you can use the following interactive commands:
-
-* ``save`` or ``s``: Save the current configuration
-* ``add`` or ``a``: Add a new printer section
-* ``delete`` or ``d``: Delete a printer section
-* ``repair`` or ``r``: Repair the configuration (fix invalid printer references)
-* ``show``: Display the current configuration
-* ``change``: Change the position of a section
-* ``edit`` or ``e``: Edit a section
-* ``close`` or ``c``: Close the application
-* ``help`` or ``h``: Show help
-
-.. _print-executor:
+1. Launch the generator (via CLI or GUI)
+2. Use ``add`` to create or ``edit`` to modify a section
+3. For each section, define:
+   - Matching rules (`Prefix`, `Suffix`)
+   - Actions (`Print`, `Show`)
+   - Printer (if applicable)
+   - Active status
+4. Use ``save`` to persist changes
+5. Exit with ``close``
 
 Print Executor
 --------------
@@ -49,48 +129,50 @@ Print Executor
    :func: get_parser
    :prog: auto_print_execute
 
-The print executor is used to print files based on the configuration.
+Usage
+~~~~~
 
-.. code-block:: bash
+**From source (Python):**
+
+::
 
     python -m auto_print.auto_print_execute <file_path>
 
-Arguments:
-    * ``file_path``: Path to the file to be printed
+**From MSI installer:**
 
-Process Flow
-~~~~~~~~~~~~
+::
 
-When you run the print executor with a file path, it follows this process:
+    auto-print.exe print <file_path>
 
-1. Checks if the file exists
-2. Loads the printer configuration from ``%USERPROFILE%\auto-printer\auto-printer-config.json``
-3. Extracts the filename from the path
-4. Compares the filename against each configuration section:
-   - If both prefix and suffix match, the file is processed according to that section
-   - If a prefix or suffix is not specified in a section, that part of the check is always considered a match
-5. For the first matching section, the file is:
-   - Printed directly to the specified printer if "print" is true
-   - Opened with the default application if "show" is true
-   - Both printed and shown if both are true
-6. If no matching section is found, an error is logged
+Execution Workflow
+~~~~~~~~~~~~~~~~~~
 
-Example:
+1. Confirm the file exists
+2. Load configuration from::
 
-.. code-block:: bash
+    %USERPROFILE%\auto-printer\auto-printer-config.json
+3. Extract filename from path
+4. Match it against active sections
+5. For the first matching section:
+   - Print if ``Print`` is ``true``
+   - Open if ``Show`` is ``true``
+6. Log an error if no match is found
 
-    python -m auto_print.auto_print_execute invoice_123.pdf
+Example
+~~~~~~~
 
-This will print the file "invoice_123.pdf" to the appropriate printer based on your configuration.
+::
+
+    auto-print.exe invoice_123.pdf
+
+This prints the file based on the rules defined for "Invoices".
 
 Exit Codes
 ~~~~~~~~~~
 
-The print executor returns the following exit codes:
-
-* ``0``: Success
-* ``-1``: No file to print specified
-* ``-2``: Too many arguments
-* ``-3``: File does not exist
-* ``-4``: Error loading configuration
-* ``-5``: Ghostscript not installed or other error
+- ``0``: Success
+- ``-1``: No file specified
+- ``-2``: Too many arguments
+- ``-3``: File not found
+- ``-4``: Failed to load configuration
+- ``-5``: Ghostscript not found or other runtime error

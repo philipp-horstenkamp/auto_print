@@ -1,7 +1,5 @@
-.. _contributing:
-
 Contributing
-===========
+============
 
 Thank you for considering contributing to auto-print! This document provides guidelines for contributing to the project.
 
@@ -19,7 +17,7 @@ Development Setup
 
    .. code-block:: bash
 
-       poetry install --with dev,docs
+       poetry install
 
 3. Set up pre-commit hooks:
 
@@ -32,8 +30,16 @@ Code Style
 
 This project uses:
 
-* Ruff for linting and formatting
-* MyPy for type checking
+* |ruff| for linting and formatting
+* |mypy| for type checking
+
+.. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+   :target: https://github.com/astral-sh/ruff
+   :alt: Ruff
+
+.. |mypy| image:: https://img.shields.io/badge/mypy-checked-blue
+   :target: https://mypy-lang.org/
+   :alt: MyPy
 
 You can run these tools using pre-commit:
 
@@ -59,16 +65,6 @@ To build the documentation:
 
     cd docs
     make html
-
-For the German translation:
-
-.. code-block:: bash
-
-    cd docs
-    make gettext
-    sphinx-intl update -p _build/gettext -l de
-    # Edit the .po files in locale/de/LC_MESSAGES/
-    make -e SPHINXOPTS="-D language='de'" html
 
 Pull Request Process
 --------------------
