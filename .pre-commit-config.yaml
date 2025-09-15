@@ -53,6 +53,13 @@ repos:
   - id: mypy
 
 - repo: https://github.com/python-poetry/poetry
-  rev: 2.2.0    # add version here
+  rev: 2.2.0
   hooks:
   - id: poetry-check
+
+- repo: https://github.com/rstcheck/rstcheck
+  rev: v6.0.0
+  hooks:
+  - id: rstcheck
+    additional_dependencies:
+    - rstcheck[toml,sphinx]

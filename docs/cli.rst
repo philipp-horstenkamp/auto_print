@@ -1,45 +1,75 @@
-.. _cli:
-
 Command Line Interface
 ======================
 
-auto-print provides two command-line interfaces:
+Overview
+--------
 
-1. Configuration Generator: For setting up printer configurations
-2. Print Executor: For printing files based on the configuration
+**Auto Print** provides two main command-line tools:
 
-.. _config-generator:
+#. **Configuration Generator** – Interactive tool for setting up printing rules
+#. **Print Executor** – Command-line tool to apply those rules to files
 
-Configuration Generator
------------------------
+.. note::
+
+   If installed via the MSI installer:
+
+   - Use ``auto-print.exe`` to print files (also available in the right-click context menu for PDF files)
+   - Use ``auto-print-config.exe`` or launch **Auto Print Config** from the Start Menu to configure rules
+
+Configuration
+-------------
+
+The configuration file is stored at:
+
+::
+
+    %USERPROFILE%\auto-printer\auto-printer-config.json
+
+For details about the configuration file structure, see the :ref:`Configuration File Structure <configuration-file-structure>` section in the usage documentation.
+
+Configuration Generator Commands
+--------------------------------
 
 .. argparse::
    :module: auto_print.auto_print_config_generator
    :func: get_parser
    :prog: auto_print_config_generator
 
-The configuration generator provides an interactive interface to create and manage printer configurations.
+The configuration generator provides an interactive interface with the following commands:
 
-.. code-block:: bash
++----------+--------+------------------------------------------------+
+| Command  | Short  | Description                                    |
++==========+========+================================================+
+| save     | s      | Save the configuration                         |
++----------+--------+------------------------------------------------+
+| close    | c      | Close the config tool                          |
++----------+--------+------------------------------------------------+
+| add      | a      | Add a config section                           |
++----------+--------+------------------------------------------------+
+| delete   | d      | Remove a section                               |
++----------+--------+------------------------------------------------+
+| show     | s      | Display the config                             |
++----------+--------+------------------------------------------------+
+| change   |        | Reorder sections                               |
++----------+--------+------------------------------------------------+
+| edit     | e      | Edit section content                           |
++----------+--------+------------------------------------------------+
+| help     | h      | Display help                                   |
++----------+--------+------------------------------------------------+
+| repair   | r      | Validate printer availability                  |
++----------+--------+------------------------------------------------+
 
-    python -m auto_print.auto_print_config_generator
+Configuration Workflow
+~~~~~~~~~~~~~~~~~~~~~~
 
-Interactive Commands
-~~~~~~~~~~~~~~~~~~~~
+The configuration workflow follows these steps:
 
-Once the configuration generator is running, you can use the following interactive commands:
+1. Launch the generator (via CLI or GUI)
+2. Use the commands listed above to create and manage configuration sections
+3. Use ``save`` to persist changes
+4. Exit with ``close``
 
-* ``save`` or ``s``: Save the current configuration
-* ``add`` or ``a``: Add a new printer section
-* ``delete`` or ``d``: Delete a printer section
-* ``repair`` or ``r``: Repair the configuration (fix invalid printer references)
-* ``show``: Display the current configuration
-* ``change``: Change the position of a section
-* ``edit`` or ``e``: Edit a section
-* ``close`` or ``c``: Close the application
-* ``help`` or ``h``: Show help
-
-.. _print-executor:
+For details about configuration options and matching rules, see the :ref:`Configuration File Structure <configuration-file-structure>` and :ref:`Document Routing Logic <document-routing-logic>` sections in the usage documentation.
 
 Print Executor
 --------------
@@ -49,48 +79,47 @@ Print Executor
    :func: get_parser
    :prog: auto_print_execute
 
-The print executor is used to print files based on the configuration.
+Usage
+~~~~~
 
-.. code-block:: bash
+**From MSI installer:**
+
+::
+
+    auto-print.exe <file_path>
+
+**From source (Python):**
+
+::
 
     python -m auto_print.auto_print_execute <file_path>
 
-Arguments:
-    * ``file_path``: Path to the file to be printed
+Execution Workflow
+~~~~~~~~~~~~~~~~~~
 
-Process Flow
-~~~~~~~~~~~~
+The print executor:
 
-When you run the print executor with a file path, it follows this process:
+1. Confirms the file exists
+2. Loads the configuration file
+3. Processes the file according to the document routing logic
 
-1. Checks if the file exists
-2. Loads the printer configuration from ``%USERPROFILE%\auto-printer\auto-printer-config.json``
-3. Extracts the filename from the path
-4. Compares the filename against each configuration section:
-   - If both prefix and suffix match, the file is processed according to that section
-   - If a prefix or suffix is not specified in a section, that part of the check is always considered a match
-5. For the first matching section, the file is:
-   - Printed directly to the specified printer if "print" is true
-   - Opened with the default application if "show" is true
-   - Both printed and shown if both are true
-6. If no matching section is found, an error is logged
+For detailed information about how files are matched and processed, see the :ref:`Document Routing Logic <document-routing-logic>` section in the usage documentation.
 
-Example:
+Example
+~~~~~~~
 
-.. code-block:: bash
+::
 
-    python -m auto_print.auto_print_execute invoice_123.pdf
+    auto-print.exe invoice_123.pdf
 
-This will print the file "invoice_123.pdf" to the appropriate printer based on your configuration.
+This processes the file based on the matching configuration section.
 
 Exit Codes
 ~~~~~~~~~~
 
-The print executor returns the following exit codes:
-
-* ``0``: Success
-* ``-1``: No file to print specified
-* ``-2``: Too many arguments
-* ``-3``: File does not exist
-* ``-4``: Error loading configuration
-* ``-5``: Ghostscript not installed or other error
+- ``0``: Success
+- ``-1``: No file specified
+- ``-2``: Too many arguments
+- ``-3``: File not found
+- ``-4``: Failed to load configuration
+- ``-5``: Ghostscript not found or other runtime error

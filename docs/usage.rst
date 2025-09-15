@@ -1,47 +1,52 @@
-.. _usage:
-
 Usage
 =====
 
 Basic Usage
-----------
+-----------
 
-Auto-print is a document routing application that acts as a switch for incoming documents. Based on the filename, it will either:
+Auto Print routes documents based on filename patterns. It can:
 
 1. Print the document directly to a specific printer
 2. Open the document with the default application
+3. Do both actions simultaneously
 
 Command Line Usage
 ~~~~~~~~~~~~~~~~~~
 
-The simplest way to use auto-print is from the command line:
-
-.. code-block:: bash
-
-    python -m auto_print.auto_print_execute path/to/your/file.pdf
+Auto Print can be used from the command line. For detailed information about command-line usage, see the :ref:`cli` section.
 
 Browser Integration
 ~~~~~~~~~~~~~~~~~~~
 
-One of the most powerful features of auto-print is its ability to integrate with web browsers. This allows you to automatically route downloaded documents to the appropriate printer or application.
-
+Auto Print proides you the ability to integrate with web browsers, allowing you to automatically route downloaded PDF documents to printers or your default application.
+-co
 To set up browser integration:
 
 1. Open the settings tab in your browser
 2. Navigate to the file handling or download settings
-3. Set auto-print as the default application for PDF files and other document types
-4. Now when you download or open documents from the browser, they will be automatically processed by auto-print
+3. Set auto-print as the default application for PDF files
+4. Now when you download or open documents from the browser, they will be automatically processed
+
+.. image:: Settings.PNG
+   :width: 400
+   :alt: Browser Settings
+
+.. image:: ChoosePrinter.PNG
+   :width: 400
+   :alt: Choose Auto Print
 
 Configuration
 -------------
 
-Before using auto-print, you need to configure it with your printer settings. The easiest way is to use the interactive configuration generator:
+Before using Auto Print, configure it with your printer settings using the interactive configuration generator:
 
 .. code-block:: bash
 
-    python -m auto_print.auto_print_config_generator
+    # If installed via MSI
+    auto-print-config
 
-This will guide you through setting up your printer configurations.
+    # If running from source
+    python -m auto_print.auto_print_config_generator
 
 Configuration File Structure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -83,16 +88,18 @@ Configuration Options:
 * **print**: Whether to print the document (true/false)
 * **show**: Whether to open the document with the default application (true/false)
 
+For detailed CLI commands to manage configuration, see the :ref:`cli` section.
+
 Document Routing Logic
 ----------------------
 
-Auto-print uses the following logic to route documents:
+Auto Print uses the following logic to route documents:
 
 1. The program receives a file path as an argument
 2. It extracts the filename from the path
-3. It compares the filename against each configuration section:
+3. It compares the filename against each configuration section in order:
    - If both prefix and suffix match, the file is processed according to that section
-   - If a prefix or suffix is not specified in a section, that part of the check is always considered a match
+   - If a prefix or suffix is not specified in a section, that part is always considered a match
 4. For the first matching section, the file is:
    - Printed directly to the specified printer if "print" is true
    - Opened with the default application if "show" is true
@@ -101,7 +108,7 @@ Auto-print uses the following logic to route documents:
 Example Scenarios
 -----------------
 
-Here are some examples of how auto-print routes different files:
+Here are some examples of how Auto Print routes different files:
 
 1. **File: INV_12345.pdf**
    - Matches the "InvoicePrinter" section
@@ -111,24 +118,16 @@ Here are some examples of how auto-print routes different files:
    - Matches the "ShippingLabels" section
    - Printed directly to "LabelPrinter" without opening
 
-3. **File: Report.docx**
+3. **File: Report.pdf**
    - Doesn't match specific sections
    - Falls back to "ViewOnly" section
-   - Opened with the default application (e.g., Microsoft Word) without printing
+   - Opened with the default application without printing
 
 Logging
 -------
 
-Auto-print logs all actions to a log file (auto_print.log). This is useful for troubleshooting and auditing which documents were processed and how.
+Auto Print logs all actions to a log file for troubleshooting and auditing. The log file is located at:
 
-To enable logging in your code:
+.. code-block::
 
-.. code-block:: python
-
-    from auto_print.auto_print_execute import configure_logger, print_file
-
-    # Set up logging
-    configure_logger()
-
-    # Print a file
-    print_file("invoice_123.pdf")
+    %USERPROFILE%\auto-printer\auto_print.log

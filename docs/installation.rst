@@ -1,25 +1,23 @@
-.. _installation:
-
 Installation
 ============
 
 Prerequisites
 -------------
 
-Auto Print requires Ghostscript to be installed on your system for PDF processing and printing:
+Auto Print requires the following dependencies:
 
-* `Download Ghostscript for Windows <https://ghostscript.com/releases/gsdnld.html>`_
+* **Ghostscript** - Required for PDF processing and printing
+  * `Download Ghostscript for Windows <https://ghostscript.com/releases/gsdnld.html>`_
+* **PDF Reader** - Adobe Acrobat or another PDF reader is recommended
 
-It is also beneficial to have Adobe Acrobat or another PDF reader installed on your system.
-
-Please install Ghostscript before using Auto Print.
+Please install these prerequisites before using Auto Print.
 
 Windows MSI Installation
 ------------------------
 
 The recommended installation method for Windows users is to use the MSI installer:
 
-1. Download the latest MSI installer from the `releases page <https://github.com/username/auto-print/releases>`_.
+1. Download the latest MSI installer from the `releases page <https://github.com/philipp-horstenkamp/auto_print/releases>`_.
 2. Double-click the downloaded .msi file to start the installation wizard.
 3. Follow the on-screen instructions to complete the installation.
 
