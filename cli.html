@@ -4,12 +4,13 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Command Line Interface &mdash; auto-print 2.0.0 documentation</title>
+  <title>Command Line Interface &mdash; auto print 2.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="_static/dark_mode_css/general.css" type="text/css" />
       <link rel="stylesheet" href="_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/printer.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -39,7 +40,8 @@
           
           
           <a href="index.html" class="icon icon-home">
-            auto-print
+            auto print
+              <img src="_static/auto-printer-img.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -55,13 +57,17 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html#uninstallation">Uninstallation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#configuration-generator">Configuration Generator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#interactive-commands">Interactive Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-generator-commands">Configuration Generator Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-workflow">Configuration Workflow</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#print-executor">Print Executor</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#process-flow">Process Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#execution-workflow">Execution Workflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#exit-codes">Exit Codes</a></li>
 </ul>
 </li>
@@ -76,7 +82,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">auto-print</a>
+          <a href="index.html">auto print</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -95,41 +101,99 @@
            <div itemprop="articleBody">
              
   <section id="command-line-interface">
-<span id="cli"></span><h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h1>
-<p>auto-print provides two command-line interfaces:</p>
+<h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p><strong>Auto Print</strong> provides two main command-line tools:</p>
 <ol class="arabic simple">
-<li><p>Configuration Generator: For setting up printer configurations</p></li>
-<li><p>Print Executor: For printing files based on the configuration</p></li>
+<li><p><strong>Configuration Generator</strong> – Interactive tool for setting up printing rules</p></li>
+<li><p><strong>Print Executor</strong> – Command-line tool to apply those rules to files</p></li>
 </ol>
-<section id="configuration-generator">
-<span id="config-generator"></span><h2>Configuration Generator<a class="headerlink" href="#configuration-generator" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If installed via the MSI installer:</p>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">auto-print.exe</span></code> to print files (also available in the right-click context menu for PDF files)</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">auto-print-config.exe</span></code> or launch <strong>Auto Print Config</strong> from the Start Menu to configure rules</p></li>
+</ul>
+</div>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<p>The configuration file is stored at:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">USERPROFILE</span><span class="o">%</span>\<span class="n">auto</span><span class="o">-</span><span class="n">printer</span>\<span class="n">auto</span><span class="o">-</span><span class="n">printer</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<p>For details about the configuration file structure, see the <span class="xref std std-ref">Configuration File Structure</span> section in the usage documentation.</p>
+</section>
+<section id="configuration-generator-commands">
+<h2>Configuration Generator Commands<a class="headerlink" href="#configuration-generator-commands" title="Link to this heading"></a></h2>
 <p><p>Interactive configuration generator for auto-print. This tool helps you create and manage printer configurations.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">auto_print_config_generator</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>The configuration generator provides an interactive interface to create and manage printer configurations.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_config_generator
-</pre></div>
-</div>
-<section id="interactive-commands">
-<h3>Interactive Commands<a class="headerlink" href="#interactive-commands" title="Link to this heading"></a></h3>
-<p>Once the configuration generator is running, you can use the following interactive commands:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">save</span></code> or <code class="docutils literal notranslate"><span class="pre">s</span></code>: Save the current configuration</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">add</span></code> or <code class="docutils literal notranslate"><span class="pre">a</span></code>: Add a new printer section</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delete</span></code> or <code class="docutils literal notranslate"><span class="pre">d</span></code>: Delete a printer section</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">repair</span></code> or <code class="docutils literal notranslate"><span class="pre">r</span></code>: Repair the configuration (fix invalid printer references)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">show</span></code>: Display the current configuration</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">change</span></code>: Change the position of a section</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">edit</span></code> or <code class="docutils literal notranslate"><span class="pre">e</span></code>: Edit a section</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">close</span></code> or <code class="docutils literal notranslate"><span class="pre">c</span></code>: Close the application</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">help</span></code> or <code class="docutils literal notranslate"><span class="pre">h</span></code>: Show help</p></li>
-</ul>
+<p>The configuration generator provides an interactive interface with the following commands:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Short</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>save</p></td>
+<td><p>s</p></td>
+<td><p>Save the configuration</p></td>
+</tr>
+<tr class="row-odd"><td><p>close</p></td>
+<td><p>c</p></td>
+<td><p>Close the config tool</p></td>
+</tr>
+<tr class="row-even"><td><p>add</p></td>
+<td><p>a</p></td>
+<td><p>Add a config section</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete</p></td>
+<td><p>d</p></td>
+<td><p>Remove a section</p></td>
+</tr>
+<tr class="row-even"><td><p>show</p></td>
+<td><p>s</p></td>
+<td><p>Display the config</p></td>
+</tr>
+<tr class="row-odd"><td><p>change</p></td>
+<td></td>
+<td><p>Reorder sections</p></td>
+</tr>
+<tr class="row-even"><td><p>edit</p></td>
+<td><p>e</p></td>
+<td><p>Edit section content</p></td>
+</tr>
+<tr class="row-odd"><td><p>help</p></td>
+<td><p>h</p></td>
+<td><p>Display help</p></td>
+</tr>
+<tr class="row-even"><td><p>repair</p></td>
+<td><p>r</p></td>
+<td><p>Validate printer availability</p></td>
+</tr>
+</tbody>
+</table>
+<section id="configuration-workflow">
+<h3>Configuration Workflow<a class="headerlink" href="#configuration-workflow" title="Link to this heading"></a></h3>
+<p>The configuration workflow follows these steps:</p>
+<ol class="arabic simple">
+<li><p>Launch the generator (via CLI or GUI)</p></li>
+<li><p>Use the commands listed above to create and manage configuration sections</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">save</span></code> to persist changes</p></li>
+<li><p>Exit with <code class="docutils literal notranslate"><span class="pre">close</span></code></p></li>
+</ol>
+<p>For details about configuration options and matching rules, see the <span class="xref std std-ref">Configuration File Structure</span> and <span class="xref std std-ref">Document Routing Logic</span> sections in the usage documentation.</p>
 </section>
 </section>
 <section id="print-executor">
-<span id="id1"></span><h2>Print Executor<a class="headerlink" href="#print-executor" title="Link to this heading"></a></h2>
+<h2>Print Executor<a class="headerlink" href="#print-executor" title="Link to this heading"></a></h2>
 <p><p>Auto-print: A document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">auto_print_execute</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">file_path</span>
@@ -143,48 +207,43 @@
 </dd>
 </dl>
 </section>
-<p>The print executor is used to print files based on the configuration.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_execute<span class="w"> </span>&lt;file_path&gt;
+<section id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h3>
+<p><strong>From MSI installer:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">auto</span><span class="o">-</span><span class="nb">print</span><span class="o">.</span><span class="n">exe</span> <span class="o">&lt;</span><span class="n">file_path</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<dl class="simple">
-<dt>Arguments:</dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">file_path</span></code>: Path to the file to be printed</p></li>
-</ul>
-</dd>
-</dl>
-<section id="process-flow">
-<h3>Process Flow<a class="headerlink" href="#process-flow" title="Link to this heading"></a></h3>
-<p>When you run the print executor with a file path, it follows this process:</p>
+<p><strong>From source (Python):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">auto_print</span><span class="o">.</span><span class="n">auto_print_execute</span> <span class="o">&lt;</span><span class="n">file_path</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="execution-workflow">
+<h3>Execution Workflow<a class="headerlink" href="#execution-workflow" title="Link to this heading"></a></h3>
+<p>The print executor:</p>
 <ol class="arabic simple">
-<li><p>Checks if the file exists</p></li>
-<li><p>Loads the printer configuration from <code class="docutils literal notranslate"><span class="pre">%USERPROFILE%\auto-printer\auto-printer-config.json</span></code></p></li>
-<li><p>Extracts the filename from the path</p></li>
-<li><p>Compares the filename against each configuration section:
-- If both prefix and suffix match, the file is processed according to that section
-- If a prefix or suffix is not specified in a section, that part of the check is always considered a match</p></li>
-<li><p>For the first matching section, the file is:
-- Printed directly to the specified printer if “print” is true
-- Opened with the default application if “show” is true
-- Both printed and shown if both are true</p></li>
-<li><p>If no matching section is found, an error is logged</p></li>
+<li><p>Confirms the file exists</p></li>
+<li><p>Loads the configuration file</p></li>
+<li><p>Processes the file according to the document routing logic</p></li>
 </ol>
-<p>Example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_execute<span class="w"> </span>invoice_123.pdf
+<p>For detailed information about how files are matched and processed, see the <span class="xref std std-ref">Document Routing Logic</span> section in the usage documentation.</p>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">auto</span><span class="o">-</span><span class="nb">print</span><span class="o">.</span><span class="n">exe</span> <span class="n">invoice_123</span><span class="o">.</span><span class="n">pdf</span>
 </pre></div>
 </div>
-<p>This will print the file “invoice_123.pdf” to the appropriate printer based on your configuration.</p>
+<p>This processes the file based on the matching configuration section.</p>
 </section>
 <section id="exit-codes">
 <h3>Exit Codes<a class="headerlink" href="#exit-codes" title="Link to this heading"></a></h3>
-<p>The print executor returns the following exit codes:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: Success</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code>: No file to print specified</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code>: No file specified</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-2</span></code>: Too many arguments</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-3</span></code>: File does not exist</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-4</span></code>: Error loading configuration</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-5</span></code>: Ghostscript not installed or other error</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-3</span></code>: File not found</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-4</span></code>: Failed to load configuration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-5</span></code>: Ghostscript not found or other runtime error</p></li>
 </ul>
 </section>
 </section>
