@@ -6,7 +6,7 @@ Welcome to Auto Print's documentation!
 **Auto Print** is a simple automation tool for printing or opening documents (e.g., PDFs) based on filename patterns using a configuration file.
 It helps streamline office workflows by associating document types with specific printers or applications.
 
-.. image:: assets/auto-printer-img.png
+.. image:: _static/assets/auto-printer-img.png
    :width: 600
    :alt: Auto Print Logo
 
@@ -20,7 +20,6 @@ Documentation Contents
    installation
    usage
    cli
-   modules/index
    contributing
 
 Indices and tables
