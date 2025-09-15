@@ -21,10 +21,3 @@ Documentation Contents
    usage
    cli
    contributing
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
