@@ -207,6 +207,8 @@ def configure_logger() -> None:
     The logger uses a timestamp format and appends to the existing log file.
     """
     try:
+        # Ensure the directory for the log file exists
+        LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
         logging.basicConfig(
             filename=LOG_FILE,
             format="%(asctime)-15s %(message)s",
