@@ -4,9 +4,7 @@ Command Line Interface
 Overview
 --------
 
-**auto-print** automates printing and viewing of files based on filename rules.
-
-It includes:
+**Auto Print** provides two main command-line tools:
 
 #. **Configuration Generator** – Interactive tool for setting up printing rules
 #. **Print Executor** – Command-line tool to apply those rules to files
@@ -15,7 +13,7 @@ It includes:
 
    If installed via the MSI installer:
 
-   - Use ``auto-print.exe`` to print files the executable should now also be associated directly with PDF files in the context menu
+   - Use ``auto-print.exe`` to print files (also available in the right-click context menu for PDF files)
    - Use ``auto-print-config.exe`` or launch **Auto Print Config** from the Start Menu to configure rules
 
 Configuration
@@ -27,99 +25,51 @@ The configuration file is stored at:
 
     %USERPROFILE%\auto-printer\auto-printer-config.json
 
-Sections define how specific file types should be handled.
+For details about the configuration file structure, see the :ref:`Configuration File Structure <configuration-file-structure>` section in the usage documentation.
 
-Section Properties
-~~~~~~~~~~~~~~~~~~
-
-Each section includes the following fields:
-
-- **Name**: Unique identifier (e.g., ``Invoices``)
-- **Prefix** *(optional)*: File must start with this string
-- **Suffix** *(optional)*: File must end with this string
-- **Print**: ``true`` to print the file
-- **Printer**: *(optional)* Printer name to use if `Print` is set to true and something other than the default printer should be used.
-- **Show**: ``true`` to open with the default application
-- **Active**: Whether this section is enabled
-
-Matching Logic
-~~~~~~~~~~~~~~
-
-Each file is matched against active sections in order.
-
-A section matches if:
-
-1. The filename starts with the ``Prefix`` (if defined)
-2. The filename ends with the ``Suffix`` (if defined)
-
-Only the **first matching** section is used to determine how the file is handled.
-
-Example Sections
-~~~~~~~~~~~~~~~~
-
-**Invoices**
-
-::
-
-    Name: "Invoices"
-    Prefix: "INV_"
-    Suffix: ".pdf"
-    Print: true
-    Printer: "Accounting Printer"
-    Show: false
-    Active: true
-
-**Shipping Labels**
-
-::
-
-    Name: "Shipping Labels"
-    Prefix: "SHIP_"
-    Suffix: ".pdf"
-    Print: true
-    Printer: "Label Printer"
-    Show: false
-    Active: true
-
-**Reports**
-
-::
-
-    Name: "Reports"
-    Suffix: "_report.pdf"
-    Print: false
-    Show: true
-    Active: true
-
-**Default PDFs**
-PDFs that should be shown as normal.
-::
-
-    Name: "All PDFs"
-    Print: false
-    Show: true
-    Active: true
-
-Configuration Generator
------------------------
+Configuration Generator Commands
+--------------------------------
 
 .. argparse::
    :module: auto_print.auto_print_config_generator
    :func: get_parser
    :prog: auto_print_config_generator
 
+The configuration generator provides an interactive interface with the following commands:
+
++----------+--------+------------------------------------------------+
+| Command  | Short  | Description                                    |
++==========+========+================================================+
+| save     | s      | Save the configuration                         |
++----------+--------+------------------------------------------------+
+| close    | c      | Close the config tool                          |
++----------+--------+------------------------------------------------+
+| add      | a      | Add a config section                           |
++----------+--------+------------------------------------------------+
+| delete   | d      | Remove a section                               |
++----------+--------+------------------------------------------------+
+| show     | s      | Display the config                             |
++----------+--------+------------------------------------------------+
+| change   |        | Reorder sections                               |
++----------+--------+------------------------------------------------+
+| edit     | e      | Edit section content                           |
++----------+--------+------------------------------------------------+
+| help     | h      | Display help                                   |
++----------+--------+------------------------------------------------+
+| repair   | r      | Validate printer availability                  |
++----------+--------+------------------------------------------------+
+
 Configuration Workflow
 ~~~~~~~~~~~~~~~~~~~~~~
 
+The configuration workflow follows these steps:
+
 1. Launch the generator (via CLI or GUI)
-2. Use ``add`` to create or ``edit`` to modify a section
-3. For each section, define:
-   - Matching rules (`Prefix`, `Suffix`)
-   - Actions (`Print`, `Show`)
-   - Printer (if applicable)
-   - Active status
-4. Use ``save`` to persist changes
-5. Exit with ``close``
+2. Use the commands listed above to create and manage configuration sections
+3. Use ``save`` to persist changes
+4. Exit with ``close``
+
+For details about configuration options and matching rules, see the :ref:`Configuration File Structure <configuration-file-structure>` and :ref:`Document Routing Logic <document-routing-logic>` sections in the usage documentation.
 
 Print Executor
 --------------
@@ -132,31 +82,28 @@ Print Executor
 Usage
 ~~~~~
 
+**From MSI installer:**
+
+::
+
+    auto-print.exe <file_path>
+
 **From source (Python):**
 
 ::
 
     python -m auto_print.auto_print_execute <file_path>
 
-**From MSI installer:**
-
-::
-
-    auto-print.exe print <file_path>
-
 Execution Workflow
 ~~~~~~~~~~~~~~~~~~
 
-1. Confirm the file exists
-2. Load configuration from::
+The print executor:
 
-    %USERPROFILE%\auto-printer\auto-printer-config.json
-3. Extract filename from path
-4. Match it against active sections
-5. For the first matching section:
-   - Print if ``Print`` is ``true``
-   - Open if ``Show`` is ``true``
-6. Log an error if no match is found
+1. Confirms the file exists
+2. Loads the configuration file
+3. Processes the file according to the document routing logic
+
+For detailed information about how files are matched and processed, see the :ref:`Document Routing Logic <document-routing-logic>` section in the usage documentation.
 
 Example
 ~~~~~~~
@@ -165,7 +112,7 @@ Example
 
     auto-print.exe invoice_123.pdf
 
-This prints the file based on the rules defined for "Invoices".
+This processes the file based on the matching configuration section.
 
 Exit Codes
 ~~~~~~~~~~
