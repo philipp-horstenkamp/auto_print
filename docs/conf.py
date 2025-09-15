@@ -77,9 +77,12 @@ gettext_compact = False
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_rtd_theme"
-html_static_path = ["_static"]
-html_logo = "auto-printer-img.png"
+html_static_path = ["_static", "assets"]
+html_logo = "assets/auto-printer-img.png"
 html_favicon = "../printer.ico"
+html_use_index = True
+html_copy_source = True
+html_scaled_image_link = False
 
 # -- Options for autodoc -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#configuration
@@ -87,4 +90,5 @@ html_favicon = "../printer.ico"
 autodoc_member_order = "bysource"
 autoclass_content = "both"
 
-notfound_urls_prefix = "/"
+html_baseurl = "https://philipp-horstenkamp.github.io/auto_print/"
+notfound_urls_prefix = "/auto_print/"
