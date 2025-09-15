@@ -128,6 +128,6 @@ Logging
 
 Auto Print logs all actions to a log file for troubleshooting and auditing. The log file is located at:
 
-```path
-%USERPROFILE%\auto-printer\auto_print.log
-```
+.. code-block::
+
+    %USERPROFILE%\auto-printer\auto_print.log
