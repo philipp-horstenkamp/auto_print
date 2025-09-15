@@ -7,7 +7,9 @@ Prerequisites
 Auto Print requires the following dependencies:
 
 * **Ghostscript** - Required for PDF processing and printing
+
   * `Download Ghostscript for Windows <https://ghostscript.com/releases/gsdnld.html>`_
+
 * **PDF Reader** - Adobe Acrobat or another PDF reader is recommended
 
 Please install these prerequisites before using Auto Print.
