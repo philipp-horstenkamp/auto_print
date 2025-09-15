@@ -27,11 +27,11 @@ To set up browser integration:
 3. Set auto-print as the default application for PDF files
 4. Now when you download or open documents from the browser, they will be automatically processed
 
-.. image:: Settings.PNG
+.. image:: assets/Settings.PNG
    :width: 400
    :alt: Browser Settings
 
-.. image:: ChoosePrinter.PNG
+.. image:: assets/ChoosePrinter.PNG
    :width: 400
    :alt: Choose Auto Print
 
