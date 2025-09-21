@@ -33,7 +33,7 @@ jobs:
         path: release_artifacts/wheel
 
     - name: Download MSI artifact (MSI)
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v5
       with:
         run-id: ${{ github.event.workflow_run.id }}
         name: MSI
