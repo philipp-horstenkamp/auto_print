@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -27,6 +27,7 @@ jobs:
       with:
         config-name: release-drafter.yml
         disable-autolabeler: false
+        commitish: main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -44,6 +45,7 @@ jobs:
         echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
     - name: Set poetry version
+      if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       run: |
         VERSION="${{ steps.draft_release.outputs.resolved_version }}"
         echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || { echo "no stable SemVer"; exit 1; }
@@ -51,6 +53,7 @@ jobs:
 
     - name: Check for changes to pyproject.toml
       id: check_diff
+      if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       run: |
         if git diff --quiet pyproject.toml; then
         echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -59,13 +62,13 @@ jobs:
         fi
 
     - name: Configure Git
-      if: steps.check_diff.outputs.changed == 'true'
+      if: steps.check_diff.outputs.changed == 'true' && steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
     - name: Commit and push version bump to a fixed branch
-      if: steps.check_diff.outputs.changed == 'true' && github.event_name != 'pull_request'
+      if: steps.check_diff.outputs.changed == 'true' && github.event_name != 'pull_request' && steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       run: |
         VERSION="${{ steps.draft_release.outputs.resolved_version }}"
         BRANCH_NAME="version-bump"
