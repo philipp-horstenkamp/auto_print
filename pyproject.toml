@@ -60,7 +60,7 @@ pytest = "^8.3.5"  # Testing framework for Python
 pytest-cov = "^4.1.0"  # Coverage reporting plugin for pytest
 pytest-github-actions-annotate-failures = "^0.2.0"  # Annotates test failures in GitHub Actions
 pytest-mock = "^3.14.0"  # Thin-wrapper around the mock package for pytest
-pytest-randomly = "^3.16.0"  # Pytest plugin to randomly order tests
+pytest-randomly = "^4.0.1"  # Pytest plugin to randomly order tests
 pytest-verbose-parametrize = "^1.8.1"  # Makes parametrized tests more verbose
 
 [tool.poetry.scripts]
