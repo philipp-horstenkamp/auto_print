@@ -25,7 +25,7 @@ jobs:
         echo "name=${REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
     - name: Download wheel artifact (distribution-packages)
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v5
       with:
           # Download artifacts from the triggering CI run:
         run-id: ${{ github.event.workflow_run.id }}
