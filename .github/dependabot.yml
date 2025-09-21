@@ -12,9 +12,6 @@ updates:
   commit-message:
     prefix: pip
     include: scope
-  auto-merge: true
-  merge-strategy: squash
-  automerge-strategy: squash
   ignore:
   - dependency-name: '*'
     update-types:
@@ -40,7 +37,6 @@ updates:
     update-types:
     - version-update:semver-minor
     - version-update:semver-patch
-  auto-merge: false
 
   # Maintain dependencies for GitHub Actions
 - package-ecosystem: github-actions
@@ -54,9 +50,6 @@ updates:
   commit-message:
     prefix: github-actions
     include: scope
-  auto-merge: true
-  merge-strategy: squash
-  automerge-strategy: squash
   ignore:
   - dependency-name: '*'
     update-types:
@@ -74,9 +67,6 @@ updates:
   commit-message:
     prefix: pre-commit
     include: scope
-  auto-merge: true
-  merge-strategy: squash
-  automerge-strategy: squash
   versioning-strategy: lockfile-only
   allow:
   - dependency-type: all
