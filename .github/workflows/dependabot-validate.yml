@@ -1,9 +1,6 @@
 name: dependabot validate
 on:
   push:
-    paths:
-    - .github/dependabot.yml
-    - .github/workflows/dependabot-validate.yml
 jobs:
   validate:
     runs-on: ubuntu-latest
