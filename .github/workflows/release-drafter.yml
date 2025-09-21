@@ -4,10 +4,13 @@ on:
   push:
     branches:
     - main
+  pull_request:
+    types: [opened, reopened, synchronize]
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   update_release_draft:
@@ -23,6 +26,7 @@ jobs:
       uses: release-drafter/release-drafter@v6
       with:
         config-name: release-drafter.yml
+        disable-autolabeler: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -36,10 +40,13 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pipx
         pipx install poetry
+        python -m pipx ensurepath
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
     - name: Set poetry version
       run: |
         VERSION="${{ steps.draft_release.outputs.resolved_version }}"
+        echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || { echo "no stable SemVer"; exit 1; }
         poetry version "$VERSION"
 
     - name: Check for changes to pyproject.toml
@@ -57,9 +64,21 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-    - name: Commit and push version bump
-      if: steps.check_diff.outputs.changed == 'true'
+    - name: Commit and push version bump to a fixed branch
+      if: steps.check_diff.outputs.changed == 'true' && github.event_name != 'pull_request'
       run: |
         VERSION="${{ steps.draft_release.outputs.resolved_version }}"
-        git commit -am "chore: bump version to $VERSION"
-        git push
+        BRANCH_NAME="version-bump"
+
+        # Switch to a new branch with working tree changes
+        git switch -C $BRANCH_NAME
+
+        # Add and commit changes
+        git add pyproject.toml
+        git commit -m "chore: bump version to $VERSION" || echo "nothing to commit"
+
+        # Push to remote
+        git push --force-with-lease origin $BRANCH_NAME
+
+        echo "Version bump to $VERSION has been pushed to the '$BRANCH_NAME' branch."
+        echo "You can create a PR from this branch when you're ready to merge the version bump."
