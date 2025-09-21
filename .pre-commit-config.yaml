@@ -29,7 +29,7 @@ repos:
     exclude: (^config.json$|\.ipynb$)
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.13.0
+  rev: v0.13.1
   hooks:
   - id: ruff
     args: [--fix]
@@ -48,7 +48,7 @@ repos:
     exclude: (^poetry.lock$)
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.18.1
+  rev: v1.18.2
   hooks:
   - id: mypy
 
@@ -58,7 +58,7 @@ repos:
   - id: poetry-check
 
 - repo: https://github.com/rstcheck/rstcheck
-  rev: v6.0.0
+  rev: v6.2.5
   hooks:
   - id: rstcheck
     additional_dependencies:
