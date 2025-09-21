@@ -1,0 +1,54 @@
+name: Publish Release from CI Artifacts
+
+on:
+  workflow_run:
+    workflows: [CI]            # must match the workflow name in your repo
+    types: [completed]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  publish:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      startsWith(github.event.workflow_run.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Derive tag name
+      id: tag
+      run: |
+        REF='${{ github.event.workflow_run.ref }}'  # e.g., refs/tags/v2.0.0
+        echo "name=${REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
+    - name: Download wheel artifact (distribution-packages)
+      uses: actions/download-artifact@v6
+      with:
+          # Download artifacts from the triggering CI run:
+        run-id: ${{ github.event.workflow_run.id }}
+        name: distribution-packages
+        path: release_artifacts/wheel
+
+    - name: Download MSI artifact (MSI)
+      uses: actions/download-artifact@v6
+      with:
+        run-id: ${{ github.event.workflow_run.id }}
+        name: MSI
+        path: release_artifacts/msi
+
+    - name: List downloaded files (debug)
+      run: |
+        ls -lahR release_artifacts || true
+
+    - name: Upload assets to the tag's Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.tag.outputs.name }}
+        files: |
+          release_artifacts/wheel/**/*.whl
+          release_artifacts/msi/**/*.msi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

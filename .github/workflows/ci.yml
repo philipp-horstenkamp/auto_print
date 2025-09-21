@@ -2,8 +2,15 @@ name: CI
 
 on:
   push:
+    branches:
+    - main
+    tags:
+    - v*                 # run CI when a version tag is pushed
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
   release:
-    types: [published]
+    types: [published]   # optional: run when a draft is published
 
 jobs:
 
@@ -154,7 +161,7 @@ jobs:
       pages: write
     steps:
     - name: Download documentation artifact
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         name: documentation
         path: docs_html
