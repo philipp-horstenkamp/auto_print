@@ -2,7 +2,6 @@
 name: Dependabot Auto-Merge (minor & patch)
 on:
   pull_request_target:
-    types: [opened, reopened, synchronize, labeled, ready_for_review]
 
 permissions:
   contents: write
