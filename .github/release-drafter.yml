@@ -1,5 +1,11 @@
-name-template: v$RESOLVED_VERSION
-tag-template: v$RESOLVED_VERSION
+# Configuration for Release Drafter GitHub Action
+# See: https://github.com/release-drafter/release-drafter
+
+# Templates for the version name and tag
+name-template: v$RESOLVED_VERSION  # Format for the release name
+tag-template: v$RESOLVED_VERSION   # Format for the git tag
+
+# List of bot accounts to exclude from contributors list
 exclude-contributors:
 - dependabot
 - dependabot[bot]
@@ -9,11 +15,17 @@ exclude-contributors:
 - Renovate Bot
 - renovate[bot]
 - GitHub Action
+
+# Specify which PRs should be added to the draft release
+filter-by-commitish: false  # When false, includes all PRs merged since the last release
+
+# Define release categories based on labels
+# PRs will be grouped in the release notes based on these categories
 categories:
 - title: 🚀 Features
   label: feature
 - title: 🐛 Bug Fixes
-  labels:
+  labels:  # Multiple labels can be specified - PRs with ANY of these labels will be included in this category
   - fix
   - bugfix
   - bug
@@ -31,19 +43,59 @@ categories:
   - python
   - github-actions
   - pre-commit
-change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+
+# Automatically label PRs based on file patterns, branch names, and PR titles
+# IMPORTANT: The autolabeler uses OR logic between different condition types (files, branch, title)
+# but uses AND logic within the same condition type.
+# For example, a PR will get the "documentation" label if it matches ANY of the file patterns,
+# but for "bug" label, it must match BOTH the branch pattern AND title pattern if both are specified.
+autolabeler:
+- label: documentation    # Applied if ANY of the files patterns match
+  files:
+  - '**/*.md'             # Any markdown file in the repository
+  - docs/**/*             # Any file in the docs directory
+- label: bug              # Applied if the branch name AND title match the patterns (both conditions must be met)
+  branch:
+  - /fix\/.+/             # Branch name contains "fix/"
+  title:
+  - /fix/i                # PR title contains "fix" (case insensitive)
+- label: feature          # Applied if the branch name AND title match the patterns (both conditions must be met)
+  branch:
+  - /feature\/.+/         # Branch name contains "feature/"
+  title:
+  - /feature/i            # PR title contains "feature" (case insensitive)
+- label: enhancement      # Applied if the branch name AND title match the patterns (both conditions must be met)
+  branch:
+  - /enhancement\/.+/       # Branch name contains "enhancement/"
+  title:
+  - /enhancement/i          # PR title contains "enhancement" (case insensitive)
+- label: dependencies     # Applied if ANY of the files patterns match
+  files:
+  - poetry.lock           # Changes to poetry.lock file
+  - pyproject.toml        # Changes to pyproject.toml file
+  - .github/dependabot.yml       # Changes to dependabot configuration
+
+# Format for each change entry in the release notes
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'  # Format: "- PR title @author (#PR-number)"
 change-title-escapes: \<*_&   # You can add # and @ to disable mentions and add ` to disable code blocks.
+
+# Version configuration
+# No pre-release mode - all versions are considered stable
+
+# Version resolution based on PR labels
+# This determines how the version number is incremented based on PR labels
+# The version follows Semantic Versioning (MAJOR.MINOR.PATCH)
 version-resolver:
-  major:
+  major:                        # MAJOR version when you make incompatible API changes
     labels:
     - major
     - breaking
-  minor:
+  minor:                        # MINOR version when you add functionality in a backward compatible manner
     labels:
     - minor
     - feature
     - enhancement
-  patch:
+  patch:                        # PATCH version when you make backward compatible bug fixes
     labels:
     - patch
     - fix
@@ -53,12 +105,22 @@ version-resolver:
     - docs
     - dependencies
     - security
-  default: patch
-template: |
-  ## Changes
+  default: patch                # Default to patch version increment if no labels match
 
-  $CHANGES
+# Release notes template - defines the format of the generated release notes
+template: |
+  ## Changes in v$RESOLVED_VERSION
+
+  $CHANGES  # This will be replaced with all the changes from PRs, formatted according to change-template
 
   ## Contributors
 
-  $CONTRIBUTORS
+  $CONTRIBUTORS  # This will be replaced with a list of contributors who made PRs in this release
+
+  ## Installation
+
+  ```bash
+  pip install auto-print==$RESOLVED_VERSION  # Installation command with the new version
+  ```
+
+  [Full Changelog](https://github.com/philipp-horstenkamp/auto_print/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION)  # Link to compare view between previous and current tags
