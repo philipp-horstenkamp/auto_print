@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -60,6 +60,43 @@ jobs:
         else
         echo "changed=true" >> "$GITHUB_OUTPUT"
         fi
+
+    - name: Download wheel artifacts from CI workflow
+      if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        workflow: ci.yml
+        name: distribution-packages
+        path: ./dist/wheel
+        workflow_conclusion: success
+
+    - name: Download MSI artifacts from CI workflow
+      if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        workflow: ci.yml
+        name: MSI
+        path: ./dist/msi
+        workflow_conclusion: success
+
+    - name: List downloaded artifacts
+      if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
+      run: |
+        ls -al ./dist
+        ls -al ./dist/wheel
+        ls -al ./dist/msi
+
+    - name: Upload artifacts to release
+      if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          ./dist/wheel/*.whl
+          ./dist/msi/*.msi
+        fail_on_unmatched_files: true
+        tag_name: v${{ steps.draft_release.outputs.resolved_version }}
+        draft: true
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Configure Git
       if: steps.check_diff.outputs.changed == 'true' && steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
