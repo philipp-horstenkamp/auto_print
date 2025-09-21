@@ -1,5 +1,5 @@
+# .github/workflows/dependabot-auto-merge.yml
 name: Dependabot Auto-Merge (minor & patch)
-
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, labeled, ready_for_review]
@@ -7,7 +7,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  actions: read
   checks: read
   statuses: read
 
@@ -21,14 +20,6 @@ jobs:
       uses: dependabot/fetch-metadata@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      # Optional: auto-approve to satisfy branch protections requiring approvals
-    - name: Approve PR
-      if: steps.meta.outputs.update-type == 'version-update:semver-minor' || steps.meta.outputs.update-type == 'version-update:semver-patch'
-      run: gh pr review "$PR_URL" --approve
-      env:
-        PR_URL: ${{ github.event.pull_request.html_url }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Enable auto-merge (squash)
       if: steps.meta.outputs.update-type == 'version-update:semver-minor' || steps.meta.outputs.update-type == 'version-update:semver-patch'
