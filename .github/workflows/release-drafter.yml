@@ -86,6 +86,33 @@ jobs:
         ls -al ./dist/wheel
         ls -al ./dist/msi
 
+    - name: Remove existing assets from release tag
+      if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # gh CLI reads GH_TOKEN/GITHUB_TOKEN
+      run: |
+        set -euo pipefail
+        TAG="v${{ steps.draft_release.outputs.resolved_version }}"
+
+        # Ensure the release exists (draft or published)
+        if ! gh release view "$TAG" >/dev/null 2>&1; then
+          echo "Release $TAG does not exist yet; nothing to clean."
+          exit 0
+        fi
+
+        # List current assets and delete them all
+        mapfile -t assets < <(gh release view "$TAG" --json assets -q '.assets[].name')
+        if [[ ${#assets[@]} -eq 0 ]]; then
+          echo "No existing assets on $TAG."
+          exit 0
+        fi
+
+        echo "Deleting ${#assets[@]} existing asset(s) from $TAG..."
+        for name in "${assets[@]}"; do
+          echo " - $name"
+          gh release delete-asset "$TAG" "$name" --yes
+        done
+
     - name: Upload artifacts to release
       if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       uses: softprops/action-gh-release@v2

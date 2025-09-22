@@ -17,7 +17,7 @@ exclude-contributors:
 - GitHub Action
 
 # Specify which PRs should be added to the draft release
-filter-by-commitish: false  # When false, includes all PRs merged since the last release
+filter-by-commitish: true  # When true, only includes PRs that match the target branch
 
 # Define release categories based on labels
 # PRs will be grouped in the release notes based on these categories
