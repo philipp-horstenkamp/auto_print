@@ -117,10 +117,4 @@ template: |
 
   $CONTRIBUTORS  # This will be replaced with a list of contributors who made PRs in this release
 
-  ## Installation
-
-  ```bash
-  pip install auto-print==$RESOLVED_VERSION  # Installation command with the new version
-  ```
-
   [Full Changelog](https://github.com/philipp-horstenkamp/auto_print/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION)  # Link to compare view between previous and current tags
