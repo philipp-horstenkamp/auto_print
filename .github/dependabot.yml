@@ -1,6 +1,5 @@
 version: 2
 updates:
-  # Python packages (ignore majors)
 - package-ecosystem: pip
   directory: /
   target-branch: main
@@ -11,8 +10,8 @@ updates:
   commit-message:
     prefix: pip
     include: scope
+  rebase-strategy: auto
 
-  # GitHub Actions (ignore majors)
 - package-ecosystem: github-actions
   directory: /
   target-branch: main
@@ -23,3 +22,4 @@ updates:
   commit-message:
     prefix: github-actions
     include: scope
+  rebase-strategy: auto
