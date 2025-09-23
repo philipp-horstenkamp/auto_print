@@ -36,7 +36,7 @@ jupyter = "^1.0.0"  # Interactive computing environment for development and test
 pre-commit = "^4.0.0"  # Framework for managing and maintaining pre-commit hooks
 
 [tool.poetry.group.docs.dependencies]
-sphinx = "^7.2.6"  # Documentation generator for Python projects
+sphinx = "^8.2.3"  # Documentation generator for Python projects
 sphinx-argparse = "^0.5.0"  # Extension for documenting command-line arguments
 sphinx-autodoc-typehints = "^2.3.0"  # Better type hint documentation
 sphinx-copybutton = "^0.5.2"  # Adds copy buttons to code blocks in documentation
