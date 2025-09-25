@@ -24,7 +24,7 @@ version = "2.0.0rc3"
 
 [tool.poetry.dependencies]
 case-insensitive-dictionary = "0.2.1"  # Dictionary implementation with case-insensitive keys
-ghostscript = "^0.7"  # Python interface for Ghostscript (PDF processing)
+ghostscript = "^0.8"  # Python interface for Ghostscript (PDF processing)
 python = ">=3.11,<3.14"  # Python version requirement
 pywin32 = {version = ">=306,<312", markers = "sys_platform == 'win32'"}  # Windows API access for printing functionality
 
