@@ -3071,14 +3071,14 @@ typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "requests"
-version = "2.32.5"
+version = "2.32.4"
 description = "Python HTTP for Humans."
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.8"
 groups = ["dev", "docs", "lint"]
 files = [
-    {file = "requests-2.32.5-py3-none-any.whl", hash = "sha256:2462f94637a34fd532264295e186976db0f5d453d1cdd31473c85a6a161affb6"},
-    {file = "requests-2.32.5.tar.gz", hash = "sha256:dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf"},
+    {file = "requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c"},
+    {file = "requests-2.32.4.tar.gz", hash = "sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422"},
 ]
 
 [package.dependencies]
@@ -3677,22 +3677,24 @@ test = ["tox"]
 
 [[package]]
 name = "sphinx-prompt"
-version = "1.9.0"
+version = "1.10.1"
 description = "Sphinx directive to add unselectable prompt"
 optional = false
-python-versions = ">=3.10"
+python-versions = ">=3.11"
 groups = ["docs"]
 files = [
-    {file = "sphinx_prompt-1.9.0-py3-none-any.whl", hash = "sha256:fd731446c03f043d1ff6df9f22414495b23067c67011cc21658ea8d36b3575fc"},
-    {file = "sphinx_prompt-1.9.0.tar.gz", hash = "sha256:471b3c6d466dce780a9b167d9541865fd4e9a80ed46e31b06a52a0529ae995a1"},
+    {file = "sphinx_prompt-1.10.1-py3-none-any.whl", hash = "sha256:6cd34abbeedc14446bba76036b1821da142052f7043c5a8a3d6b84565ee54900"},
+    {file = "sphinx_prompt-1.10.1.tar.gz", hash = "sha256:2b8a18433ee3d9f2a7c4e51a768fb14c5177cce4bf0e2298ecc068a0ca9918bf"},
 ]
 
 [package.dependencies]
 certifi = "*"
 docutils = "*"
 idna = "*"
+jinja2 = "*"
 pygments = "*"
-Sphinx = ">=8.0.0,<9.0.0"
+requests = "2.32.4"
+Sphinx = "*"
 urllib3 = "*"
 
 [[package]]
@@ -4176,4 +4178,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "21c593780f4f6ec11baf01f79c515f4a8bb72dcc35821627cbe696e6d5692a80"
+content-hash = "6d85b98617a02d4bf29e4cfbb3feca818cd8322ea44a2f41622682abdc939e2e"
