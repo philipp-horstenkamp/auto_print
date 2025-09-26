@@ -971,18 +971,15 @@ files = [
 
 [[package]]
 name = "ghostscript"
-version = "0.7"
+version = "0.8.1"
 description = "Interface to the Ghostscript C-API, both high- and low-level, based on ctypes"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "ghostscript-0.7-py2.py3-none-any.whl", hash = "sha256:97c70e27ba6b1cab4ab1d9b4cc82d89b8b53e57971f608ded4950b8aa20c78a7"},
-    {file = "ghostscript-0.7.tar.gz", hash = "sha256:b7875a87098740eb0be3de2d9662d15db727305ca9a6d4b7534a3cc33a4b965a"},
+    {file = "ghostscript-0.8.1-py3-none-any.whl", hash = "sha256:a801d1f0e3321d87c394d8c8f7d38e413692474c8a5cab7673b1b7f3a2c4b811"},
+    {file = "ghostscript-0.8.1.tar.gz", hash = "sha256:7cfa85d201036bf87890e425b4a0cdc9749abc4670a4492ae2aa66ad792b1388"},
 ]
-
-[package.dependencies]
-setuptools = ">=38.6.0"
 
 [[package]]
 name = "h11"
@@ -3438,7 +3435,7 @@ version = "80.9.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "build", "dev"]
+groups = ["build", "dev"]
 files = [
     {file = "setuptools-80.9.0-py3-none-any.whl", hash = "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922"},
     {file = "setuptools-80.9.0.tar.gz", hash = "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c"},
@@ -4178,4 +4175,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "6d85b98617a02d4bf29e4cfbb3feca818cd8322ea44a2f41622682abdc939e2e"
+content-hash = "c188e30a283ff4d991c08a185a8e01d4f295a79b1a3e0c59c114a2fc1036f61e"
