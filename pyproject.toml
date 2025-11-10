@@ -33,7 +33,7 @@ cx-freeze = "^8.0.0"  # For creating standalone executables from Python scripts
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"  # Interactive computing environment for development and testing
-pre-commit = "^4.0.0"  # Framework for managing and maintaining pre-commit hooks
+pre-commit = "^4.4.0"  # Framework for managing and maintaining pre-commit hooks
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^8.2.3"  # Documentation generator for Python projects
