@@ -3818,14 +3818,14 @@ test = ["flake8", "mypy", "pytest"]
 
 [[package]]
 name = "sphinxcontrib-mermaid"
-version = "1.1.0"
+version = "1.2.2"
 description = "Mermaid diagrams in yours Sphinx powered docs"
 optional = false
 python-versions = ">=3.8"
 groups = ["docs"]
 files = [
-    {file = "sphinxcontrib_mermaid-1.1.0-py3-none-any.whl", hash = "sha256:1133b4c00f33aedb76e37bfbd1a4280a0104c0a836da642a113eabdf261bdd0c"},
-    {file = "sphinxcontrib_mermaid-1.1.0.tar.gz", hash = "sha256:e674e04503956de8263163e0c8f446d99f9d60455cb395f64e998f1137f04f8e"},
+    {file = "sphinxcontrib_mermaid-1.2.2-py3-none-any.whl", hash = "sha256:51655f592300fc70e73b3ef2007cfc44fac11da5ff1f15c4725c83bf4a5b517c"},
+    {file = "sphinxcontrib_mermaid-1.2.2.tar.gz", hash = "sha256:35423c13e565abb839b13f955f9722f0769e77e5d607ca07877ce93e1636c196"},
 ]
 
 [package.dependencies]
@@ -4175,4 +4175,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "7fb532ebbc1133ab461aca975bb58a1165a346e2bc83231744080ea548371d89"
+content-hash = "60ace4dbeb8ea0254b1e6e14321b71b297773447bc18c87bb897160870415da5"
