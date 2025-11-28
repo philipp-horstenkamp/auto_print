@@ -3716,14 +3716,14 @@ test = ["tox"]
 
 [[package]]
 name = "sphinx-prompt"
-version = "1.10.1"
+version = "1.10.2"
 description = "Sphinx directive to add unselectable prompt"
 optional = false
 python-versions = ">=3.11"
 groups = ["docs"]
 files = [
-    {file = "sphinx_prompt-1.10.1-py3-none-any.whl", hash = "sha256:6cd34abbeedc14446bba76036b1821da142052f7043c5a8a3d6b84565ee54900"},
-    {file = "sphinx_prompt-1.10.1.tar.gz", hash = "sha256:2b8a18433ee3d9f2a7c4e51a768fb14c5177cce4bf0e2298ecc068a0ca9918bf"},
+    {file = "sphinx_prompt-1.10.2-py3-none-any.whl", hash = "sha256:6594337962c4b1498602e6984634bed4a0dc7955852e3cfc255eb0af766ed859"},
+    {file = "sphinx_prompt-1.10.2.tar.gz", hash = "sha256:47b592ba75caebd044b0eddf7a5a1b6e0aef6df587b034377cd101a999b686ba"},
 ]
 
 [package.dependencies]
@@ -3732,7 +3732,7 @@ docutils = "*"
 idna = "*"
 jinja2 = "*"
 pygments = "*"
-requests = "2.32.4"
+requests = ">=2.32.4"
 Sphinx = "*"
 urllib3 = "*"
 
@@ -4217,4 +4217,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "533e256f3fa3703931a395026848d67b176239e324d5554621a1012201ed7071"
+content-hash = "fe3be23c89f0f628d60c124c42592a19f2d907868642a4ae8030d5529431cb19"
