@@ -20,7 +20,7 @@ authors = ["Philipp Horstenkamp <philipp@horstenkamp.de>"]
 description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
 license = "MIT"
 name = "auto-print"
-version = "2.0.0rc3"
+version = "2.0.0"
 
 [tool.poetry.dependencies]
 case-insensitive-dictionary = "0.2.1"  # Dictionary implementation with case-insensitive keys
