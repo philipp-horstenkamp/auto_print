@@ -55,7 +55,7 @@ rstcheck = {extras = ["toml", "sphinx"], version = "^6.2.0"}  # RST syntax check
 ruff = "*"  # Fast Python linter, written in Rust
 
 [tool.poetry.group.test.dependencies]
-pytest = "^9.0.1"  # Testing framework for Python
+pytest = "^9.0.2"  # Testing framework for Python
 pytest-cov = "^7.0.0"  # Coverage reporting plugin for pytest
 pytest-github-actions-annotate-failures = "^0.3.0"  # Annotates test failures in GitHub Actions
 pytest-mock = "^3.14.0"  # Thin-wrapper around the mock package for pytest
