@@ -76,7 +76,7 @@ jobs:
 #        poetry run sphinx-intl update -p _build/gettext -l de
 #        poetry run make -e SPHINXOPTS="-D language='de'" html
     - name: Upload documentation
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: documentation
         path: |
@@ -110,7 +110,7 @@ jobs:
       with:
         subject-path: dist/*.whl
     - name: Upload wheel artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: distribution-packages
         path: |
@@ -145,7 +145,7 @@ jobs:
       with:
         subject-path: dist/*.msi
     - name: Upload MSI artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: MSI
         path: |
