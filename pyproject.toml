@@ -49,7 +49,7 @@ sphinx-tabs = "^3.4.1"  # Tabbed content for code examples
 sphinxcontrib-mermaid = "^1.2.3"  # Mermaid diagrams support in documentation
 
 [tool.poetry.group.lint.dependencies]
-mypy = "^1.19.0"  # Static type checker for Python
+mypy = "^1.19.1"  # Static type checker for Python
 pip-audit = "*"  # Tool for scanning Python dependencies for known vulnerabilities
 rstcheck = {extras = ["toml", "sphinx"], version = "^6.2.0"}  # RST syntax checker for documentation with TOML config support
 ruff = "*"  # Fast Python linter, written in Rust
