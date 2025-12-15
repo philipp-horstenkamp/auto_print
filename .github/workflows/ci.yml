@@ -161,7 +161,7 @@ jobs:
       pages: write
     steps:
     - name: Download documentation artifact
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: documentation
         path: docs_html
