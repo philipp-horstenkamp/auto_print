@@ -38,7 +38,7 @@ pre-commit = "^4.5.0"  # Framework for managing and maintaining pre-commit hooks
 [tool.poetry.group.docs.dependencies]
 sphinx = "^9.0.4"  # Documentation generator for Python projects
 sphinx-argparse = "^0.5.0"  # Extension for documenting command-line arguments
-sphinx-autodoc-typehints = "^3.5.2"  # Better type hint documentation
+sphinx-autodoc-typehints = "^3.6.0"  # Better type hint documentation
 sphinx-copybutton = "^0.5.2"  # Adds copy buttons to code blocks in documentation
 sphinx-intl = "^2.1.0"  # Internationalization support for Sphinx documentation
 sphinx-markdown-tables = "^0.0.17"  # Better rendering of markdown tables
