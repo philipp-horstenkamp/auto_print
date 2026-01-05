@@ -673,14 +673,14 @@ toml = ["tomli ; python_full_version <= \"3.11.0a6\""]
 
 [[package]]
 name = "cx-freeze"
-version = "8.5.2"
+version = "8.5.3"
 description = "Create standalone executables from Python scripts"
 optional = false
 python-versions = ">=3.10"
 groups = ["build"]
 files = [
-    {file = "cx_freeze-8.5.2-py3-none-any.whl", hash = "sha256:b12811adbc9546e7a5d61fce27f78e13142ffd50cde5e8c92be36655f06c9900"},
-    {file = "cx_freeze-8.5.2.tar.gz", hash = "sha256:e3c72bd5fae1e49f67a4cc747526c8ef48182bf2f8d90e85c840cc4bbba4d1c5"},
+    {file = "cx_freeze-8.5.3-py3-none-any.whl", hash = "sha256:ceafd2ceaf38a93bb562d5d97028b20d12456d578fc47c3545827a3656f81437"},
+    {file = "cx_freeze-8.5.3.tar.gz", hash = "sha256:772e41ada72467365342d521f42f124663db51882f6ba495bf88dec399dc6511"},
 ]
 
 [package.dependencies]
@@ -694,9 +694,9 @@ python-msilib = {version = ">=0.4.1", markers = "sys_platform == \"win32\" and p
 setuptools = ">=78.1.1,<81"
 
 [package.extras]
-dev = ["bump-my-version (==1.2.5)", "pre-commit (==4.5.1)"]
-doc = ["furo (==2025.9.25) ; python_version >= \"3.11\"", "myst-parser (==4.0.1) ; python_version >= \"3.11\"", "sphinx (==8.2.3) ; python_version >= \"3.11\"", "sphinx-issues (==5.0.1) ; python_version >= \"3.11\"", "sphinx-new-tab-link (==0.8.1) ; python_version >= \"3.11\"", "sphinx-tabs (==3.4.7) ; python_version >= \"3.11\""]
-tests = ["coverage (==7.13.0)", "filelock (>=3.20.1)", "pluggy (==1.6.0)", "pytest (==9.0.2)", "pytest-mock (==3.15.1)", "pytest-timeout (==2.4.0)", "pytest-xdist (==3.8.0)"]
+dev = ["bump-my-version (==1.2.6)", "pre-commit (==4.5.1)"]
+doc = ["furo (==2025.12.19) ; python_version >= \"3.11\"", "myst-parser (==4.0.1) ; python_version >= \"3.11\"", "sphinx (==8.2.3) ; python_version >= \"3.11\"", "sphinx-issues (==5.0.1) ; python_version >= \"3.11\"", "sphinx-new-tab-link (==0.8.1) ; python_version >= \"3.11\"", "sphinx-tabs (==3.4.7) ; python_version >= \"3.11\""]
+tests = ["coverage (==7.13.1)", "filelock (>=3.20.1)", "pluggy (==1.6.0)", "pytest (==9.0.2)", "pytest-mock (==3.15.1)", "pytest-timeout (==2.4.0)", "pytest-xdist (==3.8.0)"]
 
 [[package]]
 name = "cyclonedx-python-lib"
@@ -4354,4 +4354,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "2b39241e58fe2b4ff98d0372599296a88719eaba8f4cf3841de5e58b32470cbb"
+content-hash = "199a8495c73ddbac0c9076cce7373fbda8f65b9950992d3273e3f4749b5f5f80"
