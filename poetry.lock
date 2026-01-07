@@ -3823,18 +3823,18 @@ urllib3 = "*"
 
 [[package]]
 name = "sphinx-rtd-theme"
-version = "3.1.0rc1"
+version = "3.1.0rc2"
 description = "Read the Docs theme for Sphinx"
 optional = false
 python-versions = ">=3.8"
 groups = ["docs"]
 files = [
-    {file = "sphinx_rtd_theme-3.1.0rc1-py2.py3-none-any.whl", hash = "sha256:4d956e807a83b5a89f61abca5615ff80c34249d462e5efe11bb93ce23c148ef6"},
-    {file = "sphinx_rtd_theme-3.1.0rc1.tar.gz", hash = "sha256:7989a0002a0685ac4bd3cf2f0c39cf8b5e8f4a7d37db8484df2fe39cb6dcb70b"},
+    {file = "sphinx_rtd_theme-3.1.0rc2-py2.py3-none-any.whl", hash = "sha256:a12061e90dcfb0c5f31788436d67189428489e7aa8109adbd07df73e7ad0272a"},
+    {file = "sphinx_rtd_theme-3.1.0rc2.tar.gz", hash = "sha256:49a7dbb01986d0bf578196d8a013b527e93e4758bafa238655965abe6ed025a3"},
 ]
 
 [package.dependencies]
-docutils = ">0.18,<0.22"
+docutils = ">0.18,<0.23"
 sphinx = ">=6,<10"
 sphinxcontrib-jquery = ">=4,<5"
 
@@ -4354,4 +4354,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "18e14ac1c70a6e8eaaae0252bd0d2429b278125ec770443fae18ed47c0342228"
+content-hash = "0da68e4705a4a3b5425315dbc77eeeca250dd146ea38a8fd7e16eea4759c8736"
