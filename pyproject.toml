@@ -44,7 +44,7 @@ sphinx-intl = "^2.1.0"  # Internationalization support for Sphinx documentation
 sphinx-markdown-tables = "^0.0.17"  # Better rendering of markdown tables
 sphinx-notfound-page = "^1.0.0"  # Custom 404 page for documentation
 sphinx-prompt = "^1.10.2"  # Better command prompt examples
-sphinx-rtd-theme = "^3.1.0rc2"  # Read the Docs theme for Sphinx documentation
+sphinx-rtd-theme = "^3.1.0"  # Read the Docs theme for Sphinx documentation
 sphinx-tabs = "^3.4.1"  # Tabbed content for code examples
 sphinxcontrib-mermaid = "^1.2.3"  # Mermaid diagrams support in documentation
 
