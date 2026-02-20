@@ -29,7 +29,7 @@ python = ">=3.11,<3.14"  # Python version requirement
 pywin32 = {version = ">=306,<312", markers = "sys_platform == 'win32'"}  # Windows API access for printing functionality
 
 [tool.poetry.group.build.dependencies]
-cx-freeze = "^8.5.3"  # For creating standalone executables from Python scripts
+cx-freeze = "^8.6.0"  # For creating standalone executables from Python scripts
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"  # Interactive computing environment for development and testing
