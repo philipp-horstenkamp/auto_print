@@ -106,7 +106,7 @@ jobs:
       run: |
         poetry build
     - name: Generate provenance for wheel
-      uses: actions/attest-build-provenance@v3
+      uses: actions/attest-build-provenance@v4
       with:
         subject-path: dist/*.whl
     - name: Upload wheel artifacts
@@ -141,7 +141,7 @@ jobs:
       run: |
         poetry run python msi_setup.py bdist_msi
     - name: Generate provenance for MSI
-      uses: actions/attest-build-provenance@v3
+      uses: actions/attest-build-provenance@v4
       with:
         subject-path: dist/*.msi
     - name: Upload MSI artifacts
