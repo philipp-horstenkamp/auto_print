@@ -1730,7 +1730,8 @@ version = "0.17.2"
 description = "Library to instrument executable formats"
 optional = false
 python-versions = ">=3.8"
-groups = ["build", "dev"]
+groups = ["build"]
+markers = "sys_platform == \"win32\""
 files = [
     {file = "lief-0.17.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:68386290df636c37ac554a48a78a0ca04fc458056ab9751089f6cba7bf35b864"},
     {file = "lief-0.17.2-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:056e7656293d96c86944fb4cf1075e016d036d329cac4a22d81ebfaacfd6bd7c"},
@@ -1806,7 +1807,6 @@ files = [
     {file = "lief-0.17.2-cp39-cp39-win32.whl", hash = "sha256:1e25eab6f9199597643aff70540e0bd16b1a61996bb28c870427826fe3496bdb"},
     {file = "lief-0.17.2-cp39-cp39-win_amd64.whl", hash = "sha256:6b308ccd4cb7fa96b002f51a1a5fb6ae8824060a1bd8b87a9376c533f29c8f82"},
 ]
-markers = {build = "sys_platform == \"win32\""}
 
 [[package]]
 name = "mac-alias"
@@ -3935,14 +3935,14 @@ test = ["flake8", "mypy", "pytest"]
 
 [[package]]
 name = "sphinxcontrib-mermaid"
-version = "2.0.0"
+version = "2.0.1"
 description = "Mermaid diagrams in your Sphinx-powered docs"
 optional = false
 python-versions = ">=3.10"
 groups = ["docs"]
 files = [
-    {file = "sphinxcontrib_mermaid-2.0.0-py3-none-any.whl", hash = "sha256:59a73249bbee2c74b1a4db036f8e8899ade65982bdda6712cf22b4f4e9874bb5"},
-    {file = "sphinxcontrib_mermaid-2.0.0.tar.gz", hash = "sha256:cf4f7d453d001132eaba5d1fdf53d42049f02e913213cf8337427483bfca26f4"},
+    {file = "sphinxcontrib_mermaid-2.0.1-py3-none-any.whl", hash = "sha256:9dca7fbe827bad5e7e2b97c4047682cfd26e3e07398cfdc96c7a8842ae7f06e7"},
+    {file = "sphinxcontrib_mermaid-2.0.1.tar.gz", hash = "sha256:a21a385a059a6cafd192aa3a586b14bf5c42721e229db67b459dc825d7f0a497"},
 ]
 
 [package.dependencies]
@@ -4345,4 +4345,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "3cec48451249be53e3a65f11b529afba07a73f72bbc68d3c4ecd1129183a94f1"
+content-hash = "2b6c0c23a8b99844ec419f3373d927867cfc61d7eebb23c439673e39d67eb63f"
