@@ -278,7 +278,7 @@ def create_section(
                 f'The name "{name}" is already in use. Choose another name that is not in use!'
             )
             name = ""
-        if name.lower() in ["cancel", "c"]:
+        if name.lower() in {"cancel", "c"}:
             print(f'The name "{name}" is not valid. Please choose again!')
             name = ""
     return edit_section(name, config_element)
@@ -315,7 +315,7 @@ def insert_section(
         insert_str = str(end_pos)
     elif insert_str == "start":
         insert_str = "0"
-    elif insert_str in ["cancel", "c"]:
+    elif insert_str in {"cancel", "c"}:
         print_configuration(config_object)
         return config_object
 
@@ -366,7 +366,7 @@ def delete_section(
         [*list(config_object.keys()), "cancel", "c"],
         "cancel",
     )
-    if delete_object in ["cancel", "c"]:
+    if delete_object in {"cancel", "c"}:
         print("Cancel delete object!")
         return config_object
 
@@ -531,23 +531,23 @@ def main() -> None:
         )
 
         print(f"Action: {action}")
-        if action in ["s", "save"]:
+        if action in {"s", "save"}:
             save_config(config)
-        elif action in ["add", "a"]:
+        elif action in {"add", "a"}:
             config = add_section(config)
-        elif action in ["delete", "d"]:
+        elif action in {"delete", "d"}:
             config = delete_section(config)
-        elif action in ["repair", "r"]:
+        elif action in {"repair", "r"}:
             config = repair_config(config)
-        elif action in ["show"]:
+        elif action == "show":
             print()
             print_configuration(config)
-        elif action in ["change"]:
+        elif action == "change":
             config = change_section_position(config)
-        elif action in ["edit", "e"]:
+        elif action in {"edit", "e"}:
             config = edit_section_command(config)
 
-        elif action in ["close", "c"]:
+        elif action in {"close", "c"}:
             if load_config() == config:
                 break
             if bool_decision(
@@ -555,7 +555,7 @@ def main() -> None:
                 default=True,
             ):
                 break
-        elif action in ["help", "h"]:
+        elif action in {"help", "h"}:
             show_help()
 
 
