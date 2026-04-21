@@ -44,7 +44,7 @@ jobs:
         ls -lahR release_artifacts || true
 
     - name: Upload assets to the tag's Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         tag_name: ${{ steps.tag.outputs.name }}
         files: |

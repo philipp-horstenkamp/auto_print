@@ -88,7 +88,7 @@ jobs:
 
     - name: Upload artifacts to release
       if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           ./dist/wheel/*.whl
