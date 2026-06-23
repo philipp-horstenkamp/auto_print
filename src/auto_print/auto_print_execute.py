@@ -19,6 +19,7 @@ import sys
 from pathlib import Path
 from typing import Final
 
+import typer
 import win32api  # type: ignore
 import win32print  # type: ignore
 
@@ -240,61 +241,37 @@ def load_printer_config(config_path: Path) -> dict[str, dict[str, str | bool]]:
         sys.exit(-4)
 
 
-def main() -> None:
-    """Execute the main auto-print functionality.
+app = typer.Typer(
+    help="Auto-print: A document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns."
+)
 
-    This function:
-    1. Configures the logger
-    2. Processes command line arguments
-    3. Validates the file to print
-    4. Loads the printer configuration
-    5. Determines the appropriate action based on filename comparisons
-    6. Either prints the file or opens it with the default application
 
-    Exit codes:
-    -1: No file specified
-    -2: Too many arguments
-    -3: File does not exist
-    -4: Error loading configuration
-    -5: Empty file path
-    """
+@app.command()
+def print_file(
+    file_path: str = typer.Argument(
+        ...,
+        help="Path to the file to be processed",
+    ),
+) -> None:
+    """Print the specified file based on routing rules."""
     # Configure logging
     configure_logger()
     logging.info("Starting the program!")
     logging.info(f"Start program in: {Path(sys.path[0]).resolve()}")
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
-    # Process command line arguments
-    args = sys.argv
-    for index, arg in enumerate(args):
-        logging.debug(f'Argument {index} is "{arg}".')
-
-    # Validate argument count
-    if len(args) < EXPECTED_ARG_COUNT:
-        logging.warning("No file to print specified!")
-        sys.exit(-1)
-    elif len(args) > EXPECTED_ARG_COUNT:
-        logging.warning(
-            "There is more than one additional Argument. Please only use the filename as an Argument!"
-        )
-        sys.exit(-2)
-
-    # Get the file path from arguments
-    file_to_print_arg: str = args[1]
-    if not file_to_print_arg:
-        logging.warning("Empty file path provided!")
-        sys.exit(-5)
-
-    # Extract the filename from a path
-    file_to_print_name: str = Path(file_to_print_arg).name
-    logging.info(f"File to print: {file_to_print_arg}")
+    logging.info(f"File to print: {file_path}")
 
     # Validate file existence
-    if not Path(file_to_print_arg).exists():
+    path_obj = Path(file_path)
+    if not path_obj.exists():
         logging.warning(
-            f'The file specified in the argument does not exist: "{file_to_print_arg}".'
+            f'The file specified in the argument does not exist: "{file_path}".'
         )
-        sys.exit(-3)
+        raise typer.Exit(code=-3)
+
+    file_to_print_name = path_obj.name
+
     # Load printer configuration
     printer_config = load_printer_config(PRINTER_CONFIG_PATH)
 
@@ -329,21 +306,36 @@ def main() -> None:
                 else get_default_printer()
             )
 
+            # Validate that the printer exists on the system
+            printers = get_printer_list()
+            if printer_to_use not in printers:
+                logging.error(
+                    f'The printer "{printer_to_use}" is not available on this system. '
+                    f"Available printers: {', '.join(printers)}"
+                )
+                raise typer.Exit(code=-5)
+
             # Print using appropriate method based on show setting
             if should_show:
-                printer_pdf_reader(
-                    file_to_print_arg, file_to_print_name, printer_to_use
-                )
+                printer_pdf_reader(file_path, file_to_print_name, printer_to_use)
             else:
-                printer_ghost_script(file_to_print_arg, printer_to_use)
+                printer_ghost_script(file_path, printer_to_use)
         else:
             # Just show the file without printing
             logging.info("Showing the file! No printing!")
-            os.startfile(file_to_print_arg)  # type: ignore
-        sys.exit(0)
+            os.startfile(file_path)  # type: ignore
+        raise typer.Exit(code=0)
 
     # No matching configuration found
     logging.error("No valid action found.")
+
+
+def main() -> None:
+    """Execute the main auto-print functionality via Typer."""
+    app()
+
+
+click_app = typer.main.get_command(app)
 
 
 if __name__ == "__main__":

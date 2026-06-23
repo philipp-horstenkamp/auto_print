@@ -12,7 +12,7 @@ dev = [
 ]
 docs = [
   "sphinx>=9.0.4,<10.0.0",
-  "sphinx-argparse>=0.5.0,<0.6.0",
+  "sphinxcontrib-typer",
   "sphinx-autodoc-typehints>=3.6.1,<4.0.0",
   "sphinx-copybutton>=0.5.2,<0.6.0",
   "sphinx-intl>=2.1.0,<3.0.0",
@@ -45,7 +45,8 @@ authors = [
 dependencies = [
   "case-insensitive-dictionary==0.2.1",
   "ghostscript>=0.8,<0.9",
-  "pywin32>=306,<313; sys_platform == 'win32'"
+  "pywin32>=306,<313; sys_platform == 'win32'",
+  "typer>=0.12.0"
 ]
 description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
 license = {text = "MIT"}
@@ -55,8 +56,8 @@ requires-python = ">=3.11,<3.14"
 version = "2.0.0rc3"
 
 [project.scripts]
-auto-print = "auto_print.execute:main"
-auto-print-config = "auto_print.config_generator:main"
+auto-print = "auto_print.auto_print_execute:main"
+auto-print-config = "auto_print.auto_print_config_generator:main"
 
 [tool.black]
 target-version = ["py310"]
@@ -79,7 +80,8 @@ addopts = "--cov=auto_print --cov-report=xml --cov-report=term"
 testpaths = ["tests"]
 
 [tool.rstcheck]
-ignore_directives = ["argparse", "prompt", "tabs"]
+ignore_directives = ["argparse", "prompt", "tabs", "typer", "click"]
+ignore_messages = "(Hyperlink target .+ not referenced\\.$)"
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.

@@ -46,7 +46,6 @@ extensions = [
     # "sphinx.ext.viewcode",   # Add links to highlighted source code
     "sphinx.ext.napoleon",  # Support for Google and NumPy style docstrings
     "sphinx.ext.intersphinx",  # Link to another project's documentation
-    "sphinxarg.ext",  # Document command-line arguments
     "sphinx_copybutton",  # Add copy buttons to code blocks
     "sphinx_autodoc_typehints",  # Better type hint documentation
     "sphinx_markdown_tables",  # Better rendering of markdown tables
@@ -54,6 +53,7 @@ extensions = [
     "sphinx_prompt",  # Better command prompt examples
     "sphinx_tabs.tabs",  # Tabbed content for code examples
     "notfound.extension",
+    "sphinxcontrib.typer",
 ]
 
 templates_path = ["_templates"]

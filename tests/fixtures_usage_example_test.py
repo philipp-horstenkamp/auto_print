@@ -123,7 +123,9 @@ def test_execute_with_non_matching_file(multi_section_config_file, tmp_path):
         ),
     ):
         # The function logs an error when no matching section is found
-        execute_main()
+        with pytest.raises(SystemExit) as pytest_wrapped_e:
+            execute_main()
+        assert pytest_wrapped_e.value.code == 0
 
     # Verify that the error was logged
     mock_log.error.assert_called_with("No valid action found.")

@@ -6,6 +6,8 @@ import webbrowser
 from pathlib import Path
 from typing import Any
 
+import click
+import typer
 from case_insensitive_dict import CaseInsensitiveDict
 
 from auto_print.auto_print_execute import (
@@ -62,22 +64,19 @@ def input_choice(description: str, input_list: list[str], default: str) -> str:
     if default not in input_list:
         raise InputValidationError(InputValidationError.DEFAULT_NOT_IN_CHOICES)
 
-    # Display options and get user input
-    while True:
-        print(description)
-        print(f"Options: {', '.join(input_list)}")
-        text_in = input(f"Choose [{default}]:").strip()
+    choice = typer.prompt(
+        f"{description}\nOptions: {', '.join(input_list)}",
+        default=default,
+        type=click.Choice(input_list, case_sensitive=False),
+        show_choices=False,
+    )
 
-        # Use default if no input provided
-        if not text_in:
-            return default
+    # Find case-sensitive match
+    for option in input_list:
+        if option.lower() == choice.lower():
+            return option
 
-        # Find case-insensitive match
-        for option in input_list:
-            if option.lower() == text_in.lower():
-                return option
-
-        # No match found, loop will continue
+    return choice
 
 
 def bool_decision(description: str, *, default: bool = False) -> bool:
@@ -90,9 +89,7 @@ def bool_decision(description: str, *, default: bool = False) -> bool:
     Returns:
         True for yes/y responses, False for no/n responses.
     """
-    default_option = "yes" if default else "no"
-    response = input_choice(description, ["yes", "y", "no", "n"], default_option)
-    return response.startswith("y")
+    return typer.confirm(description, default=default)
 
 
 def print_element(name: str, config_element: dict[str, Any], index: int | None) -> None:
@@ -508,12 +505,12 @@ def repair_config(
     return config_object
 
 
-def main() -> None:
-    """Run the auto-print configuration generator.
+app = typer.Typer(help="Interactive configuration generator for auto-print.")
 
-    This function initializes the logger, checks for ghostscript,
-    and starts the interactive configuration process.
-    """
+
+@app.command()
+def main_interactive() -> None:
+    """Run the interactive configuration generator."""
     configure_logger()
     check_ghostscript()
 
@@ -557,6 +554,14 @@ def main() -> None:
                 break
         elif action in {"help", "h"}:
             show_help()
+
+
+def main() -> None:
+    """Run the config generator application via Typer."""
+    app()
+
+
+click_app = typer.main.get_command(app)
 
 
 if __name__ == "__main__":

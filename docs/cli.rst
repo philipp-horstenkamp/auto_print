@@ -1,3 +1,5 @@
+.. _cli:
+
 Command Line Interface
 ======================
 
@@ -30,10 +32,9 @@ For details about the configuration file structure, see the :ref:`Configuration 
 Configuration Generator Commands
 --------------------------------
 
-.. argparse::
-   :module: auto_print.auto_print_config_generator
-   :func: get_parser
-   :prog: auto_print_config_generator
+.. typer:: auto_print.auto_print_config_generator.app
+   :prog: auto-print-config
+   :preferred: text
 
 The configuration generator provides an interactive interface with the following commands:
 
@@ -74,10 +75,9 @@ For details about configuration options and matching rules, see the :ref:`Config
 Print Executor
 --------------
 
-.. argparse::
-   :module: auto_print.auto_print_execute
-   :func: get_parser
-   :prog: auto_print_execute
+.. typer:: auto_print.auto_print_execute.app
+   :prog: auto-print
+   :preferred: text
 
 Usage
 ~~~~~
