@@ -3,6 +3,7 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import datetime
 import sys
 from importlib.metadata import metadata
 from pathlib import Path
@@ -31,10 +32,11 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 _DISTRIBUTION_METADATA = metadata("auto-print")
 
 # Extract metadata
-project = str(_DISTRIBUTION_METADATA["Name"]).replace("-", " ")
-author = _DISTRIBUTION_METADATA["Author"].split("<")[0].strip()
-copyright = f"2025, {author}"  # noqa: A001
+project = "auto print"
+author = "Philipp Horstenkamp"
+copyright = f"{datetime.date.today().year}, {author}"  # noqa: A001
 release = _DISTRIBUTION_METADATA["Version"]
+
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
