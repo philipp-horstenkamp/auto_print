@@ -50,8 +50,31 @@ context_menu_text = "Auto Print with Auto Print"
 # Load package metadata from installed package
 meta = metadata("auto-print")
 
+
+def _get_meta(key: str, default: str = "") -> str:
+    try:
+        val = meta[key]
+    except KeyError:
+        return default
+    else:
+        return val if val is not None else default
+
+
+# Parse author and email from Author-email metadata
+author_email_raw = (
+    _get_meta("Author-email") or "Philipp Horstenkamp <philipp@horstenkamp.de>"
+)
+if "<" in author_email_raw:
+    author = author_email_raw.split("<")[0].strip()
+    author_email = author_email_raw.split("<")[1].replace(">", "").strip()
+else:
+    author = "Philipp Horstenkamp"
+    author_email = author_email_raw
+
+url = _get_meta("Home-page") or "https://github.com/philipp-horstenkamp/auto_print"
+
 # Determine base executable type
-base = "Win32GUI" if sys.platform == "win32" else None
+base = "gui" if sys.platform == "win32" else None
 
 """
 Define the executables to be included in the installer package.
@@ -174,8 +197,8 @@ bdist_msi_options = {
         "PATH": "$INSTDIR;.",
     },
     "summary_data": {
-        "author": meta["Author"],
-        "comments": meta["Summary"],
+        "author": author,
+        "comments": _get_meta("Summary"),
     },
     "data": {
         "Component": [
@@ -252,14 +275,14 @@ When this script is run with 'python msi_setup.py bdist_msi', cx_Freeze will:
 3. Place the resulting MSI file in the 'dist' directory
 """
 setup(
-    name=meta["Name"],
-    version=meta["Version"],
-    description=meta["Summary"],
+    name=_get_meta("Name", "auto-print"),
+    version=_get_meta("Version", "2.0.0"),
+    description=_get_meta("Summary"),
     long_description=Path("README.md").read_text(encoding="utf-8"),
-    author=meta["Author"],
-    author_email=meta["Author-email"],
-    url=meta["Home-page"],
-    license=meta["License"],
+    author=author,
+    author_email=author_email,
+    url=url,
+    license=_get_meta("License", "MIT"),
     options={
         "build_exe": {
             "packages": ["auto_print"],
