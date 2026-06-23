@@ -61,7 +61,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#print-executor">Print Executor</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#auto_print.auto_print_execute-get_parser-positional-arguments">Positional Arguments</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#execution-workflow">Execution Workflow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
@@ -98,7 +97,7 @@
            <div itemprop="articleBody">
              
   <section id="command-line-interface">
-<h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h1>
+<span id="cli"></span><h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
 <p><strong>Auto Print</strong> provides two main command-line tools:</p>
@@ -125,10 +124,22 @@
 </section>
 <section id="configuration-generator-commands">
 <h2>Configuration Generator Commands<a class="headerlink" href="#configuration-generator-commands" title="Link to this heading"></a></h2>
-<p><p>Interactive configuration generator for auto-print. This tool helps you create and manage printer configurations.</p>
-</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">auto_print_config_generator</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span>
+<div class="docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                                                                 
+ Usage: auto-print-config [OPTIONS]                              
+                                                                 
+ Run the interactive configuration generator.                    
+                                                                 
+╭─ Options ─────────────────────────────────────────────────────╮
+│ --install-completion          Install completion for the      │
+│                               current shell.                  │
+│ --show-completion             Show completion for the current │
+│                               shell, to copy it or customize  │
+│                               the installation.               │
+│ --help                        Show this message and exit.     │
+╰───────────────────────────────────────────────────────────────╯
 </pre></div>
+</div>
 </div>
 <p>The configuration generator provides an interactive interface with the following commands:</p>
 <table class="docutils align-default">
@@ -191,19 +202,27 @@
 </section>
 <section id="print-executor">
 <h2>Print Executor<a class="headerlink" href="#print-executor" title="Link to this heading"></a></h2>
-<p><p>Auto-print: A document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns.</p>
-</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">auto_print_execute</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">file_path</span>
+<div class="docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                                                                 
+ Usage: auto-print [OPTIONS] FILE_PATH                           
+                                                                 
+ Print the specified file based on routing rules.                
+                                                                 
+╭─ Arguments ───────────────────────────────────────────────────╮
+│ *    file_path      TEXT  Path to the file to be processed    │
+│                           [required]                          │
+╰───────────────────────────────────────────────────────────────╯
+╭─ Options ─────────────────────────────────────────────────────╮
+│ --install-completion          Install completion for the      │
+│                               current shell.                  │
+│ --show-completion             Show completion for the current │
+│                               shell, to copy it or customize  │
+│                               the installation.               │
+│ --help                        Show this message and exit.     │
+╰───────────────────────────────────────────────────────────────╯
 </pre></div>
 </div>
-<section id="auto_print.auto_print_execute-get_parser-positional-arguments">
-<h3>Positional Arguments<a class="headerlink" href="#auto_print.auto_print_execute-get_parser-positional-arguments" title="Link to this heading"></a></h3>
-<dl class="option-list">
-<dt><kbd>file_path</kbd></dt>
-<dd><p>Path to the file to be processed</p>
-</dd>
-</dl>
-</section>
+</div>
 <section id="usage">
 <h3>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h3>
 <p><strong>From MSI installer:</strong></p>
