@@ -71,7 +71,7 @@ autolabeler:
   - /enhancement/i          # PR title contains "enhancement" (case insensitive)
 - label: dependencies     # Applied if ANY of the files patterns match
   files:
-  - poetry.lock           # Changes to poetry.lock file
+  - uv.lock               # Changes to uv.lock file
   - pyproject.toml        # Changes to pyproject.toml file
   - .github/dependabot.yml       # Changes to dependabot configuration
 
