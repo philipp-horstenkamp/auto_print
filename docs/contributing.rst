@@ -17,7 +17,7 @@ Development Setup
 
    .. code-block:: bash
 
-       poetry install
+       uv sync --all-groups
 
 3. Set up pre-commit hooks:
 
@@ -54,7 +54,7 @@ Run tests using pytest:
 
 .. code-block:: bash
 
-    poetry run pytest
+    uv run pytest
 
 Documentation
 -------------

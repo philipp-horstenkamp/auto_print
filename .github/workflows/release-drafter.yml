@@ -36,29 +36,27 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install pipx
-        pipx install poetry
-        python -m pipx ensurepath
-        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
 
-    - name: Set poetry version
+    - name: Set project version
       if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       run: |
         VERSION="${{ steps.draft_release.outputs.resolved_version }}"
         echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || { echo "no stable SemVer"; exit 1; }
-        poetry version "$VERSION"
+        python -c "import sys, re; p = 'pyproject.toml'; t = open(p, encoding='utf-8').read(); open(p, 'w', encoding='utf-8').write(re.sub(r'^version\s*=\s*\"[^\"]+\"', f'version = \"{sys.argv[1]}\"', t, flags=re.MULTILINE))" "$VERSION"
+        uv lock
 
-    - name: Check for changes to pyproject.toml
+    - name: Check for changes to pyproject.toml or uv.lock
       id: check_diff
       if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       run: |
-        if git diff --quiet pyproject.toml; then
-        echo "changed=false" >> "$GITHUB_OUTPUT"
+        if git diff --quiet pyproject.toml uv.lock; then
+          echo "changed=false" >> "$GITHUB_OUTPUT"
         else
-        echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Download wheel artifacts from CI workflow
@@ -114,7 +112,7 @@ jobs:
         git switch -C $BRANCH_NAME
 
         # Add and commit changes
-        git add pyproject.toml
+        git add pyproject.toml uv.lock
         git commit -m "chore: bump version to $VERSION" || echo "nothing to commit"
 
         # Push to remote
