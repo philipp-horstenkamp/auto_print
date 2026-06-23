@@ -46,7 +46,7 @@ jobs:
       run: |
         VERSION="${{ steps.draft_release.outputs.resolved_version }}"
         echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || { echo "no stable SemVer"; exit 1; }
-        python -c "import re; p = 'pyproject.toml'; t = open(p, encoding='utf-8').read(); open(p, 'w', encoding='utf-8').write(re.sub(r'^version\s*=\s*\"[^\"]+\"', f'version = \"{VERSION}\"', t, flags=re.MULTILINE))"
+        python -c "import sys, re; p = 'pyproject.toml'; t = open(p, encoding='utf-8').read(); open(p, 'w', encoding='utf-8').write(re.sub(r'^version\s*=\s*\"[^\"]+\"', f'version = \"{sys.argv[1]}\"', t, flags=re.MULTILINE))" "$VERSION"
         uv lock
 
     - name: Check for changes to pyproject.toml or uv.lock
