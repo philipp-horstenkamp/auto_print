@@ -30,7 +30,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Set up uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
     - name: Install dependencies
@@ -59,7 +59,7 @@ jobs:
       with:
         python-version: '3.12'
     - name: Set up uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
     - name: Install dependencies
@@ -100,7 +100,7 @@ jobs:
       with:
         python-version: '3.11'
     - name: Set up uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
     - name: wheel-build
@@ -133,7 +133,7 @@ jobs:
       with:
         python-version: '3.11'
     - name: Set up uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
     - name: Install dependencies
