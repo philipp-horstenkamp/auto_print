@@ -29,7 +29,7 @@ repos:
     exclude: (^config.json$|\.ipynb$)
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.15.18
+  rev: v0.15.20
   hooks:
   - id: ruff
     args: [--fix]
@@ -53,7 +53,7 @@ repos:
   - id: mypy
 
 - repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.11.7
+  rev: 0.11.25
   hooks:
   - id: uv-lock
 
