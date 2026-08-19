@@ -1,3 +1,21 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json"
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "dependencyDashboard": true,
+  "dependencyDashboardApproval": true,
+  "extends": [
+    "config:recommended"
+  ],
+  "minimumReleaseAge": "2 days",
+  "packageRules": [
+    {
+      "dependencyDashboardApproval": false,
+      "description": "Automatically create pull requests for security vulnerabilities without requiring manual dashboard approval or minimum release age",
+      "labels": [
+        "security",
+        "dependencies"
+      ],
+      "matchIsVulnerability": true,
+      "minimumReleaseAge": "0 days"
+    }
+  ]
 }
