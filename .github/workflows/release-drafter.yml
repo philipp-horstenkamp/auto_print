@@ -94,6 +94,19 @@ jobs:
         ls -al ./dist/wheel
         ls -al ./dist/msi
 
+    - name: Purge old assets from draft release
+      if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        TAG_NAME="v${{ steps.draft_release.outputs.resolved_version }}"
+        echo "Checking for old assets on release $TAG_NAME..."
+        ASSETS=$(gh release view "$TAG_NAME" --json assets --jq '.assets[].name' 2>/dev/null || true)
+        for ASSET in $ASSETS; do
+          echo "Deleting old release asset: $ASSET"
+          gh release delete-asset "$TAG_NAME" "$ASSET" -y || true
+        done
+
     - name: Upload artifacts to release
       if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       uses: softprops/action-gh-release@v3
