@@ -68,7 +68,6 @@ jobs:
     - name: Download wheel artifacts from CI workflow
       if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       uses: dawidd6/action-download-artifact@v23
-      continue-on-error: true
       with:
         workflow: ci.yml
         run_id: ${{ github.event.workflow_run.id }}
@@ -79,7 +78,6 @@ jobs:
     - name: Download MSI artifacts from CI workflow
       if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
       uses: dawidd6/action-download-artifact@v23
-      continue-on-error: true
       with:
         workflow: ci.yml
         run_id: ${{ github.event.workflow_run.id }}
@@ -114,7 +112,7 @@ jobs:
         files: |
           ./dist/wheel/*.whl
           ./dist/msi/*.msi
-        fail_on_unmatched_files: false
+        fail_on_unmatched_files: true
         tag_name: v${{ steps.draft_release.outputs.resolved_version }}
         draft: true
         token: ${{ secrets.GITHUB_TOKEN }}
