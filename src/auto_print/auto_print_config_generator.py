@@ -6,7 +6,6 @@ import webbrowser
 from pathlib import Path
 from typing import Any
 
-import click
 import typer
 from case_insensitive_dict import CaseInsensitiveDict
 
@@ -67,7 +66,6 @@ def input_choice(description: str, input_list: list[str], default: str) -> str:
     choice = typer.prompt(
         f"{description}\nOptions: {', '.join(input_list)}",
         default=default,
-        type=click.Choice(input_list, case_sensitive=False),
         show_choices=False,
     )
 

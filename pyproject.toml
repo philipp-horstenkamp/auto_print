@@ -52,7 +52,7 @@ description = "A Short programm that checks a file for its filename and routs th
 license = {text = "MIT"}
 name = "auto-print"
 readme = "README.md"
-requires-python = ">=3.11,<3.14"
+requires-python = ">=3.12,<3.15"
 version = "2.0.0rc3"
 
 [project.scripts]
@@ -112,7 +112,7 @@ fix = true
 # Same as Black.
 line-length = 88
 # Target Python 3.10.
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 # Allow autofix for all enabled rules (when `--fix`) is provided.
