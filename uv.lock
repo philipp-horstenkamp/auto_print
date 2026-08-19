@@ -225,7 +225,6 @@ version = "2.0.0rc3"
 source = { editable = "." }
 dependencies = [
     { name = "case-insensitive-dictionary" },
-    { name = "click" },
     { name = "ghostscript" },
     { name = "pywin32", marker = "sys_platform == 'win32'" },
     { name = "typer" },
@@ -270,7 +269,6 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "case-insensitive-dictionary", specifier = "==0.2.1" },
-    { name = "click", specifier = ">=8.0.0" },
     { name = "ghostscript", specifier = ">=0.8,<0.9" },
     { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=306,<313" },
     { name = "typer", specifier = ">=0.12.0" },

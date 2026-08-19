@@ -44,7 +44,6 @@ authors = [
 ]
 dependencies = [
   "case-insensitive-dictionary==0.2.1",
-  "click>=8.0.0",
   "ghostscript>=0.8,<0.9",
   "pywin32>=306,<313; sys_platform == 'win32'",
   "typer>=0.12.0"
