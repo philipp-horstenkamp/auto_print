@@ -137,26 +137,26 @@ python<span class="w"> </span>-m<span class="w"> </span>auto_print.auto_print_co
 <span id="id1"></span><h3>Configuration File Structure<a class="headerlink" href="#configuration-file-structure" title="Link to this heading"></a></h3>
 <p>The configuration is stored in a JSON file with the following structure:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;InvoicePrinter&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;active&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;printer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FinancePrinter&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INV_&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;suffix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;print&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;show&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">  </span><span class="nt">"InvoicePrinter"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"printer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FinancePrinter"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"prefix"</span><span class="p">:</span><span class="w"> </span><span class="s2">"INV_"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"suffix"</span><span class="p">:</span><span class="w"> </span><span class="s2">".pdf"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"print"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"show"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;ShippingLabels&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;active&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;printer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LabelPrinter&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHIP_&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;suffix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;show&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;print&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">  </span><span class="nt">"ShippingLabels"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"printer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LabelPrinter"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"prefix"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHIP_"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"suffix"</span><span class="p">:</span><span class="w"> </span><span class="s2">".pdf"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"show"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"print"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;ViewOnly&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;active&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;show&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;print&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">  </span><span class="nt">"ViewOnly"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"show"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"print"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
