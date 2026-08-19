@@ -10,7 +10,6 @@
 Everything is logged and can be looked up in the auto_print.log file!
 """
 
-import argparse
 import json
 import logging
 import os
@@ -26,21 +25,6 @@ import win32print  # type: ignore
 # Constants
 EXPECTED_ARG_COUNT: Final[int] = 2
 PRINTER_NOT_FOUND_ERROR: Final[int] = 1801
-
-
-def get_parser():
-    """Create an argument parser for the auto_print_execute module.
-
-    This function is used for documentation only.
-
-    Returns:
-        argparse.ArgumentParser: The argument parser
-    """
-    parser = argparse.ArgumentParser(
-        description="Auto-print: A document routing application that automatically decides whether to print documents directly or open them with the default application based on filename patterns."
-    )
-    parser.add_argument("file_path", help="Path to the file to be processed", type=str)
-    return parser
 
 
 # defines the path of the printer config JSON file.
