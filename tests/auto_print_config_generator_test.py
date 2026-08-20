@@ -73,47 +73,52 @@ def test_print_configuration(mock_print, mock_config_object):
     assert mock_print.call_count > 0
 
 
-@patch("auto_print.auto_print_config_generator.typer.confirm", return_value=True)
+@patch("auto_print.auto_print_config_generator.questionary.confirm")
 def test_bool_decision_yes(mock_confirm):
     """Test the bool_decision function with 'y' input."""
+    mock_confirm.return_value.ask.return_value = True
     result = bool_decision("Test decision?", default=False)
     assert result is True
     mock_confirm.assert_called_once()
 
 
-@patch("auto_print.auto_print_config_generator.typer.confirm", return_value=False)
+@patch("auto_print.auto_print_config_generator.questionary.confirm")
 def test_bool_decision_no(mock_confirm):
     """Test the bool_decision function with 'n' input."""
+    mock_confirm.return_value.ask.return_value = False
     result = bool_decision("Test decision?", default=True)
     assert result is False
     mock_confirm.assert_called_once()
 
 
-@patch("auto_print.auto_print_config_generator.typer.confirm", return_value=True)
+@patch("auto_print.auto_print_config_generator.questionary.confirm")
 def test_bool_decision_default(mock_confirm):
     """Test the bool_decision function with the default input."""
+    mock_confirm.return_value.ask.return_value = True
     result = bool_decision("Test decision?", default=True)
     assert result is True
     mock_confirm.assert_called_once()
 
 
-@patch("auto_print.auto_print_config_generator.typer.prompt", return_value="option1")
-def test_input_choice(mock_prompt):
+@patch("auto_print.auto_print_config_generator.questionary.select")
+def test_input_choice(mock_select):
     """Test the input_choice function."""
+    mock_select.return_value.ask.return_value = "option1"
     result = input_choice("Choose an option:", ["option1", "option2"], "option2")
     assert result == "option1"
-    mock_prompt.assert_called_once()
+    mock_select.assert_called_once()
 
 
-@patch("auto_print.auto_print_config_generator.typer.prompt", return_value="option2")
-def test_input_choice_default(mock_prompt):
+@patch("auto_print.auto_print_config_generator.questionary.select")
+def test_input_choice_default(mock_select):
     """Test the input_choice function with default input."""
+    mock_select.return_value.ask.return_value = "option2"
     result = input_choice("Choose an option:", ["option1", "option2"], "option2")
     assert result == "option2"
-    mock_prompt.assert_called_once()
+    mock_select.assert_called_once()
 
 
-@patch("auto_print.auto_print_config_generator.typer.prompt", return_value="PDF24")
+@patch("auto_print.auto_print_config_generator.questionary.select")
 @patch(
     "auto_print.auto_print_config_generator.get_default_printer", return_value="PDF24"
 )
@@ -121,9 +126,10 @@ def test_input_choice_default(mock_prompt):
     "auto_print.auto_print_config_generator.get_printer_list", return_value=["PDF24"]
 )
 def test_repair_config(
-    mock_get_printer_list, mock_get_default_printer, mock_prompt, mock_config_object
+    mock_get_printer_list, mock_get_default_printer, mock_select, mock_config_object
 ):
     """Test the repair_config function."""
+    mock_select.return_value.ask.return_value = "PDF24"
     # Create a config with a printer that's not in the printer list
     config_with_invalid_printer = CaseInsensitiveDict(
         {
@@ -140,7 +146,7 @@ def test_repair_config(
     assert result["Test Section"]["printer"] == "PDF24"
 
     # Reset mocks for the second part of the test
-    mock_prompt.reset_mock()
+    mock_select.reset_mock()
     mock_get_printer_list.reset_mock()
 
     # Test with a valid printer
@@ -158,7 +164,7 @@ def test_repair_config(
     # Check that the printer wasn't changed
     assert result["Test Section"]["printer"] == "PDF24"
     # Input shouldn't have been called since no repair was needed
-    mock_prompt.assert_not_called()
+    mock_select.assert_not_called()
 
 
 # Tests using file fixtures

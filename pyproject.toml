@@ -45,6 +45,7 @@ dependencies = [
   "case-insensitive-dictionary==0.2.1",
   "ghostscript>=0.8,<0.9",
   "pywin32>=306,<313; sys_platform == 'win32'",
+  "questionary>=2.1.0",
   "typer>=0.12.0"
 ]
 description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
