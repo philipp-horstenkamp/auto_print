@@ -1,14 +1,16 @@
 version: 2
 updates:
-- package-ecosystem: "uv"
+- package-ecosystem: uv
   directory: /
   target-branch: main
   schedule:
     interval: daily
+  cooldown:
+    default-days: 2
   open-pull-requests-limit: 10
   labels: [dependencies, python]
   commit-message:
-    prefix: pip
+    prefix: uv
     include: scope
   rebase-strategy: auto
 
@@ -17,6 +19,8 @@ updates:
   target-branch: main
   schedule:
     interval: daily
+  cooldown:
+    default-days: 2
   open-pull-requests-limit: 10
   labels: [dependencies, github-actions]
   commit-message:
