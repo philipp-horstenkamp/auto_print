@@ -20,6 +20,7 @@ from typing import Final
 
 import typer
 import win32api  # type: ignore
+import win32con  # type: ignore
 import win32print  # type: ignore
 
 # Constants
@@ -109,16 +110,20 @@ def install_ghostscript():
     """
     for sys_arg in sys.argv:
         logging.error(f"Started with arguments: {sys_arg}")
-    from tkinter import messagebox
 
-    messagebox.showerror(
-        "Ghostscript missing!",
+    win32api.MessageBox(
+        0,
         "Ghostscript is not installed.\nPlease install ghostscript!",
+        "Ghostscript missing!",
+        win32con.MB_OK | win32con.MB_ICONERROR,
     )
-    action = messagebox.askyesno(
-        "Install Ghostscript!", "Would you like to download Ghostscript 64 bit?"
+    action = win32api.MessageBox(
+        0,
+        "Would you like to download Ghostscript 64 bit?",
+        "Install Ghostscript!",
+        win32con.MB_YESNO | win32con.MB_ICONQUESTION,
     )
-    if action:
+    if action == win32con.IDYES:
         import webbrowser
 
         webbrowser.open("https://ghostscript.com/releases/gsdnld.html", new=2)
