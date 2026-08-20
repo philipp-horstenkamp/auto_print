@@ -6,6 +6,7 @@ import webbrowser
 from pathlib import Path
 from typing import Any
 
+import questionary
 import typer
 from case_insensitive_dict import CaseInsensitiveDict
 
@@ -63,11 +64,14 @@ def input_choice(description: str, input_list: list[str], default: str) -> str:
     if default not in input_list:
         raise InputValidationError(InputValidationError.DEFAULT_NOT_IN_CHOICES)
 
-    choice = typer.prompt(
-        f"{description}\nOptions: {', '.join(input_list)}",
+    choice = questionary.select(
+        description,
+        choices=input_list,
         default=default,
-        show_choices=False,
-    )
+    ).ask()
+
+    if choice is None:
+        choice = default
 
     # Find case-sensitive match
     for option in input_list:
@@ -87,7 +91,8 @@ def bool_decision(description: str, *, default: bool = False) -> bool:
     Returns:
         True for yes/y responses, False for no/n responses.
     """
-    return typer.confirm(description, default=default)
+    result = questionary.confirm(description, default=default).ask()
+    return default if result is None else bool(result)
 
 
 def print_element(name: str, config_element: dict[str, Any], index: int | None) -> None:
@@ -196,7 +201,13 @@ def edit_section(
             'Something like "test_str" to filter all files who start with "test_str"\n'
             "Can be empty if no filter of this type should be used!"
         )
-        prefix = input("Type prefix:").strip()
+        prefix = (
+            questionary.text(
+                "Type prefix:",
+                default=config_element.get("prefix", ""),
+            ).ask()
+            or ""
+        ).strip()
         if prefix:
             config_element["prefix"] = prefix
         elif "prefix" in config_element:
@@ -208,7 +219,13 @@ def edit_section(
             'Something like "t_file.pdf" to filter all pdfs files who end with "t_file"\n'
             "Can be empty if no filter of this type should be used!"
         )
-        suffix = input("Type suffix:").strip()
+        suffix = (
+            questionary.text(
+                "Type suffix:",
+                default=config_element.get("suffix", ""),
+            ).ask()
+            or ""
+        ).strip()
         if suffix:
             config_element["suffix"] = suffix
         elif "suffix" in config_element:
@@ -267,7 +284,8 @@ def create_section(
     config_element: dict[str, Any] = {}
     name = ""
     while not name:
-        name = input("Name:").strip()
+        entered = questionary.text("Name:").ask()
+        name = (entered or "").strip()
         if name in config_object:
             print(
                 f'The name "{name}" is already in use. Choose another name that is not in use!'
@@ -303,7 +321,7 @@ def insert_section(
 
     insert_str: str = input_choice(
         "Please choose where to add the section or choose cancel to cancel this action:",
-        ["start"] + [str(n) for n in range(end_pos + 1)] + ["end", "cancel", "c"],
+        ["start"] + [str(n) for n in range(end_pos + 1)] + ["end", "cancel"],
         "end",
     )
     if insert_str == "end":
@@ -358,7 +376,7 @@ def delete_section(
     print_configuration(config_object)
     delete_object = input_choice(
         "Chose what section to delete or to cancel the operation!",
-        [*list(config_object.keys()), "cancel", "c"],
+        [*list(config_object.keys()), "cancel"],
         "cancel",
     )
     if delete_object in {"cancel", "c"}:
@@ -455,15 +473,15 @@ def generate_list_of_available_commands(
     Returns:
         The generated list of possible commands.
     """
-    options = ["save", "s", "close", "c", "add", "a"]
+    options = ["save", "close", "add"]
     if config_object:
-        options += ["repair", "r", "delete", "d"]
+        options += ["repair", "delete"]
     options += ["show"]
     if config_object and len(config_object.keys()) > 1:
         options.append("change")
     if config_object:
-        options += ["edit", "e"]
-    options += ["help", "h"]
+        options.append("edit")
+    options.append("help")
     return options
 
 
