@@ -319,18 +319,32 @@ def insert_section(
     print(f"Insert Position {end_pos} ->")
     print()
 
-    insert_str: str = input_choice(
-        "Please choose where to add the section or choose cancel to cancel this action:",
-        ["start"] + [str(n) for n in range(end_pos + 1)] + ["end", "cancel"],
-        "end",
+    choices = (
+        ["At start (top priority)"]
+        + [
+            f'After "{name}" (position {i + 1})'
+            for i, name in enumerate(config_object.keys())
+        ]
+        + ["At end", "Cancel"]
     )
-    if insert_str == "end":
-        insert_str = str(end_pos)
-    elif insert_str == "start":
-        insert_str = "0"
-    elif insert_str in {"cancel", "c"}:
+
+    insert_str: str = input_choice(
+        "Please choose where to place the rule in priority order:",
+        choices,
+        "At end",
+    )
+    if insert_str.lower() in {"cancel", "c"} or insert_str == "Cancel":
         print_configuration(config_object)
         return config_object
+    if insert_str in {"At start (top priority)", "start", "0"}:
+        insert_pos = 0
+    elif insert_str in {"At end", "end", str(end_pos)}:
+        insert_pos = end_pos
+    else:
+        try:
+            insert_pos = int(insert_str.split("(position ")[1].rstrip(")"))
+        except (IndexError, ValueError):
+            insert_pos = end_pos
 
     key_list = list(config_object.keys())
 
@@ -375,9 +389,9 @@ def delete_section(
         return config_object
     print_configuration(config_object)
     delete_object = input_choice(
-        "Chose what section to delete or to cancel the operation!",
-        [*list(config_object.keys()), "cancel"],
-        "cancel",
+        "Choose which printer rule section to delete:",
+        [*list(config_object.keys()), "Cancel"],
+        "Cancel",
     )
     if delete_object in {"cancel", "c"}:
         print("Cancel delete object!")
@@ -465,23 +479,25 @@ def show_help():
 def generate_list_of_available_commands(
     config_object: CaseInsensitiveDict[str, dict[str, Any]],
 ) -> list[str]:
-    """Checks to config for operations that would make sense and generates a list of possible commands accordingly.
+    """Checks the config for operations that make sense and generates a list of self-explanatory commands.
 
     Args:
         config_object: A configuration object.
 
     Returns:
-        The generated list of possible commands.
+        The generated list of possible command labels.
     """
-    options = ["save", "close", "add"]
+    options = ["Save configuration", "Add new printer rule"]
     if config_object:
-        options += ["repair", "delete"]
-    options += ["show"]
+        options += [
+            "Edit printer rule",
+            "Delete printer rule",
+            "Repair configuration",
+        ]
+    options.append("Show current configuration")
     if config_object and len(config_object.keys()) > 1:
-        options.append("change")
-    if config_object:
-        options.append("edit")
-    options.append("help")
+        options.append("Change rule priority")
+    options += ["Open help in browser", "Exit / Close"]
     return options
 
 
@@ -538,37 +554,37 @@ def main_interactive() -> None:
 
     while True:
         action = input_choice(
-            "What workflows should be taken?:",
+            "What workflow would you like to execute?:",
             generate_list_of_available_commands(config),
-            "close",
+            "Exit / Close",
         )
 
         print(f"Action: {action}")
-        if action in {"s", "save"}:
+        if action in {"Save configuration", "save", "s"}:
             save_config(config)
-        elif action in {"add", "a"}:
+        elif action in {"Add new printer rule", "add", "a"}:
             config = add_section(config)
-        elif action in {"delete", "d"}:
+        elif action in {"Delete printer rule", "delete", "d"}:
             config = delete_section(config)
-        elif action in {"repair", "r"}:
+        elif action in {"Repair configuration", "repair", "r"}:
             config = repair_config(config)
-        elif action == "show":
+        elif action in {"Show current configuration", "show"}:
             print()
             print_configuration(config)
-        elif action == "change":
+        elif action in {"Change rule priority", "change"}:
             config = change_section_position(config)
-        elif action in {"edit", "e"}:
+        elif action in {"Edit printer rule", "edit", "e"}:
             config = edit_section_command(config)
 
-        elif action in {"close", "c"}:
+        elif action in {"Exit / Close", "close", "c"}:
             if load_config() == config:
                 break
             if bool_decision(
-                "There are unsaved changes. Please confirm with y/n if you want to close anyway[n]:",
-                default=True,
+                "There are unsaved changes. Do you want to close anyway?",
+                default=False,
             ):
                 break
-        elif action in {"help", "h"}:
+        elif action in {"Open help in browser", "help", "h"}:
             show_help()
 
 
