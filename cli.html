@@ -124,37 +124,50 @@
 </section>
 <section id="configuration-generator-commands">
 <h2>Configuration Generator Commands<a class="headerlink" href="#configuration-generator-commands" title="Link to this heading"></a></h2>
-<p>The configuration generator provides an interactive arrow-key menu powered by <code class="docutils literal notranslate"><span class="pre">questionary</span></code> with the following options:</p>
+<p>The configuration generator provides an interactive interface with the following commands:</p>
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Option Choice</p></th>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Short</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Add new printer rule</p></td>
-<td><p>Create and insert a new document printing rule</p></td>
+<tr class="row-even"><td><p>save</p></td>
+<td><p>s</p></td>
+<td><p>Save the configuration</p></td>
 </tr>
-<tr class="row-odd"><td><p>Edit printer rule</p></td>
-<td><p>Modify an existing rule section</p></td>
+<tr class="row-odd"><td><p>close</p></td>
+<td><p>c</p></td>
+<td><p>Close the config tool</p></td>
 </tr>
-<tr class="row-even"><td><p>Change rule priority</p></td>
-<td><p>Reorder rule precedence</p></td>
+<tr class="row-even"><td><p>add</p></td>
+<td><p>a</p></td>
+<td><p>Add a config section</p></td>
 </tr>
-<tr class="row-odd"><td><p>Delete printer rule</p></td>
-<td><p>Remove a rule section</p></td>
+<tr class="row-odd"><td><p>delete</p></td>
+<td><p>d</p></td>
+<td><p>Remove a section</p></td>
 </tr>
-<tr class="row-even"><td><p>Repair configuration</p></td>
-<td><p>Validate and fix invalid/uninstalled printers</p></td>
+<tr class="row-even"><td><p>show</p></td>
+<td><p>s</p></td>
+<td><p>Display the config</p></td>
 </tr>
-<tr class="row-odd"><td><p>Save configuration</p></td>
-<td><p>Persist configuration changes to disk</p></td>
+<tr class="row-odd"><td><p>change</p></td>
+<td></td>
+<td><p>Reorder sections</p></td>
 </tr>
-<tr class="row-even"><td><p>Open help in browser</p></td>
-<td><p>Launch official online documentation</p></td>
+<tr class="row-even"><td><p>edit</p></td>
+<td><p>e</p></td>
+<td><p>Edit section content</p></td>
 </tr>
-<tr class="row-odd"><td><p>Exit / Close</p></td>
-<td><p>Exit tool (prompts to save unsaved changes)</p></td>
+<tr class="row-odd"><td><p>help</p></td>
+<td><p>h</p></td>
+<td><p>Display help</p></td>
+</tr>
+<tr class="row-even"><td><p>repair</p></td>
+<td><p>r</p></td>
+<td><p>Validate printer availability</p></td>
 </tr>
 </tbody>
 </table>
@@ -162,10 +175,10 @@
 <h3>Configuration Workflow<a class="headerlink" href="#configuration-workflow" title="Link to this heading"></a></h3>
 <p>The configuration workflow follows these steps:</p>
 <ol class="arabic simple">
-<li><p>Launch the generator (via <code class="docutils literal notranslate"><span class="pre">auto-print-config</span></code> or GUI Start Menu shortcut).</p></li>
-<li><p>View the formatted <strong>Rich Table</strong> showing active printing rules and printer status.</p></li>
-<li><p>Use the interactive menu options above to create, reorder, or edit rules.</p></li>
-<li><p>Select <code class="docutils literal notranslate"><span class="pre">Save</span> <span class="pre">configuration</span></code> or choose <code class="docutils literal notranslate"><span class="pre">Save</span> <span class="pre">&amp;</span> <span class="pre">Exit</span></code> when closing.</p></li>
+<li><p>Launch the generator (via CLI or GUI)</p></li>
+<li><p>Use the commands listed above to create and manage configuration sections</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">save</span></code> to persist changes</p></li>
+<li><p>Exit with <code class="docutils literal notranslate"><span class="pre">close</span></code></p></li>
 </ol>
 <p>For details about configuration options and matching rules, see the <a class="reference internal" href="usage.html#configuration-file-structure"><span class="std std-ref">Configuration File Structure</span></a> and <a class="reference internal" href="usage.html#document-routing-logic"><span class="std std-ref">Document Routing Logic</span></a> sections in the usage documentation.</p>
 </section>

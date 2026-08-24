@@ -36,37 +36,39 @@ Configuration Generator Commands
    :prog: auto-print-config
    :preferred: text
 
-The configuration generator provides an interactive arrow-key menu powered by ``questionary`` with the following options:
+The configuration generator provides an interactive interface with the following commands:
 
-+--------------------------+----------------------------------------------------+
-| Option Choice            | Description                                        |
-+==========================+====================================================+
-| Add new printer rule     | Create and insert a new document printing rule     |
-+--------------------------+----------------------------------------------------+
-| Edit printer rule        | Modify an existing rule section                    |
-+--------------------------+----------------------------------------------------+
-| Change rule priority     | Reorder rule precedence                            |
-+--------------------------+----------------------------------------------------+
-| Delete printer rule      | Remove a rule section                              |
-+--------------------------+----------------------------------------------------+
-| Repair configuration     | Validate and fix invalid/uninstalled printers      |
-+--------------------------+----------------------------------------------------+
-| Save configuration       | Persist configuration changes to disk              |
-+--------------------------+----------------------------------------------------+
-| Open help in browser     | Launch official online documentation               |
-+--------------------------+----------------------------------------------------+
-| Exit / Close             | Exit tool (prompts to save unsaved changes)        |
-+--------------------------+----------------------------------------------------+
++----------+--------+------------------------------------------------+
+| Command  | Short  | Description                                    |
++==========+========+================================================+
+| save     | s      | Save the configuration                         |
++----------+--------+------------------------------------------------+
+| close    | c      | Close the config tool                          |
++----------+--------+------------------------------------------------+
+| add      | a      | Add a config section                           |
++----------+--------+------------------------------------------------+
+| delete   | d      | Remove a section                               |
++----------+--------+------------------------------------------------+
+| show     | s      | Display the config                             |
++----------+--------+------------------------------------------------+
+| change   |        | Reorder sections                               |
++----------+--------+------------------------------------------------+
+| edit     | e      | Edit section content                           |
++----------+--------+------------------------------------------------+
+| help     | h      | Display help                                   |
++----------+--------+------------------------------------------------+
+| repair   | r      | Validate printer availability                  |
++----------+--------+------------------------------------------------+
 
 Configuration Workflow
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The configuration workflow follows these steps:
 
-1. Launch the generator (via ``auto-print-config`` or GUI Start Menu shortcut).
-2. View the formatted **Rich Table** showing active printing rules and printer status.
-3. Use the interactive menu options above to create, reorder, or edit rules.
-4. Select ``Save configuration`` or choose ``Save & Exit`` when closing.
+1. Launch the generator (via CLI or GUI)
+2. Use the commands listed above to create and manage configuration sections
+3. Use ``save`` to persist changes
+4. Exit with ``close``
 
 For details about configuration options and matching rules, see the :ref:`Configuration File Structure <configuration-file-structure>` and :ref:`Document Routing Logic <document-routing-logic>` sections in the usage documentation.
 
