@@ -67,7 +67,7 @@ jobs:
 
     - name: Download wheel artifacts from CI workflow
       if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
-      uses: dawidd6/action-download-artifact@v23
+      uses: dawidd6/action-download-artifact@v24
       with:
         workflow: ci.yml
         run_id: ${{ github.event.workflow_run.id }}
@@ -77,7 +77,7 @@ jobs:
 
     - name: Download MSI artifacts from CI workflow
       if: steps.draft_release.conclusion == 'success' && steps.draft_release.outputs.resolved_version != ''
-      uses: dawidd6/action-download-artifact@v23
+      uses: dawidd6/action-download-artifact@v24
       with:
         workflow: ci.yml
         run_id: ${{ github.event.workflow_run.id }}
