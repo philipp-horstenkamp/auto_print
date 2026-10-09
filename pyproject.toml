@@ -39,7 +39,7 @@ test = [
 
 [project]
 authors = [
-  {name = "Philipp Horstenkamp", email = "philipp@horstenkamp.de"}
+  { name = "Philipp Horstenkamp", email = "philipp@horstenkamp.de" }
 ]
 dependencies = [
   "case-insensitive-dictionary==0.2.1",
@@ -48,7 +48,7 @@ dependencies = [
   "typer>=0.12.0"
 ]
 description = "A Short programm that checks a file for its filename and routs the file to a printer or the default software to print defined in the OS or any other software."
-license = {text = "MIT"}
+license = { text = "MIT" }
 name = "auto-print"
 readme = "README.md"
 requires-python = ">=3.12,<3.15"
