@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12, <3.15"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -17,7 +17,7 @@ resolution-markers = [
     "python_full_version < '3.14' and platform_machine == 'armv7l' and sys_platform == 'linux'",
     "python_full_version < '3.14' and platform_machine == 'ppc64le' and sys_platform == 'linux'",
     "python_full_version < '3.14' and platform_machine == 's390x' and sys_platform == 'linux'",
-    "(python_full_version < '3.14' and platform_machine != 'aarch64' and platform_machine != 'armv7l' and platform_machine != 'i686' and platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_machine != 'x86_64' and sys_platform == 'linux') or (python_full_version < '3.13' and sys_platform == 'win32') or (python_full_version < '3.14' and sys_platform != 'linux' and sys_platform != 'win32')",
+    "(python_full_version < '3.13' and platform_machine != 'aarch64' and platform_machine != 'armv7l' and platform_machine != 'i686' and platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_machine != 'x86_64') or (python_full_version == '3.13.*' and platform_machine != 'aarch64' and platform_machine != 'armv7l' and platform_machine != 'i686' and platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_machine != 'x86_64' and sys_platform == 'linux') or (python_full_version < '3.13' and sys_platform == 'win32') or (python_full_version < '3.14' and sys_platform != 'linux' and sys_platform != 'win32')",
 ]
 
 [options]
@@ -462,7 +462,7 @@ wheels = [
 
 [[package]]
 name = "cx-freeze"
-version = "8.7.2"
+version = "8.7.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dmgbuild", marker = "sys_platform == 'darwin'" },
@@ -474,9 +474,9 @@ dependencies = [
     { name = "python-msilib", marker = "python_full_version >= '3.13' and sys_platform == 'win32'" },
     { name = "setuptools" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/76/03/8063d1f8ea03ebd4ce9101efe5867877b1579748a18e9b015198bf852361/cx_freeze-8.7.2.tar.gz", hash = "sha256:48afc98b46d791d27eebf4d64881e2e59a0ba7d826986caacc30c043cc91d84c", size = 1400868, upload-time = "2026-10-14T14:33:24.916Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/96/45/8cdd1ad9bff4a367cfba7312383b9d42b8d2e0eb7906fe124ce5e83ee635/cx_freeze-8.7.3.tar.gz", hash = "sha256:3503dcb6f58620073ef96afe9e70f564a63326504c86705fec19b41bdc721211", size = 1401303, upload-time = "2026-10-23T06:24:13.689Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bc/c7/cd17f74d4ebc045f7b9a2592b7fce31f0ab596bf186ff4cf1c9b5db1c375/cx_freeze-8.7.2-py3-none-any.whl", hash = "sha256:bab6cae3615da1a29223810379db59a2676ae69a7f613bfea01a17dd040926b6", size = 261357, upload-time = "2026-10-14T14:33:23.103Z" },
+    { url = "https://files.pythonhosted.org/packages/e4/1c/9c7d35e00c926f477c05252fd36573320ce125ead11c65fcf218180d158d/cx_freeze-8.7.3-py3-none-any.whl", hash = "sha256:04aaf4d431e9cf0fe5ff08a9608a0d7a01e48b7b775860891adea9c2024a5573", size = 261410, upload-time = "2026-10-23T06:24:12.26Z" },
 ]
 
 [[package]]
