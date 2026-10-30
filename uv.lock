@@ -462,7 +462,7 @@ wheels = [
 
 [[package]]
 name = "cx-freeze"
-version = "8.7.3"
+version = "8.7.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dmgbuild", marker = "sys_platform == 'darwin'" },
@@ -474,9 +474,9 @@ dependencies = [
     { name = "python-msilib", marker = "python_full_version >= '3.13' and sys_platform == 'win32'" },
     { name = "setuptools" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/96/45/8cdd1ad9bff4a367cfba7312383b9d42b8d2e0eb7906fe124ce5e83ee635/cx_freeze-8.7.3.tar.gz", hash = "sha256:3503dcb6f58620073ef96afe9e70f564a63326504c86705fec19b41bdc721211", size = 1401303, upload-time = "2026-10-23T06:24:13.689Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6b/2f/e3bb81aaf67567de01857bff4bf99ea723748300a0cfed4350a0053b50be/cx_freeze-8.7.4.tar.gz", hash = "sha256:b3da12612bf4d5f22245d0b302b19140a6125f9be270f0b9a13cae37788a8b46", size = 1401893, upload-time = "2026-10-27T12:53:57.129Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e4/1c/9c7d35e00c926f477c05252fd36573320ce125ead11c65fcf218180d158d/cx_freeze-8.7.3-py3-none-any.whl", hash = "sha256:04aaf4d431e9cf0fe5ff08a9608a0d7a01e48b7b775860891adea9c2024a5573", size = 261410, upload-time = "2026-10-23T06:24:12.26Z" },
+    { url = "https://files.pythonhosted.org/packages/22/60/a85e01ec5c516f23abff96b72177fdf25c0a843221a75900516e6080e866/cx_freeze-8.7.4-py3-none-any.whl", hash = "sha256:4d6544c296dc66bef720aeb99442b107593800a1a3944d7279d5edc5a97b2aad", size = 261671, upload-time = "2026-10-27T12:53:55.505Z" },
 ]
 
 [[package]]
